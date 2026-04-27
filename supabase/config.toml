@@ -1,0 +1,4 @@
+project_id = "posture-reset"
+
+[functions.verify_purchase]
+verify_jwt = true

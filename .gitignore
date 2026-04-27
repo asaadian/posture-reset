@@ -1,0 +1,93 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history/
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Flutter / Dart / Pub
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+
+# Symbolication
+app.*.symbols
+
+# Obfuscation
+app.*.map.json
+
+# Android build artifacts
+/android/.gradle/
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+
+# Android local config
+/android/local.properties
+
+# Android release signing - never commit these
+/android/key.properties
+/android/app/*.jks
+/android/app/*.keystore
+*.jks
+*.keystore
+
+# Gradle
+.gradle/
+**/.gradle/
+
+# iOS / macOS generated files
+/ios/Pods/
+/ios/.symlinks/
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/ephemeral/
+/macos/Pods/
+/macos/.symlinks/
+/macos/Flutter/ephemeral/
+
+# Xcode
+**/xcuserdata/
+**/*.xcuserstate
+
+# Supabase / environment secrets
+.env
+.env.*
+*.env
+/supabase/.env
+/supabase/.env.*
+
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Google Cloud / Firebase service account keys - never commit
+posture-reset-*.json
+*service-account*.json
+*firebase-adminsdk*.json
+*credentials*.json

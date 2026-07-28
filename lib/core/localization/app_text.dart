@@ -846,8 +846,6 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.settings_language_english;
       case 'settings_language_german':
         return _t.settings_language_german;
-      case 'settings_language_persian':
-        return _t.settings_language_persian;
 
       default:
         return fallback;
@@ -863,7 +861,6 @@ class AppText {
   static const List<Locale> supportedLocales = [
     Locale('en'),
     Locale('de'),
-    Locale('fa'),
   ];
 
   static AppTextReader of(BuildContext context) {

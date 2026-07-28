@@ -2,7 +2,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../core/localization/app_locale_controller.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../auth/application/auth_providers.dart';
@@ -28,6 +27,74 @@ final currentUserProfileProvider = FutureProvider<UserProfile?>((ref) async {
     rethrow;
   }
 });
+
+final profileActionsControllerProvider = Provider<ProfileActionsController>((ref) {
+  return ProfileActionsController(ref);
+});
+
+class ProfileActionsController {
+  ProfileActionsController(this.ref);
+
+  final Ref ref;
+
+  ProfileRepository get _repository => ref.read(profileRepositoryProvider);
+
+  Future<UserProfile?> updateDisplayName(String value) async {
+    final user = ref.read(currentUserProvider);
+    if (user == null) return null;
+
+    final trimmed = value.trim();
+
+    final updated = await _repository.updateProfile(
+      userId: user.id,
+      displayName: trimmed.isEmpty ? null : trimmed,
+      clearDisplayName: trimmed.isEmpty,
+      email: user.email?.trim(),
+    );
+
+    ref.invalidate(currentUserProfileProvider);
+    return updated;
+  }
+
+  Future<UserProfile?> uploadAvatar({
+    required Uint8List bytes,
+    required String extension,
+    required String contentType,
+  }) async {
+    final user = ref.read(currentUserProvider);
+    if (user == null) return null;
+
+    final avatarUrl = await _repository.uploadAvatar(
+      userId: user.id,
+      bytes: bytes,
+      extension: extension,
+      contentType: contentType,
+    );
+
+    final updated = await _repository.updateProfile(
+      userId: user.id,
+      email: user.email?.trim(),
+      avatarUrl: avatarUrl,
+    );
+
+    ref.invalidate(currentUserProfileProvider);
+    return updated;
+  }
+
+  Future<UserProfile?> removeAvatar() async {
+    final user = ref.read(currentUserProvider);
+    if (user == null) return null;
+
+    final updated = await _repository.updateProfile(
+      userId: user.id,
+      email: user.email?.trim(),
+      clearAvatar: true,
+    );
+
+    ref.invalidate(currentUserProfileProvider);
+    return updated;
+  }
+}
 
 final userPreferencesControllerProvider =
     AsyncNotifierProvider<UserPreferencesController, UserPreferences?>(

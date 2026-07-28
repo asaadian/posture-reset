@@ -37,19 +37,22 @@ class BillingState {
   }
 
   BillingState copyWith({
-    BillingPurchaseStatus? status,
-    bool? isStoreAvailable,
-    List<BillingProductDetails>? products,
-    BillingProductDetails? selectedProduct,
-    BillingFailure? failure,
-    bool clearFailure = false,
-  }) {
-    return BillingState(
-      status: status ?? this.status,
-      isStoreAvailable: isStoreAvailable ?? this.isStoreAvailable,
-      products: products ?? this.products,
-      selectedProduct: selectedProduct ?? this.selectedProduct,
-      failure: clearFailure ? null : failure ?? this.failure,
-    );
-  }
+  BillingPurchaseStatus? status,
+  bool? isStoreAvailable,
+  List<BillingProductDetails>? products,
+  BillingProductDetails? selectedProduct,
+  BillingFailure? failure,
+  bool clearFailure = false,
+  bool clearSelectedProduct = false,
+}) {
+  return BillingState(
+    status: status ?? this.status,
+    isStoreAvailable: isStoreAvailable ?? this.isStoreAvailable,
+    products: products ?? this.products,
+    selectedProduct: clearSelectedProduct
+        ? null
+        : selectedProduct ?? this.selectedProduct,
+    failure: clearFailure ? null : failure ?? this.failure,
+  );
+}
 }

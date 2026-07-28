@@ -1,5 +1,3 @@
-// lib/features/quick_fix/domain/quick_fix_events_repository.dart
-
 import 'quick_fix_models.dart';
 import 'quick_fix_state.dart';
 

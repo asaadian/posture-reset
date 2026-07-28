@@ -129,8 +129,20 @@ class InsightsRepositoryImpl implements InsightsRepository {
     final templatesRows = await _safeSelectList(
       'session_templates',
       () => _client.from('session_templates').select(
-            'id, title_key, title_fallback, duration_minutes',
+            'id, title_key, title_fallback, duration_minutes, pain_targets, session_level_tag, access_tier, session_quality',
           ),
+    );
+
+    final stepTargetRows = await _safeSelectList(
+      'session_steps_targets',
+      () => _client.from('session_steps').select(
+            'session_id, body_target_codes',
+          ),
+    );
+
+    final sessionBodyZones = _buildSessionBodyZoneIndex(
+      templatesRows: templatesRows,
+      stepTargetRows: stepTargetRows,
     );
 
     final templateById = <String, Map<String, dynamic>>{
@@ -196,8 +208,10 @@ class InsightsRepositoryImpl implements InsightsRepository {
     final averageReliefScore = _computeAverageRelief(feedbackInRange);
 
     final bodyZones = _buildBodyZoneStats(
+      runsRows: runsInRange,
       snapshotRows: snapshotsInRange,
       feedbackByRun: feedbackByRun,
+      sessionBodyZones: sessionBodyZones,
     );
 
     final dominantPainAreaCode =
@@ -229,6 +243,45 @@ class InsightsRepositoryImpl implements InsightsRepository {
 
     final currentStreakDays = _computeCurrentStreak(activeDays, now);
     final longestStreakDays = _computeLongestStreak(activeDays);
+    final activeDaysCount = activeDays.length;
+
+    final abandonedRuns = runsInRange.where(
+      (row) => (row['status'] as String?) == 'abandoned',
+    ).length;
+
+    final skippedStepEvents = stepEventsInRange.where(
+      (row) => (row['event_type'] as String?) == 'step_skipped',
+    ).length;
+
+    final pausedEvents = stepEventsInRange.where(
+      (row) => (row['event_type'] as String?) == 'player_paused',
+    ).length;
+
+    final bestDay = _bestRecoveryDay(recoveryMinutesSeries);
+    final undertrainedBodyZoneCodes = _undertrainedBodyZones(bodyZones);
+    final sessionEffectiveness = _buildSessionEffectiveness(
+      templateById: templateById,
+      runsInRange: runsInRange,
+      feedbackInRange: feedbackInRange,
+    );
+    final recoveryScore = _computeRecoveryScore(
+      consistencyScore: consistencyScore,
+      completionRate: totalRuns <= 0 ? 0.0 : completedSessions / totalRuns,
+      helpRate: helpRate,
+      averageReliefScore: averageReliefScore,
+      currentStreakDays: currentStreakDays,
+      abandonedRuns: abandonedRuns,
+      totalRuns: totalRuns,
+    );
+    final nextBestAction = _buildNextBestAction(
+      bodyZones: bodyZones,
+      undertrainedBodyZoneCodes: undertrainedBodyZoneCodes,
+      sessionEffectiveness: sessionEffectiveness,
+      abandonedRuns: abandonedRuns,
+      completedSessions: completedSessions,
+      quickFixStarts: quickFixStarts,
+      skippedStepEvents: skippedStepEvents,
+    );
 
     final logs = _buildLogs(
       range: range,
@@ -261,6 +314,23 @@ class InsightsRepositoryImpl implements InsightsRepository {
       heatmapCells: heatmapCells,
       bodyZones: bodyZones,
       logs: logs,
+      recoveryScore: recoveryScore,
+      recoveryScoreTitle: _scoreTitle(recoveryScore),
+      recoveryScoreBody: _scoreBody(
+        score: recoveryScore,
+        dominantPainAreaCode: dominantPainAreaCode,
+        abandonedRuns: abandonedRuns,
+        pausedEvents: pausedEvents,
+      ),
+      activeDaysCount: activeDaysCount,
+      abandonedRuns: abandonedRuns,
+      skippedStepEvents: skippedStepEvents,
+      pausedEvents: pausedEvents,
+      bestDayLabel: bestDay?.label,
+      bestDayMinutes: bestDay?.value.round() ?? 0,
+      undertrainedBodyZoneCodes: undertrainedBodyZoneCodes,
+      sessionEffectiveness: sessionEffectiveness,
+      nextBestAction: nextBestAction,
     );
   }
 
@@ -408,29 +478,73 @@ class InsightsRepositoryImpl implements InsightsRepository {
     }).toList(growable: false);
   }
 
+  Map<String, List<String>> _buildSessionBodyZoneIndex({
+    required List<Map<String, dynamic>> templatesRows,
+    required List<Map<String, dynamic>> stepTargetRows,
+  }) {
+    final zonesBySession = <String, Set<String>>{};
+
+    for (final row in templatesRows) {
+      final sessionId = row['id'] as String?;
+      if (sessionId == null || sessionId.trim().isEmpty) continue;
+
+      final targets = _normalizeBodyAreaCodes(
+        _asStringList(row['pain_targets']),
+      );
+
+      if (targets.isNotEmpty) {
+        zonesBySession.putIfAbsent(sessionId, () => <String>{}).addAll(targets);
+      }
+    }
+
+    for (final row in stepTargetRows) {
+      final sessionId = row['session_id'] as String?;
+      if (sessionId == null || sessionId.trim().isEmpty) continue;
+
+      final targets = _normalizeBodyAreaCodes(
+        _asStringList(row['body_target_codes']),
+      );
+
+      if (targets.isNotEmpty) {
+        zonesBySession.putIfAbsent(sessionId, () => <String>{}).addAll(targets);
+      }
+    }
+
+    return zonesBySession.map(
+      (sessionId, targets) {
+        final sorted = targets.toList(growable: false)..sort();
+        return MapEntry(sessionId, sorted);
+      },
+    );
+  }
+
   List<InsightsBodyZoneStat> _buildBodyZoneStats({
+    required List<Map<String, dynamic>> runsRows,
     required List<Map<String, dynamic>> snapshotRows,
     required Map<String, Map<String, dynamic>> feedbackByRun,
+    required Map<String, List<String>> sessionBodyZones,
   }) {
+    final snapshotZonesByRun = _buildSnapshotBodyZoneIndex(snapshotRows);
     final counts = <String, int>{};
     final reliefBuckets = <String, List<double>>{};
     var totalHits = 0;
 
-    for (final row in snapshotRows) {
-      final kind = row['snapshot_kind'] as String?;
-      if (kind != 'after') continue;
+    for (final row in runsRows) {
+      final runId = row['id'] as String?;
+      final sessionId = row['session_id'] as String?;
 
-      final runId = row['run_id'] as String?;
-      final painAreas =
-          (row['pain_area_codes'] as List<dynamic>? ?? const <dynamic>[])
-              .map((item) => item.toString())
-              .where((item) => item.trim().isNotEmpty)
-              .toList(growable: false);
+      final zones = runId == null
+          ? sessionBodyZones[sessionId] ?? const <String>[]
+          : snapshotZonesByRun[runId] ??
+              sessionBodyZones[sessionId] ??
+              const <String>[];
+
+      if (zones.isEmpty) continue;
 
       final feedback = runId == null ? null : feedbackByRun[runId];
       final reliefScore = feedback == null ? null : _feedbackScore(feedback);
 
-      for (final code in painAreas) {
+      for (final code in zones) {
         counts.update(code, (value) => value + 1, ifAbsent: () => 1);
         totalHits += 1;
 
@@ -463,6 +577,341 @@ class InsightsRepositoryImpl implements InsightsRepository {
     });
 
     return items;
+  }
+
+  Map<String, List<String>> _buildSnapshotBodyZoneIndex(
+    List<Map<String, dynamic>> snapshotRows,
+  ) {
+    final afterByRun = <String, Set<String>>{};
+    final beforeByRun = <String, Set<String>>{};
+
+    for (final row in snapshotRows) {
+      final runId = row['run_id'] as String?;
+      if (runId == null || runId.trim().isEmpty) continue;
+
+      final targets = _normalizeBodyAreaCodes(
+        _asStringList(row['pain_area_codes']),
+      );
+      if (targets.isEmpty) continue;
+
+      final kind = row['snapshot_kind'] as String?;
+      final bucket = kind == 'after' ? afterByRun : beforeByRun;
+      bucket.putIfAbsent(runId, () => <String>{}).addAll(targets);
+    }
+
+    final merged = <String, List<String>>{};
+    for (final entry in beforeByRun.entries) {
+      merged[entry.key] = entry.value.toList(growable: false)..sort();
+    }
+    for (final entry in afterByRun.entries) {
+      merged[entry.key] = entry.value.toList(growable: false)..sort();
+    }
+
+    return merged;
+  }
+
+  List<String> _asStringList(dynamic value) {
+    if (value is List) {
+      return value
+          .map((item) => item.toString().trim())
+          .where((item) => item.isNotEmpty)
+          .toList(growable: false);
+    }
+
+    if (value is String && value.trim().isNotEmpty) {
+      return <String>[value.trim()];
+    }
+
+    return const <String>[];
+  }
+
+  List<String> _normalizeBodyAreaCodes(List<String> rawCodes) {
+    final normalized = <String>{};
+
+    for (final raw in rawCodes) {
+      final code = raw.trim().toLowerCase();
+      if (code.isEmpty) continue;
+
+      switch (code) {
+        case 'neck':
+        case 'cervical':
+          normalized.add('neck');
+          break;
+        case 'shoulder':
+        case 'shoulders':
+        case 'scapula':
+        case 'scapular':
+          normalized.add('shoulders');
+          break;
+        case 'upper_back':
+        case 'upper back':
+        case 'mid_back':
+        case 'mid back':
+        case 'thoracic':
+        case 'chest':
+          normalized.add('upper_back');
+          break;
+        case 'lower_back':
+        case 'low_back':
+        case 'lower back':
+        case 'lumbar':
+        case 'back':
+        case 'core':
+          normalized.add('lower_back');
+          break;
+        case 'hip':
+        case 'hips':
+        case 'glute':
+        case 'glutes':
+        case 'hips_glutes':
+        case 'hamstring':
+        case 'hamstrings':
+          normalized.add('hips_glutes');
+          break;
+        case 'forearm':
+        case 'forearms':
+        case 'mouse_arm':
+        case 'mouse arm':
+          normalized.add('forearms');
+          break;
+        case 'wrist':
+        case 'wrists':
+          normalized.add('wrists');
+          break;
+        case 'hand':
+        case 'hands':
+        case 'finger':
+        case 'fingers':
+          normalized.add('hands');
+          break;
+        case 'eye':
+        case 'eyes':
+        case 'screen':
+        case 'screen_strain':
+        case 'eye_strain':
+          normalized.add('eyes');
+          break;
+      }
+    }
+
+    return normalized.toList(growable: false);
+  }
+
+
+  int _computeRecoveryScore({
+    required double consistencyScore,
+    required double completionRate,
+    required double helpRate,
+    required double averageReliefScore,
+    required int currentStreakDays,
+    required int abandonedRuns,
+    required int totalRuns,
+  }) {
+    if (totalRuns <= 0) return 0;
+
+    final reliefNormalized = (averageReliefScore / 100).clamp(0.0, 1.0);
+    var score = 0.0;
+    score += consistencyScore.clamp(0.0, 1.0) * 28;
+    score += completionRate.clamp(0.0, 1.0) * 24;
+    score += helpRate.clamp(0.0, 1.0) * 22;
+    score += reliefNormalized * 18;
+    score += (currentStreakDays.clamp(0, 7) / 7) * 8;
+
+    if (abandonedRuns > 0) {
+      score -= (abandonedRuns * 4).clamp(0, 16);
+    }
+
+    return score.round().clamp(0, 100);
+  }
+
+  String _scoreTitle(int score) {
+    if (score >= 82) return 'Strong recovery rhythm';
+    if (score >= 64) return 'Recovery rhythm is building';
+    if (score >= 42) return 'Recovery signal needs consistency';
+    if (score > 0) return 'Early recovery signal';
+    return 'No recovery score yet';
+  }
+
+  String _scoreBody({
+    required int score,
+    required String? dominantPainAreaCode,
+    required int abandonedRuns,
+    required int pausedEvents,
+  }) {
+    if (score <= 0) {
+      return 'Complete a few sessions to unlock a useful personal recovery score.';
+    }
+
+    final zone = dominantPainAreaCode == null
+        ? 'your main working zone'
+        : _painAreaLabel(dominantPainAreaCode).toLowerCase();
+
+    if (abandonedRuns >= 2) {
+      return 'Your recent rhythm is being limited by unfinished runs. Try shorter sessions and keep the next run simple.';
+    }
+
+    if (pausedEvents >= 4) {
+      return 'You are getting recovery work done, but pause frequency suggests interruptions. A shorter quiet block may fit better.';
+    }
+
+    if (score >= 82) {
+      return 'Your consistency, completion, and feedback are aligned. Keep rotating support around $zone.';
+    }
+
+    if (score >= 64) {
+      return 'Your recovery pattern is moving in the right direction. Add one focused session for $zone to keep the signal improving.';
+    }
+
+    return 'You have enough activity to see patterns, but consistency and completion still need work.';
+  }
+
+  InsightsSeriesPoint? _bestRecoveryDay(List<InsightsSeriesPoint> series) {
+    InsightsSeriesPoint? best;
+    for (final point in series) {
+      if (point.value <= 0) continue;
+      if (best == null || point.value > best.value) best = point;
+    }
+    return best;
+  }
+
+  List<String> _undertrainedBodyZones(List<InsightsBodyZoneStat> bodyZones) {
+    const coreZones = <String>[
+      'neck',
+      'shoulders',
+      'upper_back',
+      'lower_back',
+      'hips_glutes',
+      'forearms',
+      'wrists',
+      'hands',
+      'eyes',
+    ];
+
+    if (bodyZones.isEmpty) return const <String>[];
+
+    final trained = bodyZones.map((item) => item.painAreaCode).toSet();
+    return coreZones
+        .where((code) => !trained.contains(code))
+        .take(3)
+        .toList(growable: false);
+  }
+
+  List<InsightsSessionEffectiveness> _buildSessionEffectiveness({
+    required Map<String, Map<String, dynamic>> templateById,
+    required List<Map<String, dynamic>> runsInRange,
+    required List<Map<String, dynamic>> feedbackInRange,
+  }) {
+    final completedBySession = <String, int>{};
+    for (final row in runsInRange) {
+      if ((row['status'] as String?) != 'completed') continue;
+      final sessionId = row['session_id'] as String?;
+      if (sessionId == null || sessionId.trim().isEmpty) continue;
+      completedBySession.update(sessionId, (value) => value + 1, ifAbsent: () => 1);
+    }
+
+    final feedbackBySession = <String, List<Map<String, dynamic>>>{};
+    for (final row in feedbackInRange) {
+      final sessionId = row['session_id'] as String?;
+      if (sessionId == null || sessionId.trim().isEmpty) continue;
+      feedbackBySession.putIfAbsent(sessionId, () => <Map<String, dynamic>>[]).add(row);
+    }
+
+    final items = <InsightsSessionEffectiveness>[];
+    for (final entry in completedBySession.entries) {
+      final feedback = feedbackBySession[entry.key] ?? const <Map<String, dynamic>>[];
+      final helped = feedback.where((row) => row['helped'] == true).length;
+      final helpRate = feedback.isEmpty ? 0.0 : helped / feedback.length;
+      final relief = feedback.isEmpty
+          ? 0.0
+          : feedback.map(_feedbackScore).reduce((a, b) => a + b) / feedback.length;
+      final template = templateById[entry.key];
+      final title = template?['title_fallback']?.toString().trim();
+
+      items.add(
+        InsightsSessionEffectiveness(
+          sessionId: entry.key,
+          title: title == null || title.isEmpty ? entry.key : title,
+          completedRuns: entry.value,
+          helpRate: helpRate,
+          averageReliefScore: relief,
+        ),
+      );
+    }
+
+    items.sort((a, b) {
+      final aScore = (a.helpRate * 100) + a.averageReliefScore + (a.completedRuns * 4);
+      final bScore = (b.helpRate * 100) + b.averageReliefScore + (b.completedRuns * 4);
+      return bScore.compareTo(aScore);
+    });
+
+    return items.take(4).toList(growable: false);
+  }
+
+  InsightsNextBestAction _buildNextBestAction({
+    required List<InsightsBodyZoneStat> bodyZones,
+    required List<String> undertrainedBodyZoneCodes,
+    required List<InsightsSessionEffectiveness> sessionEffectiveness,
+    required int abandonedRuns,
+    required int completedSessions,
+    required int quickFixStarts,
+    required int skippedStepEvents,
+  }) {
+    if (completedSessions <= 0) {
+      return const InsightsNextBestAction(
+        title: 'Start with one short reset',
+        body: 'Complete one guided session today so your insights can move from preview to personal signal.',
+        reason: 'No completed sessions in this range.',
+      );
+    }
+
+    if (abandonedRuns >= 2) {
+      return const InsightsNextBestAction(
+        title: 'Choose a shorter session next',
+        body: 'Pick a 6–7 minute recovery block before starting another longer flow.',
+        reason: 'Recent abandoned runs suggest session length or timing friction.',
+      );
+    }
+
+    if (skippedStepEvents >= 3) {
+      return const InsightsNextBestAction(
+        title: 'Use a gentler flow next',
+        body: 'Choose a lower-intensity session and avoid skipping unless a movement feels wrong.',
+        reason: 'Step skipping is elevated in this range.',
+      );
+    }
+
+    if (undertrainedBodyZoneCodes.isNotEmpty) {
+      final zone = _painAreaLabel(undertrainedBodyZoneCodes.first);
+      return InsightsNextBestAction(
+        title: 'Balance your next recovery block',
+        body: 'Add a session that supports $zone so your recovery work is not concentrated in one area.',
+        reason: '$zone has little or no recent coverage.',
+      );
+    }
+
+    if (sessionEffectiveness.isNotEmpty) {
+      final best = sessionEffectiveness.first;
+      return InsightsNextBestAction(
+        title: 'Repeat what works',
+        body: 'Repeat ${best.title} or choose a related session with the same body focus.',
+        reason: '${(best.helpRate * 100).round()}% helpful feedback from recent runs.',
+        sessionId: best.sessionId,
+      );
+    }
+
+    if (quickFixStarts > completedSessions) {
+      return const InsightsNextBestAction(
+        title: 'Convert one Quick Fix into a full session',
+        body: 'Keep Quick Fix for emergencies, but complete one full guided recovery session today.',
+        reason: 'Quick Fix usage is higher than completed sessions.',
+      );
+    }
+
+    return const InsightsNextBestAction(
+      title: 'Keep the current rhythm',
+      body: 'Your recent activity is balanced enough. Keep one short recovery session in the next 24 hours.',
+      reason: 'No major friction signal detected.',
+    );
   }
 
   List<InsightLogItem> _buildLogs({
@@ -518,7 +967,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
           id: 'dominant_zone',
           title: 'Most attention is landing on ${_painAreaLabel(topZone.painAreaCode)}',
           body:
-              '${(topZone.share * 100).round()}% of recent after-session pain tagging was concentrated in this zone.',
+              '${(topZone.share * 100).round()}% of recent recovery work was concentrated in this zone. Action: rotate one supporting session for a secondary zone.',
           tone: InsightLogTone.neutral,
         ),
       );
@@ -745,17 +1194,56 @@ class InsightsRepositoryImpl implements InsightsRepository {
   }
 
   String _painAreaLabel(String raw) {
-    switch (raw) {
+    switch (raw.trim().toLowerCase()) {
       case 'neck':
+      case 'cervical':
         return 'Neck';
+      case 'shoulder':
       case 'shoulders':
+      case 'scapula':
+      case 'scapular':
         return 'Shoulders';
       case 'upper_back':
+      case 'upper back':
+      case 'mid_back':
+      case 'mid back':
+      case 'thoracic':
+      case 'chest':
         return 'Upper back';
       case 'lower_back':
+      case 'low_back':
+      case 'lower back':
+      case 'lumbar':
+      case 'back':
+      case 'core':
         return 'Lower back';
+      case 'wrist':
       case 'wrists':
         return 'Wrists';
+      case 'forearm':
+      case 'forearms':
+      case 'mouse_arm':
+      case 'mouse arm':
+        return 'Forearms';
+      case 'hand':
+      case 'hands':
+      case 'finger':
+      case 'fingers':
+        return 'Hands';
+      case 'hips':
+      case 'glutes':
+      case 'hip':
+      case 'glute':
+      case 'hips_glutes':
+      case 'hamstrings':
+      case 'hamstring':
+        return 'Hips & glutes';
+      case 'eye':
+      case 'eyes':
+      case 'screen':
+      case 'screen_strain':
+      case 'eye_strain':
+        return 'Eyes';
       default:
         return raw.replaceAll('_', ' ');
     }

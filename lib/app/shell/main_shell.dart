@@ -1,13 +1,15 @@
 // lib/app/shell/main_shell.dart
-
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/app_data/app_data_reset_signal.dart';
 import '../../core/localization/app_text.dart';
+import '../startup/auth_data_refresh_listener.dart';
 
-class MainShell extends StatelessWidget {
+class MainShell extends ConsumerWidget {
   const MainShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
@@ -20,20 +22,26 @@ class MainShell extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = AppText.of(context);
+    final resetVersion = ref.watch(appDataResetSignalProvider);
 
-    return Scaffold(
-      extendBody: true,
-      body: navigationShell,
-      bottomNavigationBar: _GlassConcaveBottomBar(
-        currentIndex: navigationShell.currentIndex,
-        onTap: _onTap,
-        dashboardLabel: t.navDashboard,
-        sessionsLabel: t.navSessions,
-        quickFixLabel: t.navQuickFix,
-        insightsLabel: t.navInsights,
-        profileLabel: t.navProfile,
+    return AuthDataRefreshListener(
+      child: Scaffold(
+        extendBody: true,
+        body: KeyedSubtree(
+          key: ValueKey('app-data-$resetVersion'),
+          child: navigationShell,
+        ),
+        bottomNavigationBar: _GlassConcaveBottomBar(
+          currentIndex: navigationShell.currentIndex,
+          onTap: _onTap,
+          dashboardLabel: t.navDashboard,
+          trainingLabel: t.get('nav_training', fallback: 'Training'),
+          quickFixLabel: t.navQuickFix,
+          insightsLabel: t.navInsights,
+          programsLabel: t.get('nav_programs', fallback: 'Programs'),
+        ),
       ),
     );
   }
@@ -44,28 +52,29 @@ class _GlassConcaveBottomBar extends StatelessWidget {
     required this.currentIndex,
     required this.onTap,
     required this.dashboardLabel,
-    required this.sessionsLabel,
+    required this.trainingLabel,
     required this.quickFixLabel,
     required this.insightsLabel,
-    required this.profileLabel,
+    required this.programsLabel,
   });
 
   final int currentIndex;
   final ValueChanged<int> onTap;
   final String dashboardLabel;
-  final String sessionsLabel;
+  final String trainingLabel;
   final String quickFixLabel;
   final String insightsLabel;
-  final String profileLabel;
+  final String programsLabel;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
-      minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      minimum: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: SizedBox(
-        height: 98,
+        height: 86,
         child: Stack(
           alignment: Alignment.bottomCenter,
           clipBehavior: Clip.none,
@@ -77,13 +86,18 @@ class _GlassConcaveBottomBar extends StatelessWidget {
                   filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
                   child: CustomPaint(
                     painter: _GlassConcaveBarPainter(
-                      fillColor: colorScheme.surface.withValues(alpha: 0.72),
-                      borderColor:
-                          colorScheme.outlineVariant.withValues(alpha: 0.28),
-                      shadowColor: Colors.black.withValues(alpha: 0.16),
+                      fillColor: isDark
+                          ? colors.surface.withValues(alpha: 0.78)
+                          : colors.surface.withValues(alpha: 0.94),
+                      borderColor: isDark
+                          ? colors.outlineVariant.withValues(alpha: 0.38)
+                          : colors.outlineVariant.withValues(alpha: 0.62),
+                      shadowColor: isDark
+                          ? Colors.black.withValues(alpha: 0.34)
+                          : colors.primary.withValues(alpha: 0.12),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 16, 12, 10),
+                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
                       child: Row(
                         children: [
                           Expanded(
@@ -97,28 +111,28 @@ class _GlassConcaveBottomBar extends StatelessWidget {
                           ),
                           Expanded(
                             child: _MinimalNavItem(
-                              icon: Icons.grid_view_rounded,
-                              selectedIcon: Icons.grid_view_rounded,
-                              label: sessionsLabel,
+                              icon: Icons.fitness_center_outlined,
+                              selectedIcon: Icons.fitness_center_rounded,
+                              label: trainingLabel,
                               selected: currentIndex == 1,
                               onTap: () => onTap(1),
                             ),
                           ),
-                          const SizedBox(width: 94),
+                          const SizedBox(width: 82),
                           Expanded(
                             child: _MinimalNavItem(
-                              icon: Icons.insights_outlined,
-                              selectedIcon: Icons.insights_rounded,
-                              label: insightsLabel,
+                              icon: Icons.route_outlined,
+                              selectedIcon: Icons.route_rounded,
+                              label: programsLabel,
                               selected: currentIndex == 3,
                               onTap: () => onTap(3),
                             ),
                           ),
                           Expanded(
                             child: _MinimalNavItem(
-                              icon: Icons.person_outline_rounded,
-                              selectedIcon: Icons.person_rounded,
-                              label: profileLabel,
+                              icon: Icons.insights_outlined,
+                              selectedIcon: Icons.insights_rounded,
+                              label: insightsLabel,
                               selected: currentIndex == 4,
                               onTap: () => onTap(4),
                             ),
@@ -131,7 +145,7 @@ class _GlassConcaveBottomBar extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: -10,
+              top: -8,
               child: _QuickFixOrbButton(
                 label: quickFixLabel,
                 selected: currentIndex == 2,
@@ -163,7 +177,8 @@ class _MinimalNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Material(
       color: Colors.transparent,
@@ -182,30 +197,31 @@ class _MinimalNavItem extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 6),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary,
+                  color: colors.primary,
                   borderRadius: BorderRadius.circular(999),
                 ),
               ),
               AnimatedContainer(
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeOut,
-                width: 40,
-                height: 40,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
                   color: selected
-                      ? colorScheme.primaryContainer.withValues(alpha: 0.82)
+                      ? colors.primaryContainer.withValues(
+                          alpha: isDark ? 0.58 : 0.82,
+                        )
                       : Colors.transparent,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   selected ? selectedIcon : icon,
-                  size: 21,
-                  color: selected
-                      ? colorScheme.onPrimaryContainer
-                      : colorScheme.onSurfaceVariant,
+                  size: 20,
+                  color:
+                      selected ? colors.onPrimaryContainer : colors.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Flexible(
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
@@ -213,10 +229,9 @@ class _MinimalNavItem extends StatelessWidget {
                     label,
                     maxLines: 1,
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: selected
-                          ? colorScheme.onSurface
-                          : colorScheme.onSurfaceVariant,
-                      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                      color: selected ? colors.onSurface : colors.onSurfaceVariant,
+                      fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                      letterSpacing: 0.1,
                     ),
                   ),
                 ),
@@ -243,7 +258,8 @@ class _QuickFixOrbButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Semantics(
       button: true,
@@ -260,30 +276,35 @@ class _QuickFixOrbButton extends StatelessWidget {
               AnimatedContainer(
                 duration: const Duration(milliseconds: 260),
                 curve: Curves.easeOut,
-                width: 70,
-                height: 70,
+                width: 62,
+                height: 62,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [
-                      colorScheme.primary,
-                      colorScheme.tertiary.withValues(alpha: 0.92),
-                    ],
+                    colors: isDark
+                        ? [
+                            colors.primary,
+                            colors.tertiary.withValues(alpha: 0.92),
+                          ]
+                        : [
+                            colors.primary,
+                            colors.secondary,
+                          ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   border: Border.all(
-                    color: colorScheme.surface.withValues(alpha: 0.95),
+                    color: theme.scaffoldBackgroundColor.withValues(alpha: 0.96),
                     width: 5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: colorScheme.primary.withValues(alpha: 0.34),
+                      color: colors.primary.withValues(alpha: isDark ? 0.34 : 0.24),
                       blurRadius: 24,
                       offset: const Offset(0, 12),
                     ),
                     BoxShadow(
-                      color: colorScheme.tertiary.withValues(alpha: 0.16),
+                      color: colors.tertiary.withValues(alpha: isDark ? 0.18 : 0.10),
                       blurRadius: 18,
                       offset: const Offset(0, 6),
                     ),
@@ -291,15 +312,15 @@ class _QuickFixOrbButton extends StatelessWidget {
                 ),
                 child: Icon(
                   selected ? Icons.flash_on_rounded : Icons.bolt_rounded,
-                  color: colorScheme.onPrimary,
-                  size: 30,
+                  color: colors.onPrimary,
+                  size: 27,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text(
                 label,
                 style: theme.textTheme.labelSmall?.copyWith(
-                  color: colorScheme.onSurface,
+                  color: colors.onSurface,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.2,
                 ),

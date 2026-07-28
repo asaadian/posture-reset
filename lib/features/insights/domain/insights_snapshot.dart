@@ -34,6 +34,18 @@ class InsightsSnapshot {
     required this.heatmapCells,
     required this.bodyZones,
     required this.logs,
+    this.recoveryScore = 0,
+    this.recoveryScoreTitle = 'Recovery score',
+    this.recoveryScoreBody = 'Complete a few sessions to build a reliable recovery signal.',
+    this.activeDaysCount = 0,
+    this.abandonedRuns = 0,
+    this.skippedStepEvents = 0,
+    this.pausedEvents = 0,
+    this.bestDayLabel,
+    this.bestDayMinutes = 0,
+    this.undertrainedBodyZoneCodes = const <String>[],
+    this.sessionEffectiveness = const <InsightsSessionEffectiveness>[],
+    this.nextBestAction = const InsightsNextBestAction.empty(),
   });
 
   final InsightsRange range;
@@ -52,6 +64,22 @@ class InsightsSnapshot {
   final List<InsightsHeatmapCell> heatmapCells;
   final List<InsightsBodyZoneStat> bodyZones;
   final List<InsightLogItem> logs;
+
+  /// Premium intelligence fields derived from runs, feedback, body-zone data,
+  /// step events, and Quick Fix behavior. These are intentionally lightweight
+  /// rule-based signals, not medical claims.
+  final int recoveryScore;
+  final String recoveryScoreTitle;
+  final String recoveryScoreBody;
+  final int activeDaysCount;
+  final int abandonedRuns;
+  final int skippedStepEvents;
+  final int pausedEvents;
+  final String? bestDayLabel;
+  final int bestDayMinutes;
+  final List<String> undertrainedBodyZoneCodes;
+  final List<InsightsSessionEffectiveness> sessionEffectiveness;
+  final InsightsNextBestAction nextBestAction;
 
   bool get hasContent {
     return recoveryMinutes > 0 ||
@@ -105,6 +133,42 @@ class InsightsBodyZoneStat {
   final int hits;
   final double share;
   final double averageReliefScore;
+}
+
+class InsightsSessionEffectiveness {
+  const InsightsSessionEffectiveness({
+    required this.sessionId,
+    required this.title,
+    required this.completedRuns,
+    required this.helpRate,
+    required this.averageReliefScore,
+  });
+
+  final String sessionId;
+  final String title;
+  final int completedRuns;
+  final double helpRate;
+  final double averageReliefScore;
+}
+
+class InsightsNextBestAction {
+  const InsightsNextBestAction({
+    required this.title,
+    required this.body,
+    required this.reason,
+    this.sessionId,
+  });
+
+  const InsightsNextBestAction.empty()
+      : title = 'Build your recovery signal',
+        body = 'Complete a few sessions so Posture Reset can recommend the next best action.',
+        reason = 'Not enough recent data yet.',
+        sessionId = null;
+
+  final String title;
+  final String body;
+  final String reason;
+  final String? sessionId;
 }
 
 class InsightLogItem {

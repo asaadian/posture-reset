@@ -1,0 +1,27 @@
+{
+  "name": "posture-reset",
+  "version": "1.0.0",
+  "description": "**Posture Reset** is a premium posture, mobility, and recovery app for programmers, remote workers, desk-heavy professionals, and busy parents.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asaadian/posture-reset.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/asaadian/posture-reset/issues"
+  },
+  "homepage": "https://github.com/asaadian/posture-reset#readme",
+  "devDependencies": {
+    "supabase": "^2.98.2"
+  }
+}

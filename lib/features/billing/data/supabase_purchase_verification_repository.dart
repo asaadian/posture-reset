@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../core/config/app_env.dart';
 import '../domain/billing_models.dart';
 import '../domain/purchase_verification_repository.dart';
 
@@ -56,7 +55,6 @@ class SupabasePurchaseVerificationRepository
           'platform': BillingPlatform.android.code,
           'productId': purchase.productID,
           'purchaseToken': token,
-          'packageName': AppEnv.androidPackageName,
         },
       );
 

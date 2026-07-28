@@ -10,10 +10,12 @@ class PlayerPreSessionStateSheet extends StatefulWidget {
     super.key,
     required this.onSubmit,
     required this.initialEntrySource,
+    this.initialPainAreaCodes = const <String>[],
   });
 
   final Future<void> Function(SessionStateSnapshotInput input) onSubmit;
   final SessionEntrySource initialEntrySource;
+  final List<String> initialPainAreaCodes;
 
   @override
   State<PlayerPreSessionStateSheet> createState() =>
@@ -21,231 +23,118 @@ class PlayerPreSessionStateSheet extends StatefulWidget {
 }
 
 class _PlayerPreSessionStateSheetState extends State<PlayerPreSessionStateSheet> {
-  SessionStateLevel _energy = SessionStateLevel.medium;
-  SessionStateLevel _stress = SessionStateLevel.medium;
-  SessionStateLevel _focus = SessionStateLevel.medium;
+  final SessionStateLevel _energy = SessionStateLevel.medium;
+  final SessionStateLevel _stress = SessionStateLevel.medium;
+  final SessionStateLevel _focus = SessionStateLevel.medium;
   SessionIntentCode _intent = SessionIntentCode.relief;
-  final List<String> _painAreas = <String>['neck'];
+  late List<String> _painAreas;
+
   bool _isSubmitting = false;
 
-  bool _expandSignals = true;
-  bool _expandIntent = false;
+  @override
+  void initState() {
+    super.initState();
+    _painAreas = _safePainAreaCodes(widget.initialPainAreaCodes);
+  }
 
   @override
   Widget build(BuildContext context) {
     final t = AppText.of(context);
-    final theme = Theme.of(context);
 
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          bottom: 20 + MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 920),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  t.get(
-                    'player_pre_state_title',
-                    fallback: 'Quick check-in before you start',
-                  ),
-                  style: theme.textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  t.get(
-                    'player_pre_state_subtitle',
-                    fallback:
-                        'Capture a few signals before this session so progress and outcomes can be tracked better.',
-                  ),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _ExpandableSheetSection(
-                  title: t.get(
-                    'player_pre_state_signals_section',
-                    fallback: 'Current signals',
-                  ),
-                  expanded: _expandSignals,
-                  onTap: () =>
-                      setState(() => _expandSignals = !_expandSignals),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _SectionTitle(
-                        title: t.get(
-                          'player_pre_state_energy_title',
-                          fallback: 'Energy',
-                        ),
-                      ),
-                      _LevelSelector<SessionStateLevel>(
-                        value: _energy,
-                        items: SessionStateLevel.values,
-                        labelBuilder: (value) => _stateLevelLabel(context, value),
-                        onChanged: (value) => setState(() => _energy = value),
-                      ),
-                      const SizedBox(height: 14),
-                      _SectionTitle(
-                        title: t.get(
-                          'player_pre_state_stress_title',
-                          fallback: 'Stress',
-                        ),
-                      ),
-                      _LevelSelector<SessionStateLevel>(
-                        value: _stress,
-                        items: SessionStateLevel.values,
-                        labelBuilder: (value) => _stateLevelLabel(context, value),
-                        onChanged: (value) => setState(() => _stress = value),
-                      ),
-                      const SizedBox(height: 14),
-                      _SectionTitle(
-                        title: t.get(
-                          'player_pre_state_focus_title',
-                          fallback: 'Focus',
-                        ),
-                      ),
-                      _LevelSelector<SessionStateLevel>(
-                        value: _focus,
-                        items: SessionStateLevel.values,
-                        labelBuilder: (value) => _stateLevelLabel(context, value),
-                        onChanged: (value) => setState(() => _focus = value),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _ExpandableSheetSection(
-                  title: t.get(
-                    'player_pre_state_intent_section',
-                    fallback: 'Intent & pain areas',
-                  ),
-                  expanded: _expandIntent,
-                  onTap: () => setState(() => _expandIntent = !_expandIntent),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _SectionTitle(
-                        title: t.get(
-                          'player_pre_state_intent_title',
-                          fallback: 'Intent',
-                        ),
-                      ),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: SessionIntentCode.values.map((intent) {
-                          final selected = _intent == intent;
-                          return ChoiceChip(
-                            selected: selected,
-                            label: Text(_intentLabel(context, intent)),
-                            onSelected: (_) => setState(() => _intent = intent),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 14),
-                      _SectionTitle(
-                        title: t.get(
-                          'player_pre_state_pain_areas_title',
-                          fallback: 'Pain areas',
-                        ),
-                      ),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: _painOptions(context).map((item) {
-                          final selected = _painAreas.contains(item.$1);
-                          return FilterChip(
-                            selected: selected,
-                            label: Text(item.$2),
-                            onSelected: (value) {
-                              setState(() {
-                                if (value) {
-                                  if (!_painAreas.contains(item.$1)) {
-                                    _painAreas.add(item.$1);
-                                  }
-                                } else {
-                                  _painAreas.remove(item.$1);
-                                }
-
-                                if (_painAreas.isEmpty) {
-                                  _painAreas.add('neck');
-                                }
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 18),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: _isSubmitting
-                            ? null
-                            : () => Navigator.of(context).pop(),
-                        child: Text(
-                          t.get(
-                            'player_pre_state_skip',
-                            fallback: 'Skip for now',
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: _isSubmitting
-                            ? null
-                            : () async {
-                                setState(() => _isSubmitting = true);
-                                try {
-                                  final navigator = Navigator.of(context);
-                                  await widget.onSubmit(
-                                    SessionStateSnapshotInput(
-                                      energyLevel: _energy,
-                                      stressLevel: _stress,
-                                      focusLevel: _focus,
-                                      painAreaCodes: _painAreas,
-                                      intentCode: _intent,
-                                      entrySource: widget.initialEntrySource,
-                                    ),
-                                  );
-                                  if (!mounted) return;
-                                  navigator.pop();
-                                } finally {
-                                  if (mounted) {
-                                    setState(() => _isSubmitting = false);
-                                  }
-                                }
-                              },
-                        child: Text(
-                          t.get(
-                            'player_pre_state_start_cta',
-                            fallback: 'Start session',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+    return _FeedbackSheetScaffold(
+      title: t.get(
+        'player_pre_state_title',
+        fallback: 'Quick check-in',
+      ),
+      subtitle: t.get(
+        'player_pre_state_subtitle_compact',
+        fallback: 'Set your starting point. This takes a few seconds.',
+      ),
+      icon: Icons.tune_rounded,
+      primaryLabel: t.get(
+        'player_pre_state_start_cta',
+        fallback: 'Start session',
+      ),
+      secondaryLabel: t.get(
+        'player_pre_state_skip',
+        fallback: 'Skip',
+      ),
+      isSubmitting: _isSubmitting,
+      onSecondaryPressed: () => Navigator.of(context).pop(),
+      onPrimaryPressed: _submit,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CompactSectionLabel(
+            label: t.get(
+              'player_pre_state_pain_areas_title',
+              fallback: 'Focus area',
             ),
           ),
-        ),
+          const SizedBox(height: 8),
+          _PainAreaRail(
+            selected: _painAreas,
+            onChanged: _togglePainArea,
+          ),
+          const SizedBox(height: 12),
+          _CompactSectionLabel(
+            label: t.get(
+              'player_pre_state_intent_title',
+              fallback: 'Intent',
+            ),
+          ),
+          const SizedBox(height: 8),
+          _HorizontalChoiceRail<SessionIntentCode>(
+            value: _intent,
+            values: SessionIntentCode.values,
+            labelBuilder: (value) => _intentLabel(context, value),
+            onChanged: (value) => setState(() => _intent = value),
+          ),
+        ],
       ),
     );
+  }
+
+  Future<void> _submit() async {
+    setState(() => _isSubmitting = true);
+
+    try {
+      final navigator = Navigator.of(context);
+
+      await widget.onSubmit(
+        SessionStateSnapshotInput(
+          energyLevel: _energy,
+          stressLevel: _stress,
+          focusLevel: _focus,
+          painAreaCodes: _painAreas,
+          intentCode: _intent,
+          entrySource: widget.initialEntrySource,
+        ),
+      );
+
+      if (!mounted) return;
+      navigator.pop();
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  void _togglePainArea(String code, bool selected) {
+    setState(() {
+      if (selected) {
+        if (!_painAreas.contains(code)) {
+          _painAreas.add(code);
+        }
+      } else {
+        _painAreas.remove(code);
+      }
+
+      if (_painAreas.isEmpty) {
+        _painAreas.add(_fallbackPainAreaCode);
+      }
+    });
   }
 }
 
@@ -258,6 +147,7 @@ class PlayerPostSessionFeedbackSheet extends StatefulWidget {
     required this.isAbandoned,
     required this.onSubmit,
     required this.initialEntrySource,
+    this.initialPainAreaCodes = const <String>[],
   });
 
   final String sessionTitle;
@@ -266,6 +156,7 @@ class PlayerPostSessionFeedbackSheet extends StatefulWidget {
   final bool isAbandoned;
   final Future<void> Function(PlayerPostSessionResult result) onSubmit;
   final SessionEntrySource initialEntrySource;
+  final List<String> initialPainAreaCodes;
 
   @override
   State<PlayerPostSessionFeedbackSheet> createState() =>
@@ -275,351 +166,210 @@ class PlayerPostSessionFeedbackSheet extends StatefulWidget {
 class _PlayerPostSessionFeedbackSheetState
     extends State<PlayerPostSessionFeedbackSheet> {
   bool _helped = true;
-  bool _wouldRepeat = true;
+  final bool _wouldRepeat = true;
+
   SessionDelta _tension = SessionDelta.better;
   SessionDelta _pain = SessionDelta.better;
-  SessionDelta _energyDelta = SessionDelta.better;
-  SessionPerceivedFit _fit = SessionPerceivedFit.great;
+  final SessionDelta _energyDelta = SessionDelta.better;
+  final SessionPerceivedFit _fit = SessionPerceivedFit.great;
 
-  SessionStateLevel _afterEnergy = SessionStateLevel.medium;
-  SessionStateLevel _afterStress = SessionStateLevel.medium;
-  SessionStateLevel _afterFocus = SessionStateLevel.medium;
-  final List<String> _afterPainAreas = <String>['neck'];
+  final SessionStateLevel _afterEnergy = SessionStateLevel.medium;
+  final SessionStateLevel _afterStress = SessionStateLevel.medium;
+  final SessionStateLevel _afterFocus = SessionStateLevel.medium;
+  late final List<String> _afterPainAreas;
 
   bool _isSubmitting = false;
 
-  bool _expandQuickFeedback = true;
-  bool _expandSessionFit = false;
-  bool _expandAfterState = false;
+  @override
+  void initState() {
+    super.initState();
+    _afterPainAreas = _safePainAreaCodes(widget.initialPainAreaCodes);
+  }
 
   @override
   Widget build(BuildContext context) {
     final t = AppText.of(context);
-    final theme = Theme.of(context);
+
+    return _FeedbackSheetScaffold(
+      title: t.get(
+        widget.isAbandoned
+            ? 'player_feedback_abandoned_title'
+            : 'player_feedback_title_compact',
+        fallback: widget.isAbandoned
+            ? 'Before you leave'
+            : 'How did it feel?',
+      ),
+      subtitle: t.get(
+        'player_feedback_subtitle_compact',
+        fallback: 'One quick tap helps tune your next recommendation.',
+      ),
+      icon: widget.isAbandoned
+          ? Icons.exit_to_app_rounded
+          : Icons.check_circle_outline_rounded,
+      primaryLabel: t.get(
+        'player_feedback_submit',
+        fallback: 'Save feedback',
+      ),
+      secondaryLabel: t.get(
+        'player_feedback_close',
+        fallback: 'Close',
+      ),
+      isSubmitting: _isSubmitting,
+      onSecondaryPressed: () => Navigator.of(context).pop(),
+      onPrimaryPressed: _submit,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          _MiniQuestionCard(
+            icon: Icons.favorite_border_rounded,
+            title: t.get(
+              'player_feedback_helped_title',
+              fallback: 'Did this help?',
+            ),
+            child: _BoolSegment(
+              value: _helped,
+              trueLabel: t.get(
+                'player_feedback_yes',
+                fallback: 'Yes',
+              ),
+              falseLabel: t.get(
+                'player_feedback_no',
+                fallback: 'No',
+              ),
+              onChanged: (value) => setState(() => _helped = value),
+            ),
+          ),
+          const SizedBox(height: 8),
+          _DeltaRow(
+            icon: Icons.compress_rounded,
+            title: t.get(
+              'player_feedback_tension_title',
+              fallback: 'Tension',
+            ),
+            value: _tension,
+            onChanged: (value) => setState(() => _tension = value),
+          ),
+          const SizedBox(height: 8),
+          _DeltaRow(
+            icon: Icons.healing_outlined,
+            title: t.get(
+              'player_feedback_pain_title',
+              fallback: 'Pain',
+            ),
+            value: _pain,
+            onChanged: (value) => setState(() => _pain = value),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _submit() async {
+    setState(() => _isSubmitting = true);
+
+    try {
+      final navigator = Navigator.of(context);
+
+      final feedback = SessionFeedbackInput(
+        completionStatus: widget.isAbandoned
+            ? SessionFeedbackCompletionStatus.abandoned
+            : SessionFeedbackCompletionStatus.completed,
+        helped: _helped,
+        tensionDelta: _tension,
+        painDelta: _pain,
+        energyDelta: _energyDelta,
+        perceivedFit: _fit,
+        wouldRepeat: _wouldRepeat,
+        entrySource: widget.initialEntrySource,
+      );
+
+      final afterState = SessionStateSnapshotInput(
+        energyLevel: _afterEnergy,
+        stressLevel: _afterStress,
+        focusLevel: _afterFocus,
+        painAreaCodes: _afterPainAreas,
+        intentCode: SessionIntentCode.relief,
+        entrySource: widget.initialEntrySource,
+      );
+
+      await widget.onSubmit(
+        PlayerPostSessionResult(
+          feedback: feedback,
+          afterState: afterState,
+        ),
+      );
+
+      if (!mounted) return;
+      navigator.pop(true);
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+}
+
+class _FeedbackSheetScaffold extends StatelessWidget {
+  const _FeedbackSheetScaffold({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.child,
+    required this.primaryLabel,
+    required this.secondaryLabel,
+    required this.isSubmitting,
+    required this.onPrimaryPressed,
+    required this.onSecondaryPressed,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Widget child;
+  final String primaryLabel;
+  final String secondaryLabel;
+  final bool isSubmitting;
+  final Future<void> Function() onPrimaryPressed;
+  final VoidCallback onSecondaryPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          bottom: 20 + MediaQuery.of(context).viewInsets.bottom,
-        ),
+        padding: EdgeInsets.only(bottom: bottomInset),
         child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 920),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _SummaryCard(
-                  sessionTitle: widget.sessionTitle,
-                  totalSteps: widget.totalSteps,
-                  totalElapsedSeconds: widget.totalElapsedSeconds,
-                  isAbandoned: widget.isAbandoned,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  t.get(
-                    widget.isAbandoned
-                        ? 'player_feedback_abandoned_title'
-                        : 'player_feedback_title',
-                    fallback: widget.isAbandoned
-                        ? 'Before you leave, how did this session feel?'
-                        : 'How did this session feel?',
-                  ),
-                  style: theme.textTheme.titleLarge,
-                ),
-                const SizedBox(height: 14),
-
-                _ExpandableSheetSection(
-                  title: t.get(
-                    'player_feedback_quick_section',
-                    fallback: 'Quick feedback',
-                  ),
-                  expanded: _expandQuickFeedback,
-                  onTap: () => setState(
-                    () => _expandQuickFeedback = !_expandQuickFeedback,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _SectionTitle(
-                        title: t.get(
-                          'player_feedback_helped_title',
-                          fallback: 'Did this help?',
-                        ),
-                      ),
-                      _BoolSelector(
-                        value: _helped,
-                        trueLabel: t.get(
-                          'player_feedback_yes',
-                          fallback: 'Yes',
-                        ),
-                        falseLabel: t.get(
-                          'player_feedback_no',
-                          fallback: 'No',
-                        ),
-                        onChanged: (value) => setState(() => _helped = value),
-                      ),
-                      const SizedBox(height: 14),
-                      _SectionTitle(
-                        title: t.get(
-                          'player_feedback_tension_title',
-                          fallback: 'Tension',
-                        ),
-                      ),
-                      _DeltaSelector(
-                        value: _tension,
-                        onChanged: (value) => setState(() => _tension = value),
-                      ),
-                      const SizedBox(height: 14),
-                      _SectionTitle(
-                        title: t.get(
-                          'player_feedback_pain_title',
-                          fallback: 'Pain',
-                        ),
-                      ),
-                      _DeltaSelector(
-                        value: _pain,
-                        onChanged: (value) => setState(() => _pain = value),
-                      ),
-                      const SizedBox(height: 14),
-                      _SectionTitle(
-                        title: t.get(
-                          'player_feedback_energy_title',
-                          fallback: 'Energy',
-                        ),
-                      ),
-                      _DeltaSelector(
-                        value: _energyDelta,
-                        onChanged: (value) =>
-                            setState(() => _energyDelta = value),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                _ExpandableSheetSection(
-                  title: t.get(
-                    'player_feedback_fit_section',
-                    fallback: 'Session fit',
-                  ),
-                  expanded: _expandSessionFit,
-                  onTap: () =>
-                      setState(() => _expandSessionFit = !_expandSessionFit),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _SectionTitle(
-                        title: t.get(
-                          'player_feedback_fit_title',
-                          fallback: 'Session fit',
-                        ),
-                      ),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: SessionPerceivedFit.values.map((fit) {
-                          return ChoiceChip(
-                            selected: _fit == fit,
-                            label: Text(_fitLabel(context, fit)),
-                            onSelected: (_) => setState(() => _fit = fit),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 14),
-                      _SectionTitle(
-                        title: t.get(
-                          'player_feedback_repeat_title',
-                          fallback: 'Would you repeat this session?',
-                        ),
-                      ),
-                      _BoolSelector(
-                        value: _wouldRepeat,
-                        trueLabel: t.get(
-                          'player_feedback_repeat_yes',
-                          fallback: 'Would repeat',
-                        ),
-                        falseLabel: t.get(
-                          'player_feedback_repeat_no',
-                          fallback: 'Not likely',
-                        ),
-                        onChanged: (value) =>
-                            setState(() => _wouldRepeat = value),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                _ExpandableSheetSection(
-                  title: t.get(
-                    'player_after_state_title',
-                    fallback: 'How do you feel now?',
-                  ),
-                  expanded: _expandAfterState,
-                  onTap: () =>
-                      setState(() => _expandAfterState = !_expandAfterState),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _SectionTitle(
-                        title: t.get(
-                          'player_pre_state_energy_title',
-                          fallback: 'Energy',
-                        ),
-                      ),
-                      _LevelSelector<SessionStateLevel>(
-                        value: _afterEnergy,
-                        items: SessionStateLevel.values,
-                        labelBuilder: (value) => _stateLevelLabel(context, value),
-                        onChanged: (value) =>
-                            setState(() => _afterEnergy = value),
-                      ),
-                      const SizedBox(height: 14),
-                      _SectionTitle(
-                        title: t.get(
-                          'player_pre_state_stress_title',
-                          fallback: 'Stress',
-                        ),
-                      ),
-                      _LevelSelector<SessionStateLevel>(
-                        value: _afterStress,
-                        items: SessionStateLevel.values,
-                        labelBuilder: (value) => _stateLevelLabel(context, value),
-                        onChanged: (value) =>
-                            setState(() => _afterStress = value),
-                      ),
-                      const SizedBox(height: 14),
-                      _SectionTitle(
-                        title: t.get(
-                          'player_pre_state_focus_title',
-                          fallback: 'Focus',
-                        ),
-                      ),
-                      _LevelSelector<SessionStateLevel>(
-                        value: _afterFocus,
-                        items: SessionStateLevel.values,
-                        labelBuilder: (value) => _stateLevelLabel(context, value),
-                        onChanged: (value) =>
-                            setState(() => _afterFocus = value),
-                      ),
-                      const SizedBox(height: 14),
-                      _SectionTitle(
-                        title: t.get(
-                          'player_after_state_pain_areas_title',
-                          fallback: 'Pain areas now',
-                        ),
-                      ),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: _painOptions(context).map((item) {
-                          final selected = _afterPainAreas.contains(item.$1);
-                          return FilterChip(
-                            selected: selected,
-                            label: Text(item.$2),
-                            onSelected: (value) {
-                              setState(() {
-                                if (value) {
-                                  if (!_afterPainAreas.contains(item.$1)) {
-                                    _afterPainAreas.add(item.$1);
-                                  }
-                                } else {
-                                  _afterPainAreas.remove(item.$1);
-                                }
-
-                                if (_afterPainAreas.isEmpty) {
-                                  _afterPainAreas.add('neck');
-                                }
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 18),
-                Row(
+          physics: const BouncingScrollPhysics(),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 640),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 8, 14, 14),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: _isSubmitting
-                            ? null
-                            : () => Navigator.of(context).pop(),
-                        child: Text(
-                          t.get(
-                            'player_feedback_close',
-                            fallback: 'Close',
-                          ),
-                        ),
-                      ),
+                    const _SheetHandle(),
+                    const SizedBox(height: 10),
+                    _CompactHeader(
+                      icon: icon,
+                      title: title,
+                      subtitle: subtitle,
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: _isSubmitting
-                            ? null
-                            : () async {
-                                setState(() => _isSubmitting = true);
-                                try {
-                                  final navigator = Navigator.of(context);
-
-                                  final feedback = SessionFeedbackInput(
-                                    completionStatus: widget.isAbandoned
-                                        ? SessionFeedbackCompletionStatus
-                                            .abandoned
-                                        : SessionFeedbackCompletionStatus
-                                            .completed,
-                                    helped: _helped,
-                                    tensionDelta: _tension,
-                                    painDelta: _pain,
-                                    energyDelta: _energyDelta,
-                                    perceivedFit: _fit,
-                                    wouldRepeat: _wouldRepeat,
-                                    entrySource: widget.initialEntrySource,
-                                  );
-
-                                  final afterState = SessionStateSnapshotInput(
-                                    energyLevel: _afterEnergy,
-                                    stressLevel: _afterStress,
-                                    focusLevel: _afterFocus,
-                                    painAreaCodes: _afterPainAreas,
-                                    intentCode: SessionIntentCode.relief,
-                                    entrySource: widget.initialEntrySource,
-                                  );
-
-                                  await widget.onSubmit(
-                                    PlayerPostSessionResult(
-                                      feedback: feedback,
-                                      afterState: afterState,
-                                    ),
-                                  );
-
-                                  if (!mounted) return;
-                                  navigator.pop();
-                                } finally {
-                                  if (mounted) {
-                                    setState(() => _isSubmitting = false);
-                                  }
-                                }
-                              },
-                        child: Text(
-                          t.get(
-                            'player_feedback_submit',
-                            fallback: 'Save feedback',
-                          ),
-                        ),
-                      ),
+                    const SizedBox(height: 12),
+                    child,
+                    const SizedBox(height: 14),
+                    _SheetActionRow(
+                      primaryLabel: primaryLabel,
+                      secondaryLabel: secondaryLabel,
+                      isSubmitting: isSubmitting,
+                      onPrimaryPressed: onPrimaryPressed,
+                      onSecondaryPressed: onSecondaryPressed,
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -628,60 +378,88 @@ class _PlayerPostSessionFeedbackSheetState
   }
 }
 
-class _ExpandableSheetSection extends StatelessWidget {
-  const _ExpandableSheetSection({
+class _SheetHandle extends StatelessWidget {
+  const _SheetHandle();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      width: 42,
+      height: 5,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        color: colors.outlineVariant.withValues(alpha: 0.70),
+      ),
+    );
+  }
+}
+
+class _CompactHeader extends StatelessWidget {
+  const _CompactHeader({
+    required this.icon,
     required this.title,
-    required this.expanded,
-    required this.onTap,
-    required this.child,
+    required this.subtitle,
   });
 
+  final IconData icon;
   final String title;
-  final bool expanded;
-  final VoidCallback onTap;
-  final Widget child;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: Column(
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: isDark
+            ? colors.surfaceContainerHigh.withValues(alpha: 0.72)
+            : colors.surfaceContainerLow.withValues(alpha: 0.92),
+        border: Border.all(
+          color: colors.outlineVariant.withValues(alpha: isDark ? 0.70 : 0.56),
+        ),
+      ),
+      child: Row(
         children: [
-          InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  AnimatedRotation(
-                    turns: expanded ? 0.5 : 0.0,
-                    duration: const Duration(milliseconds: 180),
-                    child: const Icon(Icons.keyboard_arrow_down_rounded),
-                  ),
-                ],
-              ),
-            ),
+          _RoundIconBadge(
+            icon: icon,
+            color: colors.primary,
+            size: 42,
           ),
-          AnimatedCrossFade(
-            firstChild: const SizedBox.shrink(),
-            secondChild: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: child,
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    color: colors.onSurface,
+                    fontWeight: FontWeight.w900,
+                    height: 1.05,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colors.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                    height: 1.25,
+                  ),
+                ),
+              ],
             ),
-            crossFadeState: expanded
-                ? CrossFadeState.showSecond
-                : CrossFadeState.showFirst,
-            duration: const Duration(milliseconds: 180),
           ),
         ],
       ),
@@ -689,107 +467,114 @@ class _ExpandableSheetSection extends StatelessWidget {
   }
 }
 
-class _SummaryCard extends StatelessWidget {
-  const _SummaryCard({
-    required this.sessionTitle,
-    required this.totalSteps,
-    required this.totalElapsedSeconds,
-    required this.isAbandoned,
+class _CompactSectionLabel extends StatelessWidget {
+  const _CompactSectionLabel({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: colors.onSurface,
+              fontWeight: FontWeight.w900,
+            ),
+      ),
+    );
+  }
+}
+
+class _MiniQuestionCard extends StatelessWidget {
+  const _MiniQuestionCard({
+    required this.icon,
+    required this.title,
+    required this.child,
   });
 
-  final String sessionTitle;
-  final int totalSteps;
-  final int totalElapsedSeconds;
-  final bool isAbandoned;
+  final IconData icon;
+  final String title;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    final t = AppText.of(context);
     final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: theme.colorScheme.primary.withValues(alpha: 0.12),
-              ),
-              child: Icon(
-                isAbandoned
-                    ? Icons.exit_to_app_rounded
-                    : Icons.check_circle_outline_rounded,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isAbandoned
-                        ? t.get(
-                            'player_feedback_abandoned_summary_title',
-                            fallback: 'Session ended early',
-                          )
-                        : t.get(
-                            'player_feedback_summary_title',
-                            fallback: 'Session summary',
-                          ),
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    sessionTitle,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '$totalSteps ${t.get('player_completion_steps', fallback: 'Steps')} • ${_formatDuration(totalElapsedSeconds)}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    return Container(
+      padding: const EdgeInsets.all(11),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: isDark
+            ? colors.surfaceContainerHigh.withValues(alpha: 0.54)
+            : Colors.white.withValues(alpha: 0.92),
+        border: Border.all(
+          color: colors.outlineVariant.withValues(alpha: isDark ? 0.66 : 0.54),
         ),
       ),
-    );
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleSmall,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 17, color: colors.primary),
+              const SizedBox(width: 7),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: colors.onSurface,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 9),
+          child,
+        ],
       ),
     );
   }
 }
 
-class _BoolSelector extends StatelessWidget {
-  const _BoolSelector({
+class _DeltaRow extends StatelessWidget {
+  const _DeltaRow({
+    required this.icon,
+    required this.title,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final IconData icon;
+  final String title;
+  final SessionDelta value;
+  final ValueChanged<SessionDelta> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return _MiniQuestionCard(
+      icon: icon,
+      title: title,
+      child: _SegmentedSelector<SessionDelta>(
+        value: value,
+        values: SessionDelta.values,
+        labelBuilder: (delta) => _deltaLabel(context, delta),
+        onChanged: onChanged,
+      ),
+    );
+  }
+}
+
+class _BoolSegment extends StatelessWidget {
+  const _BoolSegment({
     required this.value,
     required this.trueLabel,
     required this.falseLabel,
@@ -803,98 +588,407 @@ class _BoolSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        ChoiceChip(
-          selected: value,
-          label: Text(trueLabel),
-          onSelected: (_) => onChanged(true),
+    return _SegmentedSelector<bool>(
+      value: value,
+      values: const [true, false],
+      labelBuilder: (item) => item ? trueLabel : falseLabel,
+      onChanged: onChanged,
+    );
+  }
+}
+
+class _SegmentedSelector<T> extends StatelessWidget {
+  const _SegmentedSelector({
+    required this.value,
+    required this.values,
+    required this.labelBuilder,
+    required this.onChanged,
+  });
+
+  final T value;
+  final List<T> values;
+  final String Function(T value) labelBuilder;
+  final ValueChanged<T> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        color: colors.surfaceContainerLow.withValues(alpha: 0.72),
+        border: Border.all(
+          color: colors.outlineVariant.withValues(alpha: 0.50),
         ),
-        ChoiceChip(
-          selected: !value,
-          label: Text(falseLabel),
-          onSelected: (_) => onChanged(false),
+      ),
+      child: Row(
+        children: values.map((item) {
+          final selected = value == item;
+
+          return Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(999),
+              onTap: () => onChanged(item),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 160),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  color: selected ? colors.primary : Colors.transparent,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (selected) ...[
+                      Icon(
+                        Icons.check_rounded,
+                        size: 15,
+                        color: colors.onPrimary,
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                    Flexible(
+                      child: Text(
+                        labelBuilder(item),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              color: selected
+                                  ? colors.onPrimary
+                                  : colors.onSurfaceVariant,
+                              fontWeight:
+                                  selected ? FontWeight.w900 : FontWeight.w700,
+                              height: 1.0,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class _HorizontalChoiceRail<T> extends StatelessWidget {
+  const _HorizontalChoiceRail({
+    required this.value,
+    required this.values,
+    required this.labelBuilder,
+    required this.onChanged,
+  });
+
+  final T value;
+  final List<T> values;
+  final String Function(T value) labelBuilder;
+  final ValueChanged<T> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 38,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: values.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final item = values[index];
+          final selected = value == item;
+
+          return _CompactChoicePill(
+            label: labelBuilder(item),
+            selected: selected,
+            onTap: () => onChanged(item),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _PainAreaRail extends StatelessWidget {
+  const _PainAreaRail({
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final List<String> selected;
+  final void Function(String code, bool selected) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final items = _painOptions(context);
+
+    return SizedBox(
+      height: 38,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final item = items[index];
+          final isSelected = selected.contains(item.$1);
+
+          return _CompactChoicePill(
+            label: item.$2,
+            selected: isSelected,
+            onTap: () => onChanged(item.$1, !isSelected),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _CompactChoicePill extends StatelessWidget {
+  const _CompactChoicePill({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(999),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(999),
+          color: selected
+              ? colors.primary
+              : colors.surfaceContainerLow.withValues(alpha: 0.74),
+          border: Border.all(
+            color: selected
+                ? colors.primary.withValues(alpha: 0.64)
+                : colors.outlineVariant.withValues(alpha: 0.56),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (selected) ...[
+              Icon(
+                Icons.check_rounded,
+                size: 15,
+                color: colors.onPrimary,
+              ),
+              const SizedBox(width: 5),
+            ],
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: selected ? colors.onPrimary : colors.onSurface,
+                    fontWeight: FontWeight.w900,
+                    height: 1.0,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RoundIconBadge extends StatelessWidget {
+  const _RoundIconBadge({
+    required this.icon,
+    required this.color,
+    required this.size,
+  });
+
+  final IconData icon;
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withValues(alpha: isDark ? 0.16 : 0.10),
+        border: Border.all(
+          color: color.withValues(alpha: isDark ? 0.24 : 0.16),
+        ),
+      ),
+      child: Icon(
+        icon,
+        color: color,
+        size: size * 0.48,
+      ),
+    );
+  }
+}
+
+class _SheetActionRow extends StatelessWidget {
+  const _SheetActionRow({
+    required this.primaryLabel,
+    required this.secondaryLabel,
+    required this.isSubmitting,
+    required this.onPrimaryPressed,
+    required this.onSecondaryPressed,
+  });
+
+  final String primaryLabel;
+  final String secondaryLabel;
+  final bool isSubmitting;
+  final Future<void> Function() onPrimaryPressed;
+  final VoidCallback onSecondaryPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        TextButton(
+          onPressed: isSubmitting ? null : onSecondaryPressed,
+          child: Text(
+            secondaryLabel,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: colors.onSurfaceVariant,
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: FilledButton(
+            onPressed: isSubmitting ? null : onPrimaryPressed,
+            child: isSubmitting
+                ? SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colors.onPrimary,
+                    ),
+                  )
+                : Text(primaryLabel),
+          ),
         ),
       ],
     );
   }
 }
 
-class _DeltaSelector extends StatelessWidget {
-  const _DeltaSelector({
-    required this.value,
-    required this.onChanged,
-  });
 
-  final SessionDelta value;
-  final ValueChanged<SessionDelta> onChanged;
+const String _fallbackPainAreaCode = 'neck';
 
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: SessionDelta.values.map((delta) {
-        return ChoiceChip(
-          selected: value == delta,
-          label: Text(_deltaLabel(context, delta)),
-          onSelected: (_) => onChanged(delta),
-        );
-      }).toList(),
-    );
+List<String> _safePainAreaCodes(List<String> rawCodes) {
+  final normalized = <String>[];
+  for (final raw in rawCodes) {
+    final code = _canonicalPainAreaCode(raw);
+    if (code.isEmpty) continue;
+    if (!normalized.contains(code)) normalized.add(code);
   }
+  if (normalized.isEmpty) normalized.add(_fallbackPainAreaCode);
+  return normalized;
 }
 
-class _LevelSelector<T> extends StatelessWidget {
-  const _LevelSelector({
-    required this.value,
-    required this.items,
-    required this.labelBuilder,
-    required this.onChanged,
-  });
-
-  final T value;
-  final List<T> items;
-  final String Function(T value) labelBuilder;
-  final ValueChanged<T> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: items.map((item) {
-        return ChoiceChip(
-          selected: value == item,
-          label: Text(labelBuilder(item)),
-          onSelected: (_) => onChanged(item),
-        );
-      }).toList(),
-    );
+String _canonicalPainAreaCode(String raw) {
+  switch (raw.trim().toLowerCase()) {
+    case 'neck':
+    case 'cervical':
+      return 'neck';
+    case 'shoulder':
+    case 'shoulders':
+    case 'scapula':
+    case 'scapular':
+      return 'shoulders';
+    case 'upper_back':
+    case 'upper back':
+    case 'thoracic':
+    case 'chest':
+      return 'upper_back';
+    case 'back':
+    case 'lower_back':
+    case 'low_back':
+    case 'lower back':
+    case 'lumbar':
+    case 'core':
+      return 'lower_back';
+    case 'hip':
+    case 'hips':
+    case 'glute':
+    case 'glutes':
+    case 'hips_glutes':
+    case 'hamstring':
+    case 'hamstrings':
+      return 'hips_glutes';
+    case 'forearm':
+    case 'forearms':
+    case 'mouse_arm':
+      return 'forearms';
+    case 'wrist':
+    case 'wrists':
+      return 'wrists';
+    case 'hand':
+    case 'hands':
+    case 'finger':
+    case 'fingers':
+      return 'hands';
+    case 'eye':
+    case 'eyes':
+      return 'eyes';
+    default:
+      return raw.trim().toLowerCase();
   }
 }
 
 List<(String, String)> _painOptions(BuildContext context) {
   return [
     ('neck', AppText.get(context, key: 'pain_neck', fallback: 'Neck')),
-    ('shoulders', AppText.get(context, key: 'pain_shoulders', fallback: 'Shoulders')),
-    ('upper_back', AppText.get(context, key: 'pain_upper_back', fallback: 'Upper back')),
-    ('lower_back', AppText.get(context, key: 'pain_lower_back', fallback: 'Lower back')),
+    (
+      'shoulders',
+      AppText.get(context, key: 'pain_shoulders', fallback: 'Shoulders'),
+    ),
+    (
+      'upper_back',
+      AppText.get(context, key: 'pain_upper_back', fallback: 'Upper back'),
+    ),
+    (
+      'lower_back',
+      AppText.get(context, key: 'pain_lower_back', fallback: 'Lower back'),
+    ),
+    (
+      'hips_glutes',
+      AppText.get(context, key: 'pain_hips_glutes', fallback: 'Hips & Glutes'),
+    ),
+    (
+      'forearms',
+      AppText.get(context, key: 'pain_forearms', fallback: 'Forearms'),
+    ),
+    (
+      'hands',
+      AppText.get(context, key: 'pain_hands', fallback: 'Hands'),
+    ),
     ('wrists', AppText.get(context, key: 'pain_wrists', fallback: 'Wrists')),
+    ('eyes', AppText.get(context, key: 'pain_eyes', fallback: 'Eyes')),
   ];
-}
-
-String _stateLevelLabel(BuildContext context, SessionStateLevel value) {
-  switch (value) {
-    case SessionStateLevel.low:
-      return AppText.get(context, key: 'common_level_low', fallback: 'Low');
-    case SessionStateLevel.medium:
-      return AppText.get(context, key: 'common_level_medium', fallback: 'Medium');
-    case SessionStateLevel.high:
-      return AppText.get(context, key: 'common_level_high', fallback: 'High');
-  }
 }
 
 String _intentLabel(BuildContext context, SessionIntentCode value) {
@@ -917,23 +1011,11 @@ String _deltaLabel(BuildContext context, SessionDelta value) {
     case SessionDelta.same:
       return AppText.get(context, key: 'common_delta_same', fallback: 'Same');
     case SessionDelta.better:
-      return AppText.get(context, key: 'common_delta_better', fallback: 'Better');
+      return AppText.get(
+        context,
+        key: 'common_delta_better',
+        fallback: 'Better',
+      );
   }
 }
 
-String _fitLabel(BuildContext context, SessionPerceivedFit value) {
-  switch (value) {
-    case SessionPerceivedFit.poor:
-      return AppText.get(context, key: 'common_fit_poor', fallback: 'Poor');
-    case SessionPerceivedFit.okay:
-      return AppText.get(context, key: 'common_fit_okay', fallback: 'Okay');
-    case SessionPerceivedFit.great:
-      return AppText.get(context, key: 'common_fit_great', fallback: 'Great');
-  }
-}
-
-String _formatDuration(int totalSeconds) {
-  final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
-  final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
-  return '$minutes:$seconds';
-}

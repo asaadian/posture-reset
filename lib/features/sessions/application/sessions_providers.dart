@@ -1,13 +1,13 @@
 // lib/features/sessions/application/sessions_providers.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/supabase/supabase_providers.dart';
 import '../data/supabase_saved_sessions_repository.dart';
 import '../data/supabase_sessions_repository.dart';
 import '../domain/saved_sessions_repository.dart';
 import '../domain/session_models.dart';
 import '../domain/sessions_repository.dart';
-
 
 final sessionsRepositoryProvider = Provider<SessionsRepository>((ref) {
   final client = ref.watch(supabaseClientProvider);
@@ -38,7 +38,6 @@ final sessionsByIdsProvider =
     return repository.getSessionsByIds(sessionIds);
   },
 );
-
 
 final savedSessionIdsProvider = FutureProvider<Set<String>>((ref) async {
   final repository = ref.watch(savedSessionsRepositoryProvider);
@@ -117,6 +116,16 @@ double _scoreRelatedSession(SessionSummary current, SessionSummary other) {
   if (current.intensity == other.intensity) score += 2.0;
   if (current.isSilentFriendly == other.isSilentFriendly) score += 1.0;
   if (current.isBeginnerFriendly == other.isBeginnerFriendly) score += 1.0;
+
+  if (current.accessTier == other.accessTier) score += 2.0;
+  if (current.sessionLevelTag == other.sessionLevelTag) score += 3.0;
+  if (current.requiresSpecialEquipment == other.requiresSpecialEquipment) {
+    score += 1.0;
+  }
+
+  final currentEquipment = current.requiredEquipment.toSet();
+  final otherEquipment = other.requiredEquipment.toSet();
+  score += currentEquipment.intersection(otherEquipment).length * 1.5;
 
   if (current.modeCompatibility.dadMode && other.modeCompatibility.dadMode) {
     score += 1.0;

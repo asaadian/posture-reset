@@ -1,12 +1,16 @@
 // lib/features/auth/application/auth_providers.dart
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthService {
   AuthService(this._client);
 
   final SupabaseClient _client;
+
+  static const String oauthRedirectUrl = 'posturereset://auth/callback';
 
   Stream<AuthState> authStateChanges() => _client.auth.onAuthStateChange;
 
@@ -18,7 +22,7 @@ class AuthService {
     required String password,
   }) {
     return _client.auth.signInWithPassword(
-      email: email,
+      email: email.trim(),
       password: password,
     );
   }
@@ -28,8 +32,26 @@ class AuthService {
     required String password,
   }) {
     return _client.auth.signUp(
-      email: email,
+      email: email.trim(),
       password: password,
+      emailRedirectTo: kIsWeb ? null : oauthRedirectUrl,
+    );
+  }
+
+  Future<bool> signInWithGoogle() {
+    return _client.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: kIsWeb ? null : oauthRedirectUrl,
+      authScreenLaunchMode: LaunchMode.externalApplication,
+    );
+  }
+
+  Future<void> resetPasswordForEmail({
+    required String email,
+  }) {
+    return _client.auth.resetPasswordForEmail(
+      email.trim(),
+      redirectTo: kIsWeb ? null : oauthRedirectUrl,
     );
   }
 

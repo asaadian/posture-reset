@@ -18,6 +18,7 @@ import 'session_player_state.dart';
 import '../../access/application/access_providers.dart';
 import '../../access/domain/access_models.dart';
 import '../../access/domain/access_policy.dart';
+import '../../programs/application/recovery_program_providers.dart';
 
 class SessionPlayerController extends ChangeNotifier {
   SessionPlayerController({
@@ -139,12 +140,45 @@ class SessionPlayerController extends ChangeNotifier {
             0,
             1 << 30,
           ),
-          metadata: metadata,
+          metadata: {
+            ..._stepDoseMetadata(targetStep),
+            ...metadata,
+          },
         ),
       );
     } catch (_) {
       // Non-blocking analytics/persistence trail.
     }
+  }
+
+  Map<String, Object?> _stepDoseMetadata(SessionStep step) {
+    return <String, Object?>{
+      'movement_pattern': sessionStepMovementPatternToDb(
+        step.effectiveMovementPattern,
+      ),
+      'side_mode': sessionStepSideModeToDb(step.effectiveSideMode),
+      'equipment_code': sessionStepEquipmentCodeToDb(
+        step.effectiveEquipmentCode,
+      ),
+      'intensity_level': sessionStepIntensityLevelToDb(
+        step.effectiveIntensityLevel,
+      ),
+      if (step.repetitionCount != null && step.repetitionCount! > 0)
+        'repetition_count': step.repetitionCount,
+      if (step.holdSeconds != null && step.holdSeconds! > 0)
+        'hold_seconds': step.holdSeconds,
+      'step_duration_seconds': step.durationSeconds,
+      'step_purpose_code': sessionStepPurposeToDb(step.effectiveStepPurpose),
+      'step_purpose_label': step.effectiveStepPurposeLabel,
+      'is_assessment_step': step.isAssessmentStep,
+      'is_retest_step': step.isRetestStep,
+      'has_step_goal': step.hasStepGoal,
+      'has_what_to_notice': step.hasWhatToNotice,
+      'avoid_mistakes_count': step.avoidMistakes.length,
+      if (step.visualDurationSeconds != null && step.visualDurationSeconds! > 0)
+        'visual_duration_seconds': step.visualDurationSeconds,
+      'video_demo_loop': step.shouldLoopVisualAsDemo,
+    };
   }
 
   Future<void> _init() async {
@@ -305,15 +339,8 @@ class SessionPlayerController extends ChangeNotifier {
       return;
     }
 
-    _setState(
-      _state.copyWith(
-        isLoading: false,
-        session: detail,
-        accessLocked: false,
-        requiresPreSessionCapture: true,
-        entrySource: _entrySource,
-      ),
-    );
+    await _startRunWithoutPreSessionCapture(detail);
+    return;
   } catch (error, stackTrace) {
     debugPrint('SessionPlayerController._init failed: $error');
     debugPrintStack(stackTrace: stackTrace);
@@ -327,6 +354,89 @@ class SessionPlayerController extends ChangeNotifier {
     );
   }
 }
+
+  Future<void> _startRunWithoutPreSessionCapture(SessionDetail detail) async {
+    if (_state.runId != null || _runFinalized) return;
+
+    _setState(
+      _state.copyWith(
+        isLoading: false,
+        isStartingRun: true,
+        isSubmittingPreSessionState: false,
+        clearErrorMessage: true,
+        session: detail,
+        accessLocked: false,
+        requiresPreSessionCapture: false,
+        preSessionCaptureCompleted: false,
+        resumedRun: false,
+        isRunning: false,
+        isPaused: false,
+        currentStepIndex: 0,
+        currentStepElapsedSeconds: 0,
+        totalElapsedSeconds: 0,
+        entrySource: _entrySource,
+      ),
+    );
+
+    try {
+      final firstStep = detail.steps.first;
+
+      final runId = await _runsRepository.startRun(
+        sessionId: detail.summary.id,
+        totalSteps: detail.steps.length,
+        firstStepId: firstStep.id,
+        entrySource: _entrySource,
+      );
+
+      _setState(
+        _state.copyWith(
+          runId: runId,
+          isLoading: false,
+          isStartingRun: false,
+          isSubmittingPreSessionState: false,
+          resumedRun: false,
+          isRunning: true,
+          isPaused: false,
+          currentStepIndex: 0,
+          currentStepElapsedSeconds: 0,
+          totalElapsedSeconds: 0,
+          requiresPreSessionCapture: false,
+          preSessionCaptureCompleted: false,
+          entrySource: _entrySource,
+        ),
+      );
+
+      unawaited(
+        _trackStepEvent(
+          eventType: SessionStepEventType.stepStarted,
+          step: firstStep,
+          stepIndex: 0,
+          stepElapsedSeconds: 0,
+          totalElapsedSeconds: 0,
+          metadata: {
+            'entry_source': _entrySource.dbValue,
+            'pre_session_capture_completed': false,
+            'pre_session_capture_skipped': true,
+          },
+        ),
+      );
+
+      _startTicker();
+    } catch (error, stackTrace) {
+      debugPrint('_startRunWithoutPreSessionCapture failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      _setState(
+        _state.copyWith(
+          isLoading: false,
+          isStartingRun: false,
+          isSubmittingPreSessionState: false,
+          isRunning: false,
+          isPaused: false,
+          errorMessage: 'Could not start this session.',
+        ),
+      );
+    }
+  }
 
   Future<void> startRunWithPreSessionState(
     SessionStateSnapshotInput input,
@@ -412,66 +522,10 @@ class SessionPlayerController extends ChangeNotifier {
   }
 
   Future<void> skipPreSessionCapture() async {
-    if (_state.session == null || _state.runId != null) return;
+    final detail = _state.session;
+    if (detail == null || _state.runId != null) return;
 
-    _setState(
-      _state.copyWith(
-        isStartingRun: true,
-        clearErrorMessage: true,
-      ),
-    );
-
-    try {
-      final firstStep = _state.session!.steps.first;
-
-      final runId = await _runsRepository.startRun(
-        sessionId: _state.session!.summary.id,
-        totalSteps: _state.session!.steps.length,
-        firstStepId: firstStep.id,
-        entrySource: _entrySource,
-      );
-
-      _setState(
-        _state.copyWith(
-          runId: runId,
-          resumedRun: false,
-          isStartingRun: false,
-          isRunning: true,
-          isPaused: false,
-          currentStepIndex: 0,
-          currentStepElapsedSeconds: 0,
-          totalElapsedSeconds: 0,
-          requiresPreSessionCapture: false,
-          preSessionCaptureCompleted: false,
-          entrySource: _entrySource,
-        ),
-      );
-
-      unawaited(
-        _trackStepEvent(
-          eventType: SessionStepEventType.stepStarted,
-          step: firstStep,
-          stepIndex: 0,
-          stepElapsedSeconds: 0,
-          totalElapsedSeconds: 0,
-          metadata: {
-            'entry_source': _entrySource.dbValue,
-            'pre_session_capture_completed': false,
-          },
-        ),
-      );
-
-      _startTicker();
-    } catch (error, stackTrace) {
-      debugPrint('skipPreSessionCapture failed: $error');
-      debugPrintStack(stackTrace: stackTrace);
-      _setState(
-        _state.copyWith(
-          isStartingRun: false,
-          errorMessage: 'Could not start this session.',
-        ),
-      );
-    }
+    await _startRunWithoutPreSessionCapture(detail);
   }
 
   void _startTicker() {
@@ -831,6 +885,52 @@ class SessionPlayerController extends ChangeNotifier {
     }
   }
 
+
+  Future<void> _completeActiveProgramDayIfNeeded(
+    PlayerPostSessionResult result,
+  ) async {
+    if (_state.runId == null || _state.session == null) return;
+    if (result.feedback.completionStatus !=
+        SessionFeedbackCompletionStatus.completed) {
+      return;
+    }
+
+    // Program completion is intentionally limited to program/dashboard launches.
+    // Direct library/detail sessions should not accidentally advance a program.
+    if (_entrySource != SessionEntrySource.dashboard) return;
+
+    try {
+      final repository = _ref.read(recoveryProgramsRepositoryProvider);
+      final progress = await repository.getActiveDashboardProgress();
+
+      if (progress == null || progress.isCompleted) return;
+      if (!progress.hasCurrentSession) return;
+      if (progress.currentSessionId != _state.session!.summary.id) return;
+
+      final elapsedSeconds = _state.totalElapsedSeconds > 0
+          ? _state.totalElapsedSeconds
+          : _state.totalSessionDurationSeconds;
+
+      await repository.completeProgramDay(
+        programId: progress.programId,
+        dayNumber: progress.currentDay,
+        sessionRunId: _state.runId,
+        minutesCompleted: (elapsedSeconds / 60).ceil().clamp(0, 1 << 30),
+        helped: result.feedback.helped,
+      );
+
+      _ref.invalidate(activeRecoveryProgramDashboardProgressProvider);
+      _ref.invalidate(recoveryProgramProgressProvider(progress.programId));
+      _ref.invalidate(
+        recoveryProgramDayProgressMapProvider(progress.programId),
+      );
+    } catch (error, stackTrace) {
+      debugPrint('Program day completion failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      // Non-blocking: session feedback has already been saved.
+    }
+  }
+
   Future<void> submitPostSessionResult(PlayerPostSessionResult result) async {
     if (_state.runId == null || _state.session == null || _state.feedbackSubmitted) {
       return;
@@ -875,6 +975,8 @@ class SessionPlayerController extends ChangeNotifier {
         sessionId: _state.session!.summary.id,
         input: afterStateInput,
       );
+
+      await _completeActiveProgramDayIfNeeded(result);
 
       _setState(
         _state.copyWith(

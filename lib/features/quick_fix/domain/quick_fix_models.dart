@@ -1,5 +1,3 @@
-// lib/features/quick_fix/domain/quick_fix_models.dart
-
 import '../../sessions/domain/session_models.dart';
 
 enum QuickFixActionType {

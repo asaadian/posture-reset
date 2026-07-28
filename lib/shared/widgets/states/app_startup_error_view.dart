@@ -1,4 +1,3 @@
-// lib/shared/widgets/states/app_startup_error_view.dart
 import 'package:flutter/material.dart';
 
 import '../../../core/localization/app_text.dart';
@@ -15,48 +14,77 @@ class AppStartupErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = AppText.of(context);
     final theme = Theme.of(context);
+    final t = AppText.of(context);
 
     return Scaffold(
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 520),
+      body: SafeArea(
+        child: Center(
           child: Padding(
             padding: const EdgeInsets.all(24),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(28),
+                  color: theme.colorScheme.surfaceContainerHigh,
+                  border: Border.all(
+                    color: theme.colorScheme.outlineVariant,
+                  ),
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 42,
-                      color: theme.colorScheme.error,
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: theme.colorScheme.errorContainer,
+                      ),
+                      child: Icon(
+                        Icons.error_outline_rounded,
+                        color: theme.colorScheme.onErrorContainer,
+                        size: 32,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      t.startupErrorTitle,
-                      style: theme.textTheme.headlineSmall,
+                      t.get(
+                        'startup_error_title',
+                        fallback: 'Something went wrong',
+                      ),
                       textAlign: TextAlign.center,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      t.startupErrorSubtitle,
-                      style: theme.textTheme.bodyMedium,
+                      message.isEmpty
+                          ? t.get(
+                              'startup_error_body',
+                              fallback:
+                                  'The app could not finish startup. Please check your connection and try again.',
+                            )
+                          : message,
                       textAlign: TextAlign.center,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                        height: 1.35,
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    SelectableText(
-                      message,
-                      style: theme.textTheme.bodySmall,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                    FilledButton(
+                    const SizedBox(height: 18),
+                    FilledButton.icon(
                       onPressed: onRetry,
-                      child: Text(t.commonRetry),
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: Text(
+                        t.get(
+                          'startup_error_retry_cta',
+                          fallback: 'Try again',
+                        ),
+                      ),
                     ),
                   ],
                 ),

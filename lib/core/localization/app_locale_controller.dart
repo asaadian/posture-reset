@@ -15,7 +15,6 @@ class AppLocaleController extends Notifier<Locale> {
   static const supportedLocales = <Locale>[
     Locale('de'),
     Locale('en'),
-    Locale('fa'),
   ];
 
   @override

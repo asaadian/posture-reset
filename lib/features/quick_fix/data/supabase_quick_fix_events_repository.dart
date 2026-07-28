@@ -1,5 +1,3 @@
-// lib/features/quick_fix/data/supabase_quick_fix_events_repository.dart
-
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/quick_fix_events_repository.dart';
@@ -38,7 +36,6 @@ class SupabaseQuickFixEventsRepository implements QuickFixEventsRepository {
       'selected_problem_code': state.selectedProblemId,
       'selected_time_minutes': timeMinutes,
       'selected_energy_code': state.selectedEnergyId,
-      'selected_location_codes': _normalizedCodes(state.selectedLocationIds),
       'selected_mode_codes': _normalizedCodes(state.selectedModeIds),
       'silent_mode_enabled': state.silentModeEnabled,
       'recommended_session_id': recommendedSessionId,

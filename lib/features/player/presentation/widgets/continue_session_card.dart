@@ -23,6 +23,10 @@ class ContinueSessionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     final title = AppText.get(
       context,
       key: candidate.session.titleKey,
@@ -41,27 +45,67 @@ class ContinueSessionCard extends StatelessWidget {
         ? Icons.play_arrow_rounded
         : Icons.open_in_new_rounded;
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        gradient: LinearGradient(
+          colors: isDark
+              ? [
+                  colors.primary.withValues(alpha: 0.12),
+                  colors.surfaceContainerHigh.withValues(alpha: 0.78),
+                  colors.surface.withValues(alpha: 0.96),
+                ]
+              : [
+                  colors.primary.withValues(alpha: 0.06),
+                  colors.surface.withValues(alpha: 0.94),
+                  colors.surfaceContainerLow.withValues(alpha: 0.88),
+                ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(
+          color: colors.outlineVariant.withValues(
+            alpha: isDark ? 0.76 : 0.64,
+          ),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.18)
+                : colors.primary.withValues(alpha: 0.06),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              _title(context, candidate.action),
-              style: Theme.of(context).textTheme.titleLarge,
+            _HeaderIconLabel(
+              icon: _headerIcon(candidate.action),
+              label: _title(context, candidate.action),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: colors.onSurface,
+                fontWeight: FontWeight.w900,
+                height: 1.08,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 7),
             Text(
               _subtitle(context),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colors.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+                height: 1.32,
+              ),
             ),
             const SizedBox(height: 14),
             Row(
@@ -83,8 +127,14 @@ class ContinueSessionCard extends StatelessWidget {
                         pathParameters: {'id': candidate.sessionId},
                       );
                     },
-                    icon: Icon(primaryIcon),
+                    icon: Icon(primaryIcon, size: 19),
                     label: Text(primaryLabel),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size.fromHeight(48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -95,12 +145,23 @@ class ContinueSessionCard extends StatelessWidget {
                       pathParameters: {'id': candidate.sessionId},
                     );
                   },
-                  icon: const Icon(Icons.info_outline_rounded),
+                  icon: const Icon(Icons.info_outline_rounded, size: 18),
                   label: Text(
                     AppText.get(
                       context,
                       key: 'continuity_open_detail',
                       fallback: 'Open',
+                    ),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(0, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    side: BorderSide(
+                      color: colors.outlineVariant.withValues(
+                        alpha: isDark ? 0.78 : 0.64,
+                      ),
                     ),
                   ),
                 ),
@@ -110,6 +171,19 @@ class ContinueSessionCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  IconData _headerIcon(ContinuityActionType action) {
+    switch (action) {
+      case ContinuityActionType.continueSession:
+        return Icons.play_circle_outline_rounded;
+      case ContinuityActionType.resumeSession:
+        return Icons.restore_rounded;
+      case ContinuityActionType.repeatSession:
+        return Icons.replay_rounded;
+      case ContinuityActionType.startSession:
+        return Icons.flash_on_rounded;
+    }
   }
 
   String _title(BuildContext context, ContinuityActionType action) {
@@ -197,5 +271,47 @@ class ContinueSessionCard extends StatelessWidget {
           fallback: 'This is the most recent session worth repeating.',
         );
     }
+  }
+}
+
+class _HeaderIconLabel extends StatelessWidget {
+  const _HeaderIconLabel({
+    required this.icon,
+    required this.label,
+  });
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        color: colors.primary.withValues(alpha: isDark ? 0.14 : 0.10),
+        border: Border.all(
+          color: colors.primary.withValues(alpha: isDark ? 0.24 : 0.18),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: colors.primary),
+          const SizedBox(width: 7),
+          Text(
+            label,
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: colors.primary,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

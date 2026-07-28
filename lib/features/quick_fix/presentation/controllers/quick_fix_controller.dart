@@ -1,5 +1,3 @@
-// lib/features/quick_fix/presentation/controllers/quick_fix_controller.dart
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -82,7 +80,7 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
 
     return initial.copyWith(
       selectedModeIds: seededModes,
-      silentModeEnabled: preferences.preferredSilentMode,
+      silentModeEnabled: false,
     );
   }
 
@@ -120,7 +118,10 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
   }
 
   Future<void> _apply(QuickFixState next) async {
-    final recomputed = await _recompute(next, trackRecommendation: true);
+    final recomputed = await _recompute(
+      next.copyWith(recommendationRevealCount: 0),
+      trackRecommendation: true,
+    );
     state = AsyncData(recomputed);
   }
 
@@ -160,22 +161,36 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
     );
   }
 
-  Future<void> toggleLocation(String id) async {
+  Future<void> setEquipment(Set<String> ids) async {
     final current = _current();
     if (current == null) return;
 
-    final selected = [...current.selectedLocationIds];
+    final safeSelected = ids.isEmpty ? <String>['none'] : (ids.toList()..sort());
+
+    await _apply(
+      current.copyWith(
+        selectedEquipmentIds: safeSelected,
+        hasUserInteracted: true,
+      ),
+    );
+  }
+
+  Future<void> toggleEquipment(String id) async {
+    final current = _current();
+    if (current == null) return;
+
+    final selected = [...current.selectedEquipmentIds];
     if (selected.contains(id)) {
       selected.remove(id);
     } else {
       selected.add(id);
     }
 
-    final safeSelected = selected.isEmpty ? <String>['desk'] : selected;
+    final safeSelected = selected.isEmpty ? <String>['none'] : selected;
 
     await _apply(
       current.copyWith(
-        selectedLocationIds: safeSelected,
+        selectedEquipmentIds: safeSelected,
         hasUserInteracted: true,
       ),
     );
@@ -240,6 +255,38 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
 
     final refreshed = await _recompute(state.value!, trackRecommendation: true);
     state = AsyncData(refreshed);
+  }
+
+  Future<QuickFixState?> prepareRecommendationReveal() async {
+    final current = _current();
+    if (current == null) return null;
+
+    if (current.recommendationRevealCount <= 0 ||
+        current.alternativeRecommendations.isEmpty) {
+      final next = current.copyWith(
+        recommendationRevealCount: current.recommendationRevealCount + 1,
+      );
+      state = AsyncData(next);
+      return next;
+    }
+
+    final alternatives = [...current.alternativeRecommendations];
+    final promoted = alternatives.removeAt(0);
+    final demotedPrimary = current.primaryRecommendation;
+
+    final next = current.copyWith(
+      primaryRecommendation: promoted,
+      alternativeRecommendations: [
+        ...alternatives,
+        if (demotedPrimary != null) demotedPrimary,
+      ].take(3).toList(),
+      clearTrackedRecommendationId: true,
+      hasUserInteracted: true,
+      recommendationRevealCount: current.recommendationRevealCount + 1,
+    );
+
+    state = AsyncData(next);
+    return next;
   }
 
   Future<void> trackAction(QuickFixActionType actionType) async {

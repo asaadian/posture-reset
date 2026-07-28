@@ -6,6 +6,7 @@ class ResponsivePageScaffold extends StatelessWidget {
     this.title,
     required this.bodyBuilder,
     this.actions,
+    this.leading,
     this.floatingActionButton,
     this.maxContentWidth = 1200,
     this.horizontalPadding = 16,
@@ -19,6 +20,7 @@ class ResponsivePageScaffold extends StatelessWidget {
 
   final Widget? title;
   final List<Widget>? actions;
+  final Widget? leading;
   final Widget Function(BuildContext context, ResponsivePageInfo pageInfo)
   bodyBuilder;
   final Widget? floatingActionButton;
@@ -42,7 +44,7 @@ class ResponsivePageScaffold extends StatelessWidget {
           extendBodyBehindAppBar: extendBodyBehindAppBar,
           appBar: hideAppBar
               ? null
-              : (title != null ? AppBar(title: title, actions: actions) : null),
+              : (title != null ? AppBar(leading: leading, title: title, actions: actions) : null),
           floatingActionButton: floatingActionButton,
           bottomNavigationBar: bottomNavigationBar,
           body: SafeArea(

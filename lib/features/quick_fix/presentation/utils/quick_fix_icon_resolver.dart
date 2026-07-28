@@ -1,5 +1,3 @@
-// lib/features/quick_fix/presentation/utils/quick_fix_icon_resolver.dart
-
 import 'package:flutter/material.dart';
 
 class QuickFixIconResolver {
@@ -49,6 +47,24 @@ class QuickFixIconResolver {
         return Icons.healing_outlined;
       case 'volume_off_outlined':
         return Icons.volume_off_outlined;
+      case 'crop_square_outlined':
+        return Icons.crop_square_outlined;
+      case 'dry_cleaning_outlined':
+        return Icons.dry_cleaning_outlined;
+      case 'horizontal_rule_rounded':
+        return Icons.horizontal_rule_rounded;
+      case 'construction_rounded':
+        return Icons.construction_rounded;
+      case 'sports_baseball_outlined':
+        return Icons.sports_baseball_outlined;
+      case 'water_bottle_outlined':
+        return Icons.water_drop_outlined;
+      case 'inventory_2_outlined':
+        return Icons.inventory_2_outlined;
+      case 'accessibility_outlined':
+        return Icons.accessibility_outlined;
+      case 'crop_16_9_outlined':
+        return Icons.crop_16_9_outlined;
       case 'checkroom_outlined':
         return Icons.checkroom_outlined;
       case 'star_outline_rounded':

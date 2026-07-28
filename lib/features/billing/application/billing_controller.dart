@@ -1,9 +1,13 @@
+// lib/features/billing/application/billing_controller.dart
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../../../core/analytics/analytics_event.dart';
+import '../../../core/analytics/analytics_providers.dart';
 import '../../access/application/access_providers.dart';
 import '../domain/billing_models.dart';
 import '../domain/billing_repository.dart';
@@ -35,7 +39,17 @@ class BillingController extends ChangeNotifier {
 
   BillingState _state = const BillingState.initial();
 
+  String? _activePurchaseProductId;
+  DateTime? _lastPurchaseStartedAt;
+
+  final Set<String> _verificationsInFlight = {};
+  final Set<String> _verifiedPurchases = {};
+
   BillingState get state => _state;
+
+  void _track(AnalyticsEvent event) {
+    unawaited(ref.read(analyticsServiceProvider).track(event));
+  }
 
   Future<void> loadProducts() async {
     _setState(
@@ -111,7 +125,9 @@ class BillingController extends ChangeNotifier {
     }
   }
 
-  Future<void> purchaseCoreAccess() async {
+  Future<void> purchaseCoreAccess({
+    String sourceSurface = AnalyticsSurfaces.premium,
+  }) async {
     if (_state.isBusy) {
       return;
     }
@@ -124,8 +140,29 @@ class BillingController extends ChangeNotifier {
     }
 
     if (product == null) {
+      _track(
+        const AnalyticsEvent(
+          eventName: AnalyticsEvents.purchaseFailed,
+          sourceSurface: AnalyticsSurfaces.premium,
+          entitlementKey: 'core_access',
+          productId: 'core_access_lifetime',
+          resultCode: 'product_unavailable',
+        ),
+      );
       return;
     }
+
+    final now = DateTime.now().toUtc();
+    final recentlyStarted = _activePurchaseProductId == product.id &&
+        _lastPurchaseStartedAt != null &&
+        now.difference(_lastPurchaseStartedAt!).inSeconds < 12;
+
+    if (recentlyStarted) {
+      return;
+    }
+
+    _activePurchaseProductId = product.id;
+    _lastPurchaseStartedAt = now;
 
     _setState(
       _state.copyWith(
@@ -135,12 +172,36 @@ class BillingController extends ChangeNotifier {
     );
 
     try {
+      _track(
+        AnalyticsEvent(
+          eventName: AnalyticsEvents.purchaseStarted,
+          sourceSurface: sourceSurface,
+          entitlementKey: 'core_access',
+          productId: product.id,
+          metadata: {
+            'store_available': _state.isStoreAvailable,
+          },
+        ),
+      );
+
       await _billingRepository.buyNonConsumable(
         productId: product.id,
       );
     } catch (error, stackTrace) {
       debugPrint('BillingController.purchaseCoreAccess failed: $error');
       debugPrintStack(stackTrace: stackTrace);
+
+      _clearActivePurchase();
+
+      _track(
+        AnalyticsEvent(
+          eventName: AnalyticsEvents.purchaseFailed,
+          sourceSurface: sourceSurface,
+          entitlementKey: 'core_access',
+          productId: product.id,
+          resultCode: 'purchase_start_failed',
+        ),
+      );
 
       _setState(
         _state.copyWith(
@@ -154,7 +215,9 @@ class BillingController extends ChangeNotifier {
     }
   }
 
-  Future<void> restorePurchases() async {
+  Future<void> restorePurchases({
+    String sourceSurface = AnalyticsSurfaces.premium,
+  }) async {
     if (_state.isBusy) {
       return;
     }
@@ -182,6 +245,15 @@ class BillingController extends ChangeNotifier {
     } catch (error, stackTrace) {
       debugPrint('BillingController.restorePurchases failed: $error');
       debugPrintStack(stackTrace: stackTrace);
+
+      _track(
+        AnalyticsEvent(
+          eventName: AnalyticsEvents.restoreFailed,
+          sourceSurface: sourceSurface,
+          entitlementKey: 'core_access',
+          resultCode: 'restore_failed',
+        ),
+      );
 
       _setState(
         _state.copyWith(
@@ -214,6 +286,18 @@ class BillingController extends ChangeNotifier {
           break;
 
         case PurchaseStatus.canceled:
+          _clearActivePurchase();
+
+          _track(
+            AnalyticsEvent(
+              eventName: AnalyticsEvents.purchaseCancelled,
+              sourceSurface: AnalyticsSurfaces.premium,
+              entitlementKey: 'core_access',
+              productId: purchase.productID,
+              resultCode: 'purchase_cancelled',
+            ),
+          );
+
           _setState(
             _state.copyWith(
               status: BillingPurchaseStatus.cancelled,
@@ -226,6 +310,18 @@ class BillingController extends ChangeNotifier {
           break;
 
         case PurchaseStatus.error:
+          _clearActivePurchase();
+
+          _track(
+            AnalyticsEvent(
+              eventName: AnalyticsEvents.purchaseFailed,
+              sourceSurface: AnalyticsSurfaces.premium,
+              entitlementKey: 'core_access',
+              productId: purchase.productID,
+              resultCode: purchase.error?.code ?? 'purchase_error',
+            ),
+          );
+
           _setState(
             _state.copyWith(
               status: BillingPurchaseStatus.failed,
@@ -246,6 +342,15 @@ class BillingController extends ChangeNotifier {
   }
 
   Future<void> _verifyAndGrant(PurchaseDetails purchase) async {
+    final verificationKey = _purchaseVerificationKey(purchase);
+
+    if (_verificationsInFlight.contains(verificationKey) ||
+        _verifiedPurchases.contains(verificationKey)) {
+      return;
+    }
+
+    _verificationsInFlight.add(verificationKey);
+
     _setState(
       _state.copyWith(
         status: BillingPurchaseStatus.verifying,
@@ -259,6 +364,21 @@ class BillingController extends ChangeNotifier {
       );
 
       if (!result.ok) {
+        _verificationsInFlight.remove(verificationKey);
+        _clearActivePurchase();
+
+        _track(
+          AnalyticsEvent(
+            eventName: purchase.status == PurchaseStatus.restored
+                ? AnalyticsEvents.restoreFailed
+                : AnalyticsEvents.purchaseFailed,
+            sourceSurface: AnalyticsSurfaces.premium,
+            entitlementKey: 'core_access',
+            productId: purchase.productID,
+            resultCode: result.errorCode ?? 'verification_failed',
+          ),
+        );
+
         _setState(
           _state.copyWith(
             status: BillingPurchaseStatus.failed,
@@ -277,6 +397,22 @@ class BillingController extends ChangeNotifier {
 
       ref.invalidate(accessSnapshotProvider);
 
+      _verifiedPurchases.add(verificationKey);
+      _verificationsInFlight.remove(verificationKey);
+      _clearActivePurchase();
+
+      _track(
+        AnalyticsEvent(
+          eventName: purchase.status == PurchaseStatus.restored
+              ? AnalyticsEvents.restoreSuccess
+              : AnalyticsEvents.purchaseSuccess,
+          sourceSurface: AnalyticsSurfaces.premium,
+          entitlementKey: result.entitlementKey ?? 'core_access',
+          productId: purchase.productID,
+          resultCode: result.status ?? 'active',
+        ),
+      );
+
       _setState(
         _state.copyWith(
           status: purchase.status == PurchaseStatus.restored
@@ -289,6 +425,21 @@ class BillingController extends ChangeNotifier {
       debugPrint('BillingController._verifyAndGrant failed: $error');
       debugPrintStack(stackTrace: stackTrace);
 
+      _verificationsInFlight.remove(verificationKey);
+      _clearActivePurchase();
+
+      _track(
+        AnalyticsEvent(
+          eventName: purchase.status == PurchaseStatus.restored
+              ? AnalyticsEvents.restoreFailed
+              : AnalyticsEvents.purchaseFailed,
+          sourceSurface: AnalyticsSurfaces.premium,
+          entitlementKey: 'core_access',
+          productId: purchase.productID,
+          resultCode: 'verification_exception',
+        ),
+      );
+
       _setState(
         _state.copyWith(
           status: BillingPurchaseStatus.failed,
@@ -299,6 +450,22 @@ class BillingController extends ChangeNotifier {
         ),
       );
     }
+  }
+
+  String _purchaseVerificationKey(PurchaseDetails purchase) {
+    final purchaseId = purchase.purchaseID?.trim();
+
+    if (purchaseId != null && purchaseId.isNotEmpty) {
+      return '${purchase.productID}:$purchaseId';
+    }
+
+    final token = purchase.verificationData.serverVerificationData.trim();
+
+    if (token.isNotEmpty) {
+      return '${purchase.productID}:$token';
+    }
+
+    return '${purchase.productID}:${purchase.transactionDate ?? 'unknown'}';
   }
 
   Future<void> _completeSafely(PurchaseDetails purchase) async {
@@ -314,6 +481,17 @@ class BillingController extends ChangeNotifier {
     debugPrint('Billing purchase stream failed: $error');
     debugPrintStack(stackTrace: stackTrace);
 
+    _clearActivePurchase();
+
+    _track(
+      const AnalyticsEvent(
+        eventName: AnalyticsEvents.purchaseFailed,
+        sourceSurface: AnalyticsSurfaces.premium,
+        entitlementKey: 'core_access',
+        resultCode: 'purchase_stream_error',
+      ),
+    );
+
     _setState(
       _state.copyWith(
         status: BillingPurchaseStatus.failed,
@@ -323,6 +501,11 @@ class BillingController extends ChangeNotifier {
         ),
       ),
     );
+  }
+
+  void _clearActivePurchase() {
+    _activePurchaseProductId = null;
+    _lastPurchaseStartedAt = null;
   }
 
   void _setState(BillingState value) {

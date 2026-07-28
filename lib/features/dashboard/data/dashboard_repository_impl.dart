@@ -114,7 +114,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
       final templatesRows = await _safeSelectList(
         'session_templates',
         () => _client.from('session_templates').select(
-              'id, title_key, title_fallback, duration_minutes, access_tier',
+              'id, title_key, title_fallback, duration_minutes, access_tier, session_level_tag',
             ),
       );  
 

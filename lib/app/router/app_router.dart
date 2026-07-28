@@ -4,38 +4,43 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/pages/auth_callback_page.dart';
 import '../../features/auth/presentation/pages/auth_page.dart';
-import '../../features/body_map/presentation/pages/body_map_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
-import '../../features/insights/presentation/pages/heatmap_page.dart';
 import '../../features/insights/presentation/pages/insights_page.dart';
 import '../../features/insights/presentation/pages/logs_page.dart';
+import '../../features/notifications/presentation/pages/notification_center_page.dart';
 import '../../features/player/domain/session_feedback_models.dart';
 import '../../features/player/presentation/pages/session_history_page.dart';
 import '../../features/player/presentation/pages/session_player_page.dart';
-import '../../features/profile/presentation/pages/audio_settings_page.dart';
-import '../../features/profile/presentation/pages/integrations_page.dart';
-import '../../features/profile/presentation/pages/mode_settings_page.dart';
-import '../../features/profile/presentation/pages/notification_settings_page.dart';
 import '../../features/profile/presentation/pages/premium_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/profile/presentation/pages/settings_page.dart';
+import '../../features/programs/presentation/pages/recovery_program_detail_page.dart';
+import '../../features/programs/presentation/pages/recovery_programs_page.dart';
 import '../../features/quick_fix/presentation/pages/quick_fix_page.dart';
 import '../../features/sessions/presentation/pages/saved_sessions_page.dart';
 import '../../features/sessions/presentation/pages/session_detail_page.dart';
 import '../../features/sessions/presentation/pages/sessions_library_page.dart';
 import '../../shared/widgets/feedback/route_not_found_page.dart';
 import '../shell/main_shell.dart';
+import '../startup/initial_route_page.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final appRootNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    navigatorKey: _rootNavigatorKey,
-    initialLocation: '/app/dashboard',
+    navigatorKey: appRootNavigatorKey,
+    initialLocation: '/startup',
     errorBuilder: (context, state) =>
         RouteNotFoundPage(attemptedLocation: state.uri.toString()),
     routes: [
+
+      GoRoute(
+        path: '/startup',
+        name: 'startup-route',
+        builder: (context, state) => const InitialRoutePage(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return MainShell(navigationShell: navigationShell);
@@ -71,18 +76,33 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/app/insights',
-                name: 'insights',
-                builder: (context, state) => const InsightsPage(),
+                path: '/app/programs',
+                name: 'recovery-programs',
+                builder: (context, state) => const RecoveryProgramsPage(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    name: 'recovery-program-detail',
+                    builder: (context, state) {
+                      final programId = state.pathParameters['id'];
+                      if (programId == null || programId.isEmpty) {
+                        return const RouteNotFoundPage(
+                          attemptedLocation: '/app/programs/:id',
+                        );
+                      }
+                      return RecoveryProgramDetailPage(programId: programId);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/app/profile',
-                name: 'profile',
-                builder: (context, state) => const ProfilePage(),
+                path: '/app/insights',
+                name: 'insights',
+                builder: (context, state) => const InsightsPage(),
               ),
             ],
           ),
@@ -100,14 +120,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
           return AuthPage(
             initialMode: initialMode,
-            redirectTo: redirectTo,
+            redirectTo: redirectTo?.trim().isNotEmpty == true
+                ? redirectTo
+                : '/app/dashboard',
           );
         },
       ),
       GoRoute(
-        path: '/app/body-map',
-        name: 'body-map',
-        builder: (context, state) => const BodyMapPage(),
+        path: '/auth/callback',
+        name: 'auth-callback',
+        builder: (context, state) => const AuthCallbackPage(),
+      ),
+      GoRoute(
+        path: '/callback',
+        name: 'auth-callback-short',
+        builder: (context, state) => const AuthCallbackPage(),
       ),
       GoRoute(
         path: '/app/saved',
@@ -154,44 +181,31 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: '/app/insights/heatmap',
-        name: 'heatmap',
-        builder: (context, state) => const HeatmapPage(),
-      ),
-      GoRoute(
         path: '/app/insights/logs',
         name: 'logs',
         builder: (context, state) => const LogsPage(),
       ),
+
+      GoRoute(
+        path: '/app/notifications',
+        name: 'notification-center',
+        builder: (context, state) => const NotificationCenterPage(),
+      ),
+      GoRoute(
+        path: '/app/profile',
+        name: 'profile',
+        builder: (context, state) => const ProfilePage(),
+      ),
+
       GoRoute(
         path: '/app/profile/settings',
         name: 'settings',
         builder: (context, state) => const SettingsPage(),
       ),
       GoRoute(
-        path: '/app/profile/settings/audio',
-        name: 'audio-settings',
-        builder: (context, state) => const AudioSettingsPage(),
-      ),
-      GoRoute(
-        path: '/app/profile/settings/notifications',
-        name: 'notification-settings',
-        builder: (context, state) => const NotificationSettingsPage(),
-      ),
-      GoRoute(
-        path: '/app/profile/settings/modes',
-        name: 'mode-settings',
-        builder: (context, state) => const ModeSettingsPage(),
-      ),
-      GoRoute(
         path: '/app/profile/premium',
         name: 'premium',
         builder: (context, state) => const PremiumPage(),
-      ),
-      GoRoute(
-        path: '/app/profile/integrations',
-        name: 'integrations',
-        builder: (context, state) => const IntegrationsPage(),
       ),
     ],
   );

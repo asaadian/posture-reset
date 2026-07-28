@@ -1,5 +1,3 @@
-// lib/features/quick_fix/application/quick_fix_recommendation_engine.dart
-
 import '../domain/quick_fix_models.dart';
 import '../domain/quick_fix_state.dart';
 import '../../sessions/domain/session_models.dart';
@@ -29,9 +27,11 @@ class QuickFixRecommendationEngine {
     }
 
     final ranked = sessions
-        .map((session) => _ScoredRecommendation(
-              recommendation: _buildRecommendation(state, session),
-            ))
+        .map(
+          (session) => _ScoredRecommendation(
+            recommendation: _buildRecommendation(state, session),
+          ),
+        )
         .where((item) => item.recommendation.score > 0)
         .toList(growable: true)
       ..sort((a, b) {
@@ -73,7 +73,7 @@ class QuickFixRecommendationEngine {
     SessionSummary session,
   ) {
     final score = _scoreSession(state, session);
-    final signals = _buildSignals(state, session);
+    final signals = _buildSignals(session);
 
     return QuickFixRecommendation(
       session: session,
@@ -92,16 +92,19 @@ class QuickFixRecommendationEngine {
     final desiredMinutes = int.tryParse(state.selectedTimeId) ?? 0;
     final durationDelta = (session.durationMinutes - desiredMinutes).abs();
 
-    score += _scoreProblem(state.selectedProblemId, session);
+    final problemScore = _scoreProblem(state.selectedProblemId, session);
+    if (problemScore <= 0) {
+      return 0;
+    }
+
+    if (!_hasRequiredEquipment(state, session)) {
+      return 0;
+    }
+
+    score += problemScore;
+    score += _scoreEquipment(state, session);
     score += _scoreEnergy(state.selectedEnergyId, session);
     score += _scoreModes(state.selectedModeIds, session);
-    score += _scoreLocations(state.selectedLocationIds, session);
-
-    if (state.silentModeEnabled && session.isSilentFriendly) {
-      score += 5;
-    } else if (!state.silentModeEnabled && session.isSilentFriendly) {
-      score += 1.5;
-    }
 
     if (session.isBeginnerFriendly) {
       score += 1.25;
@@ -122,82 +125,209 @@ class QuickFixRecommendationEngine {
     return score;
   }
 
-  double _scoreProblem(String problemId, SessionSummary session) {
-    final painCodes = session.painTargets.map((e) => e.code.toLowerCase()).toSet();
+  double _scoreProblem(String rawProblemId, SessionSummary session) {
+    final problemId = _canonicalProblemId(rawProblemId);
+    final painCodes =
+        session.painTargets.map((e) => _canonicalBodyCode(e.code)).toSet();
     final tagCodes = session.tags.map((e) => e.code.toLowerCase()).toSet();
     final text =
-        '${session.titleFallback} ${session.subtitleFallback} ${session.shortDescriptionFallback}'
+        '${session.id} ${session.titleFallback} ${session.subtitleFallback} ${session.shortDescriptionFallback}'
             .toLowerCase();
+
+    bool exactPain(List<String> codes) {
+      final canonicalCodes = codes.map(_canonicalBodyCode).toSet();
+      return painCodes.intersection(canonicalCodes).isNotEmpty;
+    }
 
     bool hit(List<String> keywords) {
       for (final keyword in keywords) {
-        if (painCodes.any((e) => e.contains(keyword))) return true;
-        if (tagCodes.any((e) => e.contains(keyword))) return true;
-        if (text.contains(keyword)) return true;
+        final normalized = keyword.toLowerCase();
+        if (painCodes.any((e) => e.contains(normalized))) return true;
+        if (tagCodes.any((e) => e.contains(normalized))) return true;
+        if (text.contains(normalized)) return true;
       }
       return false;
     }
 
+    double base({
+      required List<String> primaryCodes,
+      required List<String> primaryKeywords,
+      required List<String> secondaryKeywords,
+      required List<SessionGoal> preferredGoals,
+    }) {
+      return _problemScore(
+        exactPain(primaryCodes) || hit(primaryKeywords),
+        hit(secondaryKeywords),
+        session,
+        preferredGoals: preferredGoals,
+      );
+    }
+
     switch (problemId) {
       case 'neck':
-        return _problemScore(
-          hit(['neck']),
-          hit(['shoulder', 'upper_back', 'posture']),
-          session,
+        final score = base(
+          primaryCodes: const ['neck'],
+          primaryKeywords: const ['neck', 'cervical'],
+          secondaryKeywords: const ['shoulder', 'upper_back', 'upper back'],
           preferredGoals: const [
             SessionGoal.painRelief,
             SessionGoal.postureReset,
             SessionGoal.mobility,
           ],
         );
-      case 'shoulder':
-        return _problemScore(
-          hit(['shoulder']),
-          hit(['neck', 'upper_back']),
-          session,
+        if (session.id == 'sess_towel_deep_neck_flexor_control_07') return score + 8;
+        if (session.id == 'sess_cervical_isometric_stability_07') return score + 7;
+        if (session.id == 'sess_ball_upper_trap_levator_reset_07') return score + 5;
+        if (session.id == 'sess_flagship_laptop_neck_shoulder_chain_10') return score + 6;
+        return score;
+
+      case 'shoulders':
+        final score = base(
+          primaryCodes: const ['shoulders'],
+          primaryKeywords: const ['shoulder', 'shoulders', 'scapula'],
+          secondaryKeywords: const ['neck', 'upper_back', 'upper back'],
           preferredGoals: const [
             SessionGoal.painRelief,
             SessionGoal.mobility,
             SessionGoal.recovery,
           ],
         );
-      case 'wrist':
-        return _problemScore(
-          hit(['wrist', 'forearm', 'hand', 'typing']),
-          false,
-          session,
+        if (session.id == 'sess_band_rotator_cuff_scapular_control_08') return score + 8;
+        if (session.id == 'sess_serratus_wall_slide_miniband_07') return score + 7;
+        if (session.id == 'sess_dowel_shoulder_mobility_control_07') return score + 5;
+        if (session.id == 'sess_flagship_laptop_neck_shoulder_chain_10') return score + 6;
+        return score;
+
+      case 'upper_back':
+        final score = base(
+          primaryCodes: const ['upper_back'],
+          primaryKeywords: const [
+            'upper_back',
+            'upper back',
+            'thoracic',
+            'mid_back',
+            'mid back',
+          ],
+          secondaryKeywords: const ['shoulder', 'neck', 'posture'],
           preferredGoals: const [
             SessionGoal.painRelief,
-            SessionGoal.recovery,
             SessionGoal.mobility,
+            SessionGoal.postureReset,
           ],
         );
-      case 'back':
-        return _problemScore(
-          hit(['lower_back', 'back', 'spine', 'lumbar']),
-          hit(['posture']),
-          session,
+        if (session.id == 'sess_foam_roller_thoracic_extension_rotation_08') return score + 8;
+        if (session.id == 'sess_desk_thoracic_rotation_scapular_integration_07') return score + 6;
+        if (session.id == 'sess_flagship_full_desk_worker_therapy_12') return score + 5;
+        return score;
+
+      case 'lower_back':
+        final score = base(
+          primaryCodes: const ['lower_back'],
+          primaryKeywords: const ['lower_back', 'lower back', 'lumbar'],
+          secondaryKeywords: const ['hips', 'glutes', 'hips_glutes', 'posture'],
           preferredGoals: const [
             SessionGoal.painRelief,
             SessionGoal.postureReset,
             SessionGoal.decompression,
           ],
         );
-      case 'eye':
-        return _problemScore(
-          hit(['eye', 'screen', 'visual']),
-          hit(['focus', 'breath', 'decompression']),
-          session,
+        if (session.id == 'sess_chair_core_bracing_low_back_support_07') return score + 8;
+        if (session.id == 'sess_standing_back_decompression_core_reset_07') return score + 6;
+        if (session.id == 'sess_flagship_after_work_spine_hip_reset_10') return score + 5;
+        return score;
+
+      case 'wrists':
+        final score = base(
+          primaryCodes: const ['wrists'],
+          primaryKeywords: const ['wrist', 'wrists'],
+          secondaryKeywords: const ['forearm', 'forearms', 'hand', 'hands', 'typing'],
+          preferredGoals: const [
+            SessionGoal.painRelief,
+            SessionGoal.recovery,
+            SessionGoal.mobility,
+          ],
+        );
+        if (session.id == 'sess_eccentric_wrist_extensor_loading_07') return score + 8;
+        if (session.id == 'sess_median_nerve_tendon_glide_06') return score + 6;
+        if (session.id == 'sess_flagship_mouse_arm_clinical_reset_09') return score + 5;
+        if (session.id == 'sess_free_typing_load_starter_04') return score + 3;
+        return score;
+
+      case 'forearms':
+        final score = base(
+          primaryCodes: const ['forearms'],
+          primaryKeywords: const ['forearm', 'forearms', 'mouse arm'],
+          secondaryKeywords: const ['wrist', 'wrists', 'typing', 'shoulder'],
+          preferredGoals: const [
+            SessionGoal.painRelief,
+            SessionGoal.recovery,
+            SessionGoal.mobility,
+          ],
+        );
+        if (session.id == 'sess_forearm_pronation_supination_control_07') return score + 8;
+        if (session.id == 'sess_mouse_arm_shoulder_chain_07') return score + 7;
+        if (session.id == 'sess_flagship_mouse_arm_clinical_reset_09') return score + 6;
+        return score;
+
+      case 'hands':
+      case 'fingers':
+        final score = base(
+          primaryCodes: const ['hands', 'fingers'],
+          primaryKeywords: const ['hand', 'hands', 'finger', 'fingers'],
+          secondaryKeywords: const ['wrist', 'wrists', 'typing', 'forearm'],
+          preferredGoals: const [
+            SessionGoal.painRelief,
+            SessionGoal.recovery,
+            SessionGoal.mobility,
+          ],
+        );
+        if (session.id == 'sess_soft_ball_hand_strength_06') return score + 8;
+        if (session.id == 'sess_median_nerve_tendon_glide_06') return score + 5;
+        return score;
+
+      case 'eyes':
+        final score = base(
+          primaryCodes: const ['eyes'],
+          primaryKeywords: const [
+            'eye',
+            'eyes',
+            'screen',
+            'visual',
+            'vision',
+            'screen_break',
+          ],
+          secondaryKeywords: const ['neck', 'focus', 'breath'],
           preferredGoals: const [
             SessionGoal.focusPrep,
             SessionGoal.decompression,
             SessionGoal.recovery,
           ],
         );
+        if (session.id == 'sess_free_desk_decompression_04') return score + 4;
+        if (session.id == 'sess_towel_deep_neck_flexor_control_07') return score + 3;
+        return score;
+
+      case 'hips_glutes':
+        final score = base(
+          primaryCodes: const ['hips_glutes', 'hips', 'glutes'],
+          primaryKeywords: const ['hips_glutes', 'hip', 'hips', 'glute', 'glutes'],
+          secondaryKeywords: const ['lower_back', 'lower back', 'lumbar'],
+          preferredGoals: const [
+            SessionGoal.painRelief,
+            SessionGoal.recovery,
+            SessionGoal.mobility,
+          ],
+        );
+        if (session.id == 'sess_miniband_glute_med_stability_08') return score + 8;
+        if (session.id == 'sess_hip_flexor_release_glute_rebalance_07') return score + 7;
+        if (session.id == 'sess_hamstring_slider_hip_hinge_control_07') return score + 5;
+        if (session.id == 'sess_flagship_after_work_spine_hip_reset_10') return score + 5;
+        return score;
+
       case 'stress':
-        return _problemScore(
-          hit(['breath', 'calm', 'decompression']),
-          hit(['focus', 'recovery']),
+        final score = _problemScore(
+          hit(['stress', 'calm', 'downshift', 'nervous system', 'breath']),
+          hit(['decompression', 'recovery', 'focus', 'low_energy', 'evening']),
           session,
           preferredGoals: const [
             SessionGoal.decompression,
@@ -205,6 +335,11 @@ class QuickFixRecommendationEngine {
             SessionGoal.focusPrep,
           ],
         );
+        if (session.id == 'sess_flagship_after_work_spine_hip_reset_10') return score + 7;
+        if (session.id == 'sess_free_desk_decompression_04') return score + 4;
+        if (session.id == 'sess_flagship_full_desk_worker_therapy_12') return score + 4;
+        return score;
+
       default:
         return 0;
     }
@@ -217,7 +352,7 @@ class QuickFixRecommendationEngine {
     required List<SessionGoal> preferredGoals,
   }) {
     double score = 0;
-    if (primaryHit) score += 12;
+    if (primaryHit) score += 16;
     if (secondaryHit) score += 5;
 
     for (final goal in preferredGoals) {
@@ -227,6 +362,150 @@ class QuickFixRecommendationEngine {
     }
 
     return score;
+  }
+
+  String _canonicalProblemId(String raw) {
+    switch (raw.toLowerCase()) {
+      case 'shoulder':
+      case 'shoulders':
+        return 'shoulders';
+      case 'wrist':
+      case 'wrists':
+        return 'wrists';
+      case 'back':
+      case 'lower_back':
+      case 'low_back':
+      case 'lumbar':
+        return 'lower_back';
+      case 'eye':
+      case 'eyes':
+      case 'screen':
+      case 'screen_strain':
+      case 'eye_strain':
+        return 'eyes';
+      case 'hand':
+      case 'hands':
+        return 'hands';
+      case 'finger':
+      case 'fingers':
+        return 'fingers';
+      case 'forearm':
+      case 'forearms':
+      case 'mouse_arm':
+        return 'forearms';
+      case 'hip':
+      case 'hips':
+      case 'glute':
+      case 'glutes':
+      case 'hips_glutes':
+        return 'hips_glutes';
+      default:
+        return raw.toLowerCase();
+    }
+  }
+
+  String _canonicalBodyCode(String raw) {
+    switch (raw.toLowerCase()) {
+      case 'shoulder':
+      case 'shoulders':
+        return 'shoulders';
+      case 'wrist':
+      case 'wrists':
+        return 'wrists';
+      case 'back':
+      case 'low_back':
+      case 'lumbar':
+      case 'lower_back':
+        return 'lower_back';
+      case 'eye':
+      case 'eyes':
+        return 'eyes';
+      case 'hand':
+      case 'hands':
+        return 'hands';
+      case 'finger':
+      case 'fingers':
+        return 'fingers';
+      case 'forearm':
+      case 'forearms':
+        return 'forearms';
+      case 'hip':
+      case 'hips':
+      case 'glute':
+      case 'glutes':
+      case 'hips_glutes':
+        return 'hips_glutes';
+      default:
+        return raw.toLowerCase();
+    }
+  }
+
+  bool _hasRequiredEquipment(QuickFixState state, SessionSummary session) {
+    final selected = state.selectedEquipmentIds.toSet();
+    if (selected.isEmpty) return false;
+
+    final selectedSpecial = _selectedSpecialEquipment(selected);
+    final requiredSpecial = _requiredSpecialEquipment(session);
+
+    if (selectedSpecial.isNotEmpty) {
+      return requiredSpecial.isNotEmpty &&
+          requiredSpecial.any(selectedSpecial.contains) &&
+          requiredSpecial.every(selected.contains);
+    }
+
+    if (requiredSpecial.isEmpty) return true;
+    return requiredSpecial.every(selected.contains);
+  }
+
+  double _scoreEquipment(QuickFixState state, SessionSummary session) {
+    final selected = state.selectedEquipmentIds.toSet();
+    final selectedSpecial = _selectedSpecialEquipment(selected);
+    final requiredSpecial = _requiredSpecialEquipment(session);
+
+    if (selectedSpecial.isNotEmpty && requiredSpecial.isEmpty) return 0;
+    if (requiredSpecial.isEmpty) return 2.5;
+    if (!requiredSpecial.every(selected.contains)) return 0;
+
+    if (requiredSpecial.any(
+      (item) => item == 'long_band' || item == 'mini_band',
+    )) {
+      return 6;
+    }
+
+    if (requiredSpecial.any(
+      (item) => item == 'foam_roller' || item == 'massage_ball',
+    )) {
+      return 5.5;
+    }
+
+    if (requiredSpecial.any(
+      (item) => item == 'water_bottle' ||
+          item == 'soft_ball' ||
+          item == 'dowel' ||
+          item == 'towel',
+    )) {
+      return 5;
+    }
+
+    return 3;
+  }
+
+  Set<String> _requiredSpecialEquipment(SessionSummary session) {
+    return session.requiredEquipment
+        .map(sessionStepEquipmentCodeToDb)
+        .where(_isSpecialEquipment)
+        .toSet();
+  }
+
+  Set<String> _selectedSpecialEquipment(Set<String> selected) {
+    return selected.where(_isSpecialEquipment).toSet();
+  }
+
+  bool _isSpecialEquipment(String item) {
+    return item != 'none' &&
+        item != 'chair' &&
+        item != 'desk' &&
+        item != 'wall';
   }
 
   double _scoreEnergy(String energyId, SessionSummary session) {
@@ -292,77 +571,26 @@ class QuickFixRecommendationEngine {
     return score;
   }
 
-  double _scoreLocations(List<String> locationIds, SessionSummary session) {
-    double score = 0;
-
-    for (final id in locationIds) {
-      switch (id) {
-        case 'desk':
-          if (session.environmentCompatibility.deskFriendly) score += 4;
-          if (session.environmentCompatibility.officeFriendly) score += 2;
-          if (session.environmentCompatibility.lowSpaceFriendly) score += 1.5;
-          if (session.environmentCompatibility.noMatRequired) score += 1.5;
-          break;
-        case 'chair':
-          if (session.environmentCompatibility.deskFriendly) score += 3;
-          if (session.environmentCompatibility.officeFriendly) score += 2;
-          if (session.environmentCompatibility.lowSpaceFriendly) score += 2;
-          break;
-        case 'standing':
-          if (session.environmentCompatibility.lowSpaceFriendly) score += 2.5;
-          if (session.environmentCompatibility.officeFriendly) score += 1.5;
-          if (session.environmentCompatibility.homeFriendly) score += 1;
-          break;
-        case 'floor':
-          if (session.environmentCompatibility.homeFriendly) score += 3;
-          break;
-        case 'bedside':
-          if (session.environmentCompatibility.homeFriendly) score += 3;
-          if (session.environmentCompatibility.quietFriendly) score += 1.5;
-          break;
-      }
-    }
-
-    if (session.environmentCompatibility.quietFriendly) score += 1;
-
-    return score;
-  }
-
-  List<QuickFixSignal> _buildSignals(
-    QuickFixState state,
-    SessionSummary session,
-  ) {
+  List<QuickFixSignal> _buildSignals(SessionSummary session) {
     final signals = <QuickFixSignal>[];
-
-    if (session.environmentCompatibility.deskFriendly) {
-      signals.add(const QuickFixSignal(
-        iconName: 'desk_outlined',
-        labelKey: 'session_env_desk_friendly',
-        labelFallback: 'Desk-friendly',
-      ));
-    }
-
-    if (session.isSilentFriendly) {
-      signals.add(const QuickFixSignal(
-        iconName: 'volume_off_outlined',
-        labelKey: 'session_env_quiet',
-        labelFallback: 'Quiet-friendly',
-      ));
-    }
-
-    if (session.environmentCompatibility.noMatRequired) {
-      signals.add(const QuickFixSignal(
-        iconName: 'checkroom_outlined',
-        labelKey: 'session_env_no_mat',
-        labelFallback: 'No mat required',
-      ));
-    }
 
     if (session.isBeginnerFriendly) {
       signals.add(const QuickFixSignal(
         iconName: 'star_outline_rounded',
         labelKey: 'sessions_tag_beginner',
         labelFallback: 'Beginner',
+      ));
+    }
+
+    if (session.requiredEquipment.any((item) =>
+        item != SessionStepEquipmentCode.none &&
+        item != SessionStepEquipmentCode.chair &&
+        item != SessionStepEquipmentCode.desk &&
+        item != SessionStepEquipmentCode.wall)) {
+      signals.add(const QuickFixSignal(
+        iconName: 'fitness_center_outlined',
+        labelKey: 'quick_fix_signal_equipment_based',
+        labelFallback: 'Equipment-based',
       ));
     }
 
@@ -406,15 +634,6 @@ class QuickFixRecommendationEngine {
   ) {
     final parts = <String>[];
 
-    if (state.silentModeEnabled && session.isSilentFriendly) {
-      parts.add('quiet-friendly');
-    }
-
-    if (session.environmentCompatibility.deskFriendly &&
-        state.selectedLocationIds.contains('desk')) {
-      parts.add('desk-ready');
-    }
-
     if (session.modeCompatibility.focusMode &&
         state.selectedModeIds.contains('focus')) {
       parts.add('focus-compatible');
@@ -425,11 +644,17 @@ class QuickFixRecommendationEngine {
       parts.add('pain-relief aligned');
     }
 
+    final requiredEquipment = _requiredSpecialEquipment(session).toList(growable: false);
+
+    if (requiredEquipment.isNotEmpty) {
+      parts.add('available equipment');
+    }
+
     if (parts.isEmpty) {
       parts.add('strong context match');
     }
 
-    return 'Recommended because it matches your current problem, time window, and context with ${parts.join(', ')} support.';
+    return 'Recommended because it matches your current target, time window, and ${parts.join(', ')} support.';
   }
 }
 

@@ -3,6 +3,7 @@
 class UserProfile {
   const UserProfile({
     required this.userId,
+    required this.email,
     required this.displayName,
     required this.avatarUrl,
     required this.onboardingCompleted,
@@ -11,6 +12,7 @@ class UserProfile {
   });
 
   final String userId;
+  final String? email;
   final String? displayName;
   final String? avatarUrl;
   final bool onboardingCompleted;
@@ -20,6 +22,7 @@ class UserProfile {
   factory UserProfile.fromMap(Map<String, dynamic> map) {
     return UserProfile(
       userId: map['user_id'] as String,
+      email: map['email'] as String?,
       displayName: map['display_name'] as String?,
       avatarUrl: map['avatar_url'] as String?,
       onboardingCompleted: (map['onboarding_completed'] as bool?) ?? false,
@@ -63,7 +66,7 @@ class UserPreferences {
       preferredTimeMinutes: map['preferred_time_minutes'] as int?,
       preferredEnergyCode: map['preferred_energy_code'] as String?,
       preferredSilentMode: (map['preferred_silent_mode'] as bool?) ?? true,
-      notificationsEnabled: (map['notifications_enabled'] as bool?) ?? true,
+      notificationsEnabled: (map['notifications_enabled'] as bool?) ?? false,
       audioEnabled: (map['audio_enabled'] as bool?) ?? true,
       hapticsEnabled: (map['haptics_enabled'] as bool?) ?? true,
       defaultModeCodes: ((map['default_mode_codes'] as List?) ?? const [])

@@ -1,6 +1,6 @@
 // lib/features/dashboard/domain/dashboard_snapshot.dart
 
-import '../../../features/player/domain/session_feedback_models.dart';
+import '../../player/domain/session_feedback_models.dart';
 
 class DashboardSnapshot {
   const DashboardSnapshot({

@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
@@ -25,7 +24,8 @@ class LocalNotificationService {
 
   static final LocalNotificationService instance = LocalNotificationService._();
 
-  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
   final StreamController<String> _tapPayloadController =
       StreamController<String>.broadcast();
 
@@ -48,7 +48,9 @@ class LocalNotificationService {
   Future<void> initialize() async {
     if (_initialized) return;
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const darwinSettings = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -85,36 +87,32 @@ class LocalNotificationService {
     if (kIsWeb) return false;
 
     if (Platform.isAndroid) {
-      final android = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      final android = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
 
       final notificationGranted =
           await android?.requestNotificationsPermission() ?? true;
 
-      if (!notificationGranted) {
-        return false;
-      }
-
-      try {
-        await android?.requestExactAlarmsPermission();
-      } catch (error) {
-        debugPrint('[Notifications] exact alarm permission request skipped: $error');
-      }
-
-      return true;
+      return notificationGranted;
     }
 
     if (Platform.isIOS || Platform.isMacOS) {
-      final darwin = _plugin.resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>();
+      final darwin = _plugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
       final iosGranted = await darwin?.requestPermissions(
         alert: true,
         badge: true,
         sound: true,
       );
 
-      final mac = _plugin.resolvePlatformSpecificImplementation<
-          MacOSFlutterLocalNotificationsPlugin>();
+      final mac = _plugin
+          .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin
+          >();
       final macGranted = await mac?.requestPermissions(
         alert: true,
         badge: true,
@@ -140,32 +138,16 @@ class LocalNotificationService {
       deferToday: plan.deferToday,
     );
 
-    try {
-      await _plugin.zonedSchedule(
-        smartRecoveryReminderId,
-        plan.title,
-        plan.body,
-        when,
-        _notificationDetails(),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        matchDateTimeComponents: DateTimeComponents.time,
-        payload: plan.payload,
-      );
-    } catch (error, stackTrace) {
-      debugPrint('[Notifications] exact schedule failed, using inexact fallback: $error');
-      debugPrintStack(stackTrace: stackTrace);
-
-      await _plugin.zonedSchedule(
-        smartRecoveryReminderId,
-        plan.title,
-        plan.body,
-        when,
-        _notificationDetails(),
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        matchDateTimeComponents: DateTimeComponents.time,
-        payload: plan.payload,
-      );
-    }
+    await _plugin.zonedSchedule(
+      smartRecoveryReminderId,
+      plan.title,
+      plan.body,
+      when,
+      _notificationDetails(),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
+      payload: plan.payload,
+    );
 
     await const NotificationHistoryRepository().recordScheduled(
       notificationId: smartRecoveryReminderId,
@@ -221,36 +203,27 @@ class LocalNotificationService {
 
     await _plugin.cancel(scheduledTestNotificationId);
 
-    final scheduledAt = tz.TZDateTime.now(tz.local).add(const Duration(minutes: 2));
+    final scheduledAt = tz.TZDateTime.now(
+      tz.local,
+    ).add(const Duration(minutes: 2));
 
-    try {
-      await _plugin.zonedSchedule(
-        scheduledTestNotificationId,
-        'Scheduled reminder test',
-        'This notification was scheduled two minutes ago.',
-        scheduledAt,
-        _notificationDetails(),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        payload: 'posture_reset://settings/notifications/test',
-      );
-    } catch (error, stackTrace) {
-      debugPrint('[Notifications] exact scheduled test failed, using inexact fallback: $error');
-      debugPrintStack(stackTrace: stackTrace);
-      await _plugin.zonedSchedule(
-        scheduledTestNotificationId,
-        'Scheduled reminder test',
-        'This notification was scheduled two minutes ago.',
-        scheduledAt,
-        _notificationDetails(),
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        payload: 'posture_reset://settings/notifications/test',
-      );
-    }
+    await _plugin.zonedSchedule(
+      scheduledTestNotificationId,
+      'Scheduled reminder test',
+      'This notification was scheduled two minutes ago.',
+      scheduledAt,
+      _notificationDetails(),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      payload: 'posture_reset://settings/notifications/test',
+    );
 
-    await debugPrintPendingNotifications(source: 'scheduleTestNotificationInTwoMinutes');
+    await debugPrintPendingNotifications(
+      source: 'scheduleTestNotificationInTwoMinutes',
+    );
   }
 
-  Future<void> scheduleTestInTwoMinutes() => scheduleTestNotificationInTwoMinutes();
+  Future<void> scheduleTestInTwoMinutes() =>
+      scheduleTestNotificationInTwoMinutes();
 
   Future<void> scheduleDebugNotificationInTwoMinutes() =>
       scheduleTestNotificationInTwoMinutes();
@@ -266,32 +239,19 @@ class LocalNotificationService {
 
     final scheduledAt = tz.TZDateTime.now(tz.local).add(delay);
 
-    try {
-      await _plugin.zonedSchedule(
-        scheduledTestNotificationId,
-        'Scheduled reminder test',
-        'This was scheduled ${delay.inMinutes} minute(s) ago.',
-        scheduledAt,
-        _notificationDetails(),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        payload: 'posture_reset://settings/notifications/test',
-      );
-    } on PlatformException catch (error, stackTrace) {
-      debugPrint('[Notifications] exact diagnostic test failed: ${error.code} ${error.message}');
-      debugPrintStack(stackTrace: stackTrace);
+    await _plugin.zonedSchedule(
+      scheduledTestNotificationId,
+      'Scheduled reminder test',
+      'This was scheduled ${delay.inMinutes} minute(s) ago.',
+      scheduledAt,
+      _notificationDetails(),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      payload: 'posture_reset://settings/notifications/test',
+    );
 
-      await _plugin.zonedSchedule(
-        scheduledTestNotificationId,
-        'Scheduled reminder test',
-        'This was scheduled ${delay.inMinutes} minute(s) ago.',
-        scheduledAt,
-        _notificationDetails(),
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        payload: 'posture_reset://settings/notifications/test',
-      );
-    }
-
-    await debugPrintPendingNotifications(source: 'scheduleDiagnosticTestNotification');
+    await debugPrintPendingNotifications(
+      source: 'scheduleDiagnosticTestNotification',
+    );
   }
 
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() async {

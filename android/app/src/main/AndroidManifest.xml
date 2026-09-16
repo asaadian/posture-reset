@@ -4,9 +4,6 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <!-- Needed when using AndroidScheduleMode.exactAllowWhileIdle.
-         Do NOT use USE_EXACT_ALARM here unless you are ready for Play Store policy review. -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:label="Desk Workout"

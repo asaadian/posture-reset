@@ -6,9 +6,15 @@ import '../../access/domain/access_models.dart';
 import '../domain/recovery_program_models.dart';
 
 class SupabaseRecoveryProgramsRepository implements RecoveryProgramsRepository {
-  SupabaseRecoveryProgramsRepository(this._client);
+  SupabaseRecoveryProgramsRepository(
+    this._client, {
+    required String languageCode,
+  }) : _languageCode = languageCode.toLowerCase();
 
   final SupabaseClient _client;
+  final String _languageCode;
+
+  bool get _wantsGerman => _languageCode == 'de';
 
   static const String _programsTable = 'recovery_programs';
   static const String _programDaysTable = 'recovery_program_days';
@@ -31,7 +37,7 @@ class SupabaseRecoveryProgramsRepository implements RecoveryProgramsRepository {
     final rows = (response as List)
         .map(
           (item) => _RecoveryProgramRow.fromJson(
-            Map<String, dynamic>.from(item as Map),
+            _localizedProgramJson(Map<String, dynamic>.from(item as Map)),
           ),
         )
         .toList(growable: false);
@@ -61,7 +67,7 @@ class SupabaseRecoveryProgramsRepository implements RecoveryProgramsRepository {
     final dayRows = (daysResponse as List)
         .map(
           (item) => _RecoveryProgramDayRow.fromJson(
-            Map<String, dynamic>.from(item as Map),
+            _localizedProgramDayJson(Map<String, dynamic>.from(item as Map)),
           ),
         )
         .toList(growable: false);
@@ -70,7 +76,7 @@ class SupabaseRecoveryProgramsRepository implements RecoveryProgramsRepository {
     final sessionMap = await _loadSessionRefs(sessionIds);
 
     final program = _RecoveryProgramRow.fromJson(
-      Map<String, dynamic>.from(programResponse as Map),
+      _localizedProgramJson(Map<String, dynamic>.from(programResponse as Map)),
     );
 
     final days = dayRows
@@ -138,9 +144,66 @@ class SupabaseRecoveryProgramsRepository implements RecoveryProgramsRepository {
     final rows = response as List;
     if (rows.isEmpty) return null;
 
-    return _RecoveryProgramDashboardProgressRow.fromJson(
-      Map<String, dynamic>.from(rows.first as Map),
-    ).toModel();
+    final json = Map<String, dynamic>.from(rows.first as Map);
+    if (_wantsGerman) {
+      await _localizeDashboardProgressJson(json);
+    }
+
+    return _RecoveryProgramDashboardProgressRow.fromJson(json).toModel();
+  }
+
+  Future<void> _localizeDashboardProgressJson(
+    Map<String, dynamic> json,
+  ) async {
+    final programId = json['program_id']?.toString().trim() ?? '';
+    if (programId.isNotEmpty) {
+      final program = await _client
+          .from(_programsTable)
+          .select('title_de,subtitle_de')
+          .eq('id', programId)
+          .maybeSingle();
+      if (program != null) {
+        _preferLocalizedText(json, sourceValue: program['title_de'], target: 'title_fallback');
+        _preferLocalizedText(json, sourceValue: program['subtitle_de'], target: 'subtitle_fallback');
+      }
+    }
+
+    final dayId = json['current_program_day_id']?.toString().trim() ?? '';
+    if (dayId.isNotEmpty) {
+      final day = await _client
+          .from(_programDaysTable)
+          .select('title_de,focus_de')
+          .eq('id', dayId)
+          .maybeSingle();
+      if (day != null) {
+        _preferLocalizedText(json, sourceValue: day['title_de'], target: 'current_day_title_fallback');
+        _preferLocalizedText(json, sourceValue: day['focus_de'], target: 'current_day_focus_fallback');
+      }
+    }
+
+    final sessionId = json['current_session_id']?.toString().trim() ?? '';
+    if (sessionId.isNotEmpty) {
+      final session = await _client
+          .from(_sessionTemplatesTable)
+          .select('title_de')
+          .eq('id', sessionId)
+          .maybeSingle();
+      if (session != null) {
+        _preferLocalizedText(json, sourceValue: session['title_de'], target: 'current_session_title_fallback');
+      }
+    }
+  }
+
+  void _preferLocalizedText(
+    Map<String, dynamic> json, {
+    String? source,
+    Object? sourceValue,
+    required String target,
+  }) {
+    final value = sourceValue ?? (source == null ? null : json[source]);
+    if (value is String && value.trim().isNotEmpty) {
+      json[target] = value;
+    }
   }
 
   @override
@@ -206,7 +269,7 @@ class SupabaseRecoveryProgramsRepository implements RecoveryProgramsRepository {
 
     final response = await _client
         .from(_sessionTemplatesTable)
-        .select('id,title_key,title_fallback,duration_minutes,intensity,access_tier')
+        .select('id,title_key,title_fallback,title_de,duration_minutes,intensity,access_tier')
         .inFilter('id', sessionIds);
 
     final refs = <String, RecoveryProgramSessionRef>{};
@@ -216,7 +279,11 @@ class SupabaseRecoveryProgramsRepository implements RecoveryProgramsRepository {
       final ref = RecoveryProgramSessionRef(
         id: json['id'] as String? ?? '',
         titleKey: json['title_key'] as String? ?? '',
-        titleFallback: json['title_fallback'] as String? ?? '',
+        titleFallback: _localizedText(
+          json,
+          englishKey: 'title_fallback',
+          germanKey: 'title_de',
+        ),
         durationMinutes: _intOrDefault(json['duration_minutes'], 0),
         intensity: json['intensity'] as String? ?? 'light',
         accessTier: AccessTier.fromCode(json['access_tier'] as String?),
@@ -227,6 +294,57 @@ class SupabaseRecoveryProgramsRepository implements RecoveryProgramsRepository {
     }
 
     return refs;
+  }
+
+  Map<String, dynamic> _localizedProgramJson(Map<String, dynamic> json) {
+    if (!_wantsGerman) return json;
+
+    final localized = Map<String, dynamic>.from(json);
+    _preferLocalizedText(localized, source: 'title_de', target: 'title_fallback');
+    _preferLocalizedText(localized, source: 'subtitle_de', target: 'subtitle_fallback');
+    _preferLocalizedText(localized, source: 'short_description_de', target: 'short_description_fallback');
+    _preferLocalizedText(localized, source: 'long_description_de', target: 'long_description_fallback');
+    _preferLocalizedText(localized, source: 'program_goal_de', target: 'program_goal_fallback');
+    _preferLocalizedValue(localized, source: 'expected_outcomes_de', target: 'expected_outcomes');
+    return localized;
+  }
+
+  Map<String, dynamic> _localizedProgramDayJson(Map<String, dynamic> json) {
+    if (!_wantsGerman) return json;
+
+    final localized = Map<String, dynamic>.from(json);
+    _preferLocalizedText(localized, source: 'title_de', target: 'title_fallback');
+    _preferLocalizedText(localized, source: 'focus_de', target: 'focus_fallback');
+    _preferLocalizedText(localized, source: 'phase_title_de', target: 'phase_title');
+    _preferLocalizedText(localized, source: 'objective_de', target: 'objective');
+    _preferLocalizedText(localized, source: 'why_today_de', target: 'why_today');
+    _preferLocalizedText(localized, source: 'expected_result_de', target: 'expected_result');
+    _preferLocalizedText(localized, source: 'therapist_note_de', target: 'therapist_note');
+    _preferLocalizedText(localized, source: 'tomorrow_preview_de', target: 'tomorrow_preview');
+    _preferLocalizedText(localized, source: 'completion_message_de', target: 'completion_message');
+    _preferLocalizedText(localized, source: 'adaptive_rule_de', target: 'adaptive_rule');
+    return localized;
+  }
+
+  String _localizedText(
+    Map<String, dynamic> json, {
+    required String englishKey,
+    required String germanKey,
+  }) {
+    if (_wantsGerman) {
+      final german = json[germanKey]?.toString().trim() ?? '';
+      if (german.isNotEmpty) return german;
+    }
+    return json[englishKey]?.toString().trim() ?? '';
+  }
+
+  void _preferLocalizedValue(
+    Map<String, dynamic> json, {
+    required String source,
+    required String target,
+  }) {
+    final value = json[source];
+    if (value != null) json[target] = value;
   }
 
   RecoveryProgramSummary _mapSummary(_RecoveryProgramRow row) {

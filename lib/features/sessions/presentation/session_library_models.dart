@@ -4,18 +4,12 @@ enum SessionLibraryCategory {
   all,
   neckShoulders,
   upperBack,
-  lowerBack,
-  wristsForearms,
-  focus,
-  recovery,
-  quietDesk,
+  lowerBackHips,
+  wristsHands,
 }
 
 enum SessionLibrarySort {
   recommended,
   durationShortest,
-  durationLongest,
-  intensityLowest,
-  intensityHighest,
   alphabetical,
 }

@@ -121,8 +121,6 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                         child: _SearchSortBar(
                           searchQuery: _searchQuery,
                           selectedSort: _selectedSort,
-                          visibleCount: visibleSessions.length,
-                          totalCount: allSessions.length,
                           onSearchChanged: (value) {
                             setState(() => _searchQuery = value);
                           },
@@ -190,7 +188,11 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
       return true;
     }).toList(growable: true);
 
-    result.sort((a, b) => _compareSessions(a, b, _selectedSort));
+    // The repository already returns sessions in Supabase sort_order.
+    // Keep that curated order for the default "Recommended" view.
+    if (_selectedSort != SessionLibrarySort.recommended) {
+      result.sort((a, b) => _compareSessions(a, b, _selectedSort));
+    }
     return result;
   }
 
@@ -205,7 +207,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
         return _targetsAny(session, const ['neck', 'shoulder', 'shoulders']);
       case SessionLibraryCategory.upperBack:
         return _targetsAny(session, const ['upper_back', 'thoracic', 'chest']);
-      case SessionLibraryCategory.lowerBack:
+      case SessionLibraryCategory.lowerBackHips:
         return _targetsAny(session, const [
           'lower_back',
           'low_back',
@@ -217,7 +219,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
           'hips_glutes',
           'hamstrings',
         ]);
-      case SessionLibraryCategory.wristsForearms:
+      case SessionLibraryCategory.wristsHands:
         return _targetsAny(session, const [
           'wrists',
           'wrist',
@@ -228,13 +230,6 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
           'fingers',
           'finger',
         ]);
-      case SessionLibraryCategory.focus:
-        return session.goals.contains(SessionGoal.focusPrep);
-      case SessionLibraryCategory.recovery:
-        return session.goals.contains(SessionGoal.recovery) ||
-            session.goals.contains(SessionGoal.painRelief);
-      case SessionLibraryCategory.quietDesk:
-        return session.environmentCompatibility.quietFriendly;
     }
   }
 
@@ -312,41 +307,10 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
     switch (sort) {
       case SessionLibrarySort.durationShortest:
         return a.durationMinutes.compareTo(b.durationMinutes);
-      case SessionLibrarySort.durationLongest:
-        return b.durationMinutes.compareTo(a.durationMinutes);
-      case SessionLibrarySort.intensityLowest:
-        return _intensityRank(a.intensity).compareTo(_intensityRank(b.intensity));
-      case SessionLibrarySort.intensityHighest:
-        return _intensityRank(b.intensity).compareTo(_intensityRank(a.intensity));
       case SessionLibrarySort.alphabetical:
         return a.titleFallback.toLowerCase().compareTo(b.titleFallback.toLowerCase());
       case SessionLibrarySort.recommended:
-        final aScore = _recommendationScore(a);
-        final bScore = _recommendationScore(b);
-        if (aScore != bScore) return bScore.compareTo(aScore);
-        return a.durationMinutes.compareTo(b.durationMinutes);
-    }
-  }
-
-  int _recommendationScore(SessionSummary session) {
-    var score = 0;
-    if (session.environmentCompatibility.deskFriendly) score += 2;
-    if (session.goals.contains(SessionGoal.painRelief)) score += 2;
-    if (session.goals.contains(SessionGoal.recovery)) score += 1;
-    if (session.isBeginnerFriendly) score += 1;
-    return score;
-  }
-
-  int _intensityRank(SessionIntensity value) {
-    switch (value) {
-      case SessionIntensity.gentle:
         return 0;
-      case SessionIntensity.light:
-        return 1;
-      case SessionIntensity.moderate:
-        return 2;
-      case SessionIntensity.strong:
-        return 3;
     }
   }
 }
@@ -514,7 +478,7 @@ class _MiniProgramPoster extends StatelessWidget {
                             height: 0.9,
                           ),
                         ),
-                        const SizedBox(height: 7),
+                        const SizedBox(height: 5),
                       ],
                       SizedBox(
                         width: isActive ? 190 : 154,
@@ -550,8 +514,6 @@ class _SearchSortBar extends StatefulWidget {
   const _SearchSortBar({
     required this.searchQuery,
     required this.selectedSort,
-    required this.visibleCount,
-    required this.totalCount,
     required this.onSearchChanged,
     required this.onSearchClear,
     required this.onSortChanged,
@@ -559,8 +521,6 @@ class _SearchSortBar extends StatefulWidget {
 
   final String searchQuery;
   final SessionLibrarySort selectedSort;
-  final int visibleCount;
-  final int totalCount;
   final ValueChanged<String> onSearchChanged;
   final VoidCallback onSearchClear;
   final ValueChanged<SessionLibrarySort> onSortChanged;
@@ -608,28 +568,6 @@ class _SearchSortBarState extends State<_SearchSortBar> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SectionBlockHeader(
-          icon: Icons.self_improvement_rounded,
-          title: t.get('training_sessions_section_title', fallback: 'Sessions'),
-          subtitle: t.get(
-            'training_sessions_section_subtitle',
-            fallback: 'Single recovery sessions you can start anytime.',
-          ),
-          trailing: Text(
-            t
-                .get(
-                  'sessions_visible_count',
-                  fallback: '{visible}/{total}',
-                )
-                .replaceAll('{visible}', widget.visibleCount.toString())
-                .replaceAll('{total}', widget.totalCount.toString()),
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: colors.onSurfaceVariant,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
         Row(
           children: [
             Expanded(
@@ -695,8 +633,8 @@ const List<SessionLibraryCategory> _visibleSessionCategories = [
   SessionLibraryCategory.all,
   SessionLibraryCategory.neckShoulders,
   SessionLibraryCategory.upperBack,
-  SessionLibraryCategory.lowerBack,
-  SessionLibraryCategory.wristsForearms,
+  SessionLibraryCategory.lowerBackHips,
+  SessionLibraryCategory.wristsHands,
 ];
 
 class _CategoryRail extends StatelessWidget {
@@ -711,12 +649,12 @@ class _CategoryRail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 104,
+      height: 92,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 2),
+        padding: EdgeInsets.zero,
         itemCount: _visibleSessionCategories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 14),
+        separatorBuilder: (_, __) => const SizedBox(width: 4),
         itemBuilder: (context, index) {
           final category = _visibleSessionCategories[index];
           return _CategoryStoryItem(
@@ -761,15 +699,15 @@ class _CategoryStoryItem extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
         child: SizedBox(
-          width: 72,
+          width: 64,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               AnimatedContainer(
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeOutCubic,
-                width: selected ? 68 : 64,
-                height: selected ? 68 : 64,
+                width: selected ? 58 : 56,
+                height: selected ? 58 : 56,
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -809,8 +747,8 @@ class _CategoryStoryItem extends StatelessWidget {
                   child: ClipOval(
                     child: Image.asset(
                       imagePath,
-                      width: 56,
-                      height: 56,
+                      width: 48,
+                      height: 48,
                       fit: BoxFit.cover,
                       filterQuality: FilterQuality.high,
                       errorBuilder: (context, error, stackTrace) {
@@ -862,16 +800,10 @@ String _categoryImagePath(SessionLibraryCategory category) {
       return 'assets/images/filters/neck_shoulders.png';
     case SessionLibraryCategory.upperBack:
       return 'assets/images/filters/upper_back.png';
-    case SessionLibraryCategory.lowerBack:
+    case SessionLibraryCategory.lowerBackHips:
       return 'assets/images/filters/lower_back_hips.png';
-    case SessionLibraryCategory.wristsForearms:
+    case SessionLibraryCategory.wristsHands:
       return 'assets/images/filters/wrists_hands.png';
-    case SessionLibraryCategory.focus:
-      return 'assets/images/filters/focus.png';
-    case SessionLibraryCategory.recovery:
-      return 'assets/images/filters/recovery.png';
-    case SessionLibraryCategory.quietDesk:
-      return 'assets/images/filters/quiet_desk.png';
   }
 }
 
@@ -883,16 +815,10 @@ IconData _categoryFallbackIcon(SessionLibraryCategory category) {
       return Icons.accessibility_new_rounded;
     case SessionLibraryCategory.upperBack:
       return Icons.airline_seat_recline_normal_rounded;
-    case SessionLibraryCategory.lowerBack:
+    case SessionLibraryCategory.lowerBackHips:
       return Icons.self_improvement_rounded;
-    case SessionLibraryCategory.wristsForearms:
+    case SessionLibraryCategory.wristsHands:
       return Icons.pan_tool_alt_rounded;
-    case SessionLibraryCategory.focus:
-      return Icons.center_focus_strong_rounded;
-    case SessionLibraryCategory.recovery:
-      return Icons.spa_rounded;
-    case SessionLibraryCategory.quietDesk:
-      return Icons.volume_off_rounded;
   }
 }
 
@@ -1581,16 +1507,10 @@ String _categoryLabel(BuildContext context, SessionLibraryCategory category) {
       return t.get('sessions_category_neck_shoulders', fallback: 'Neck & shoulders');
     case SessionLibraryCategory.upperBack:
       return t.get('sessions_category_upper_back', fallback: 'Upper back');
-    case SessionLibraryCategory.lowerBack:
-      return t.get('sessions_category_lower_back', fallback: 'Lower back / hips');
-    case SessionLibraryCategory.wristsForearms:
-      return t.get('sessions_category_wrists', fallback: 'Wrists / hands');
-    case SessionLibraryCategory.focus:
-      return t.get('sessions_category_focus', fallback: 'Focus');
-    case SessionLibraryCategory.recovery:
-      return t.get('sessions_category_recovery', fallback: 'Recovery');
-    case SessionLibraryCategory.quietDesk:
-      return t.get('sessions_category_quiet', fallback: 'Quiet');
+    case SessionLibraryCategory.lowerBackHips:
+      return t.get('sessions_category_lower_back_hips', fallback: 'Lower back & hips');
+    case SessionLibraryCategory.wristsHands:
+      return t.get('sessions_category_wrists_hands', fallback: 'Wrists & hands');
   }
 }
 
@@ -1598,15 +1518,9 @@ String _sortLabel(BuildContext context, SessionLibrarySort sort) {
   final t = AppText.of(context);
   switch (sort) {
     case SessionLibrarySort.recommended:
-      return t.get('sessions_sort_recommended', fallback: 'Recommended');
+      return t.get('sessions_sort_recommended', fallback: 'Default order');
     case SessionLibrarySort.durationShortest:
       return t.get('sessions_sort_shortest', fallback: 'Duration: shortest');
-    case SessionLibrarySort.durationLongest:
-      return t.get('sessions_sort_longest', fallback: 'Duration: longest');
-    case SessionLibrarySort.intensityLowest:
-      return t.get('sessions_sort_low_intensity', fallback: 'Intensity: low');
-    case SessionLibrarySort.intensityHighest:
-      return t.get('sessions_sort_high_intensity', fallback: 'Intensity: high');
     case SessionLibrarySort.alphabetical:
       return t.get('sessions_sort_alpha', fallback: 'Alphabetical');
   }
@@ -1616,15 +1530,9 @@ String _sortShortLabel(BuildContext context, SessionLibrarySort sort) {
   final t = AppText.of(context);
   switch (sort) {
     case SessionLibrarySort.recommended:
-      return t.get('sessions_sort_short_recommended', fallback: 'Best');
+      return t.get('sessions_sort_short_recommended', fallback: 'Default');
     case SessionLibrarySort.durationShortest:
       return t.get('sessions_sort_short_shortest', fallback: 'Shortest');
-    case SessionLibrarySort.durationLongest:
-      return t.get('sessions_sort_short_longest', fallback: 'Longest');
-    case SessionLibrarySort.intensityLowest:
-      return t.get('sessions_sort_short_low', fallback: 'Light');
-    case SessionLibrarySort.intensityHighest:
-      return t.get('sessions_sort_short_high', fallback: 'Strong');
     case SessionLibrarySort.alphabetical:
       return t.get('sessions_sort_short_az', fallback: 'A–Z');
   }

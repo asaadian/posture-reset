@@ -8,9 +8,15 @@ import '../domain/dashboard_repository.dart';
 import '../domain/dashboard_snapshot.dart';
 
 class DashboardRepositoryImpl implements DashboardRepository {
-  DashboardRepositoryImpl(this._client);
+  DashboardRepositoryImpl(
+    this._client, {
+    required String languageCode,
+  }) : _languageCode = languageCode.toLowerCase();
 
   final SupabaseClient _client;
+  final String _languageCode;
+
+  bool get _wantsGerman => _languageCode == 'de';
 
   Future<List<Map<String, dynamic>>> _safeSelectList(
     String label,
@@ -114,12 +120,16 @@ class DashboardRepositoryImpl implements DashboardRepository {
       final templatesRows = await _safeSelectList(
         'session_templates',
         () => _client.from('session_templates').select(
-              'id, title_key, title_fallback, duration_minutes, access_tier, session_level_tag',
+              'id, title_key, title_fallback, title_de, duration_minutes, access_tier, session_level_tag',
             ),
       );  
 
       final templateById = <String, Map<String, dynamic>>{};
       for (final row in templatesRows) {
+        if (_wantsGerman) {
+          final titleDe = row['title_de']?.toString().trim() ?? '';
+          if (titleDe.isNotEmpty) row['title_fallback'] = titleDe;
+        }
         final rawId = row['id'];
         if (rawId is String && rawId.trim().isNotEmpty) {
           templateById[rawId] = row;

@@ -31,20 +31,49 @@ class NotificationPermissionPromptGate extends ConsumerStatefulWidget {
 
 class _NotificationPermissionPromptGateState
     extends ConsumerState<NotificationPermissionPromptGate> {
-  static const String _askedKeyPrefix = 'notifications.permission_prompt_asked_v4.';
+  static const String _askedKeyPrefix = 'notifications.permission_prompt_asked_v5.';
   bool _dialogOpen = false;
   String? _lastPromptedUserId;
+  String? _promptScheduledForUserId;
 
   @override
   Widget build(BuildContext context) {
     ref.listen(currentUserProvider, (previous, next) {
       if (next == null) return;
       if (previous?.id == next.id && _lastPromptedUserId == next.id) return;
+      if (_promptScheduledForUserId == next.id) return;
 
+      _promptScheduledForUserId = next.id;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        unawaited(_maybeAskForNotifications(userId: next.id));
+        unawaited(
+          _maybeAskForNotifications(userId: next.id).whenComplete(() {
+            if (_promptScheduledForUserId == next.id) {
+              _promptScheduledForUserId = null;
+            }
+          }),
+        );
       });
     });
+
+    // The authenticated user can already exist before this gate is mounted.
+    // In that case ref.listen does not receive an initial change event, so the
+    // first-install permission prompt was silently skipped. Check the current
+    // value as well and keep the existing per-user prompt guard intact.
+    final currentUser = ref.watch(currentUserProvider);
+    if (currentUser != null &&
+        _lastPromptedUserId != currentUser.id &&
+        _promptScheduledForUserId != currentUser.id) {
+      _promptScheduledForUserId = currentUser.id;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(
+          _maybeAskForNotifications(userId: currentUser.id).whenComplete(() {
+            if (_promptScheduledForUserId == currentUser.id) {
+              _promptScheduledForUserId = null;
+            }
+          }),
+        );
+      });
+    }
 
     return widget.child;
   }

@@ -18,6 +18,15 @@ class AppEnv {
     defaultValue: 'com.weglabs.posturereset',
   );
 
+
+  /// OAuth 2.0 Web client ID from Google Cloud.
+  /// Required by native Google Sign-In so Google can issue an ID token
+  /// whose audience is accepted by Supabase Auth.
+  static const String googleWebClientId = String.fromEnvironment(
+    'GOOGLE_WEB_CLIENT_ID',
+    defaultValue: '',
+  );
+
   static const String coreAccessProductId = String.fromEnvironment(
     'CORE_ACCESS_PRODUCT_ID',
     defaultValue: 'core_access_lifetime',

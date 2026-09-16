@@ -7,9 +7,15 @@ import '../domain/insights_repository.dart';
 import '../domain/insights_snapshot.dart';
 
 class InsightsRepositoryImpl implements InsightsRepository {
-  InsightsRepositoryImpl(this._client);
+  InsightsRepositoryImpl(
+    this._client, {
+    required String languageCode,
+  }) : _languageCode = languageCode.toLowerCase();
 
   final SupabaseClient _client;
+  final String _languageCode;
+
+  bool get _wantsGerman => _languageCode == 'de';
 
   Future<List<Map<String, dynamic>>> _safeSelectList(
     String label,
@@ -129,7 +135,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
     final templatesRows = await _safeSelectList(
       'session_templates',
       () => _client.from('session_templates').select(
-            'id, title_key, title_fallback, duration_minutes, pain_targets, session_level_tag, access_tier, session_quality',
+            'id, title_key, title_fallback, title_de, duration_minutes, pain_targets, session_level_tag, access_tier, session_quality',
           ),
     );
 
@@ -144,6 +150,13 @@ class InsightsRepositoryImpl implements InsightsRepository {
       templatesRows: templatesRows,
       stepTargetRows: stepTargetRows,
     );
+
+    if (_wantsGerman) {
+      for (final row in templatesRows) {
+        final titleDe = row['title_de']?.toString().trim() ?? '';
+        if (titleDe.isNotEmpty) row['title_fallback'] = titleDe;
+      }
+    }
 
     final templateById = <String, Map<String, dynamic>>{
       for (final row in templatesRows)

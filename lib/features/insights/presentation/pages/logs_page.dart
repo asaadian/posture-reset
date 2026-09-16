@@ -551,7 +551,7 @@ class _InsightLogTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  log.title,
+                  AppText.get(context, key: 'insight_log_${log.id}_title', fallback: log.title),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleSmall?.copyWith(
@@ -562,7 +562,7 @@ class _InsightLogTile extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  log.body,
+                  AppText.get(context, key: 'insight_log_${log.id}_body', fallback: log.body),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(

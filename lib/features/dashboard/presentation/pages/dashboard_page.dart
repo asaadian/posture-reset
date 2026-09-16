@@ -22,6 +22,7 @@ import '../../../programs/application/recovery_program_providers.dart';
 import '../../../programs/domain/recovery_program_models.dart';
 import '../../../sessions/application/sessions_providers.dart';
 import '../../../sessions/domain/session_models.dart';
+import '../../../sessions/presentation/widgets/session_visual_asset.dart';
 
 final _dashboardSavedSessionsProvider =
     FutureProvider.autoDispose<List<SessionSummary>>((ref) async {
@@ -112,11 +113,10 @@ class DashboardPage extends ConsumerWidget {
     final user = ref.watch(currentUserProvider);
     final profileAsync = ref.watch(currentUserProfileProvider);
     final accessAsync = ref.watch(accessSnapshotProvider);
-    final programsAsync = ref.watch(recoveryProgramSummariesProvider);
     final activeProgramAsync =
         ref.watch(activeRecoveryProgramDashboardProgressProvider);
+    final programSummariesAsync = ref.watch(recoveryProgramSummariesProvider);
     final savedSessionsAsync = ref.watch(_dashboardSavedSessionsProvider);
-    final savedIdsAsync = ref.watch(savedSessionIdsProvider);
     final sessionSummariesAsync = ref.watch(sessionSummariesProvider);
     final dashboardAsync = ref.watch(dashboardControllerProvider);
 
@@ -128,21 +128,17 @@ class DashboardPage extends ConsumerWidget {
       data: (value) => value,
       orElse: () => AccessSnapshot.guest,
     );
-    final programs = programsAsync.maybeWhen(
-      data: (value) => value,
-      orElse: () => const <RecoveryProgramSummary>[],
-    );
     final activeProgram = activeProgramAsync.maybeWhen(
       data: (value) => value,
       orElse: () => null,
     );
+    final programs = programSummariesAsync.maybeWhen(
+      data: (value) => value,
+      orElse: () => const <RecoveryProgramSummary>[],
+    );
     final savedSessions = savedSessionsAsync.maybeWhen(
       data: (value) => value,
       orElse: () => const <SessionSummary>[],
-    );
-    final savedIds = savedIdsAsync.maybeWhen(
-      data: (value) => value,
-      orElse: () => const <String>{},
     );
     final allSessions = sessionSummariesAsync.maybeWhen(
       data: (value) => value,
@@ -214,35 +210,73 @@ class DashboardPage extends ConsumerWidget {
               ResponsiveContentSection(
                 spacing: 16,
                 children: [
-                  _ProgramHeroSection(
-                    programs: programs,
-                    activeProgram: activeProgram,
-                  ),
                   dashboardAsync.maybeWhen(
-                    data: (snapshot) => _RecoveryCommandDeck(
-                      snapshot: snapshot,
-                      activeProgram: activeProgram,
-                    ),
-                    orElse: () => _DashboardSnapshotBlock(
+                    data: (snapshot) {
+                      final isNewUser = !snapshot.hasContent &&
+                          (activeProgram == null || activeProgram.isCompleted);
+                      if (isNewUser) {
+                        return _DashboardNewUserHome(
+                          programs: programs,
+                          sessions: recommendedSessions.take(3).toList(growable: false),
+                          showPremium: !accessSnapshot.hasCoreAccess,
+                        );
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _DashboardPrimaryAction(
+                            dashboardAsync: dashboardAsync,
+                            activeProgram: activeProgram,
+                            fallbackSession: recommendedSessions.isEmpty
+                                ? null
+                                : recommendedSessions.first,
+                          ),
+                          const SizedBox(height: 16),
+                          _RecoveryStatusStrip(snapshot: snapshot),
+                          if (activeProgram != null && !activeProgram.isCompleted) ...[
+                            const SizedBox(height: 16),
+                            _ActiveProgramCompactCard(program: activeProgram),
+                          ],
+                          if (recommendedSessions.isNotEmpty) ...[
+                            const SizedBox(height: 16),
+                            _DashboardVisualSessions(
+                              sessions: recommendedSessions.take(3).toList(growable: false),
+                            ),
+                          ],
+                          if (snapshot.recentRuns.isNotEmpty) ...[
+                            const SizedBox(height: 16),
+                            _RecentRunsSection(
+                              runs: snapshot.recentRuns.take(1).toList(growable: false),
+                            ),
+                          ],
+                          if (!accessSnapshot.hasCoreAccess) ...[
+                            const SizedBox(height: 16),
+                            const _DashboardPremiumShowcase(),
+                          ],
+                        ],
+                      );
+                    },
+                    loading: () => _DashboardPrimaryAction(
                       dashboardAsync: dashboardAsync,
                       activeProgram: activeProgram,
-                      accessSnapshot: accessSnapshot,
+                      fallbackSession: recommendedSessions.isEmpty
+                          ? null
+                          : recommendedSessions.first,
+                    ),
+                    error: (_, __) => _DashboardNewUserHome(
+                      programs: programs,
+                      sessions: recommendedSessions.take(3).toList(growable: false),
+                      showPremium: !accessSnapshot.hasCoreAccess,
+                    ),
+                    orElse: () => _DashboardPrimaryAction(
+                      dashboardAsync: dashboardAsync,
+                      activeProgram: activeProgram,
+                      fallbackSession: recommendedSessions.isEmpty
+                          ? null
+                          : recommendedSessions.first,
                     ),
                   ),
-                  _MomentumSection(
-                    activeProgram: activeProgram,
-                    savedSessionCount: savedIds.length,
-                  ),
-                  _RecommendedTodaySection(sessions: recommendedSessions),
-                  dashboardAsync.maybeWhen(
-                    data: (snapshot) => _RecentRunsSection(runs: snapshot.recentRuns),
-                    orElse: () => const SizedBox.shrink(),
-                  ),
-                  _BodyFocusCard(),
-                  if (savedSessions.isNotEmpty)
-                    _SavedSessionsSection(sessions: savedSessions),
-                  if (!accessSnapshot.hasCoreAccess)
-                    const _PremiumCompactCard(),
                 ],
               ),
             ],
@@ -325,6 +359,582 @@ String _dashboardGreeting({
   return name.isEmpty ? greeting : '$greeting, $name';
 }
 
+
+
+class _DashboardNewUserHome extends StatelessWidget {
+  const _DashboardNewUserHome({
+    required this.programs,
+    required this.sessions,
+    required this.showPremium,
+  });
+
+  final List<RecoveryProgramSummary> programs;
+  final List<SessionSummary> sessions;
+  final bool showPremium;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppText.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _DashboardQuickFixDiscovery(
+          title: t.get(
+            'dashboard_new_quick_fix_title',
+            fallback: 'Where do you feel tension?',
+          ),
+          body: t.get(
+            'dashboard_new_quick_fix_body',
+            fallback: 'Tap a body area and get the best matching reset in seconds.',
+          ),
+        ),
+        const SizedBox(height: 18),
+        _ProgramDiscoveryCard(
+          featuredProgram: programs.isEmpty ? null : programs.first,
+          programCount: programs.length,
+          onTap: () => context.pushNamed('recovery-programs'),
+        ),
+        if (sessions.isNotEmpty) ...[
+          const SizedBox(height: 18),
+          _DashboardVisualSessions(sessions: sessions),
+        ],
+        if (showPremium) ...[
+          const SizedBox(height: 18),
+          const _DashboardPremiumShowcase(),
+        ],
+      ],
+    );
+  }
+}
+
+class _DashboardQuickFixDiscovery extends StatelessWidget {
+  const _DashboardQuickFixDiscovery({
+    required this.title,
+    required this.body,
+  });
+
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => context.goNamed('quick-fix'),
+        borderRadius: BorderRadius.circular(32),
+        child: Ink(
+          height: 236,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(32),
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [colors.primaryContainer.withValues(alpha: 0.70), colors.surfaceContainerHigh]
+                  : [colors.primaryContainer.withValues(alpha: 0.72), colors.surface],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            border: Border.all(color: colors.primary.withValues(alpha: 0.18)),
+            boxShadow: [
+              BoxShadow(
+                color: colors.shadow.withValues(alpha: isDark ? 0.18 : 0.09),
+                blurRadius: 28,
+                offset: const Offset(0, 14),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(32),
+            child: Stack(
+              children: [
+                Positioned(
+                  right: -8,
+                  top: 8,
+                  bottom: -16,
+                  width: 168,
+                  child: Opacity(
+                    opacity: isDark ? 0.82 : 0.92,
+                    child: Image.asset(
+                      'assets/images/body_map/front.png',
+                      fit: BoxFit.contain,
+                      alignment: Alignment.bottomCenter,
+                      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 73,
+                  top: 76,
+                  child: _QuickFixPulse(color: colors.primary),
+                ),
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          colors.surface.withValues(alpha: isDark ? 0.94 : 0.92),
+                          colors.surface.withValues(alpha: 0.58),
+                          Colors.transparent,
+                        ],
+                        stops: const [0, 0.52, 1],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: SizedBox(
+                    width: 230,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: colors.primary.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            AppText.of(context).get(
+                              'dashboard_quick_fix_badge',
+                              fallback: 'QUICK FIX',
+                            ),
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: colors.primary,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.7,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            height: 1.0,
+                            letterSpacing: -0.4,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          body,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colors.onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
+                            height: 1.22,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              AppText.of(context).get(
+                                'dashboard_quick_fix_cta',
+                                fallback: 'Choose an area',
+                              ),
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: colors.primary,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Icon(Icons.arrow_forward_rounded, color: colors.primary, size: 19),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickFixPulse extends StatelessWidget {
+  const _QuickFixPulse({required this.color});
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withValues(alpha: 0.12),
+        border: Border.all(color: color.withValues(alpha: 0.30), width: 2),
+      ),
+      alignment: Alignment.center,
+      child: Container(
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+      ),
+    );
+  }
+}
+
+class _DashboardPrimaryAction extends StatelessWidget {
+  const _DashboardPrimaryAction({
+    required this.dashboardAsync,
+    required this.activeProgram,
+    required this.fallbackSession,
+  });
+
+  final AsyncValue<DashboardSnapshot> dashboardAsync;
+  final RecoveryProgramDashboardProgress? activeProgram;
+  final SessionSummary? fallbackSession;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final t = AppText.of(context);
+    final snapshot = dashboardAsync.maybeWhen(data: (value) => value, orElse: () => null);
+    final next = snapshot?.nextSession;
+    final sessionId = next?.sessionId ??
+        (activeProgram?.hasCurrentSession == true ? activeProgram!.currentSessionId : null) ??
+        fallbackSession?.id;
+    final title = next != null
+        ? t.get(next.titleKey, fallback: next.titleFallback)
+        : activeProgram?.hasCurrentSession == true
+            ? t.get(
+                activeProgram!.currentSessionTitleKey ?? '',
+                fallback: activeProgram!.currentSessionTitleFallback ?? 'Continue session',
+              )
+            : fallbackSession != null
+                ? t.get(fallbackSession!.titleKey, fallback: fallbackSession!.titleFallback)
+                : t.get('dashboard_quick_fix_title', fallback: 'Find your reset');
+    final minutes = next?.durationMinutes ??
+        activeProgram?.currentSessionDurationMinutes ??
+        fallbackSession?.durationMinutes;
+    final isResume = next?.isActiveRun == true;
+
+    void open() {
+      if (next != null) {
+        context.pushNamed(
+          isResume ? 'session-player' : 'session-detail',
+          pathParameters: {'id': next.sessionId},
+          queryParameters: isResume ? {'source': next.entrySource.dbValue} : const {},
+        );
+      } else if (activeProgram?.hasCurrentSession == true) {
+        context.pushNamed(
+          'session-detail',
+          pathParameters: {'id': activeProgram!.currentSessionId!},
+        );
+      } else if (fallbackSession != null) {
+        context.pushNamed('session-detail', pathParameters: {'id': fallbackSession!.id});
+      } else {
+        context.goNamed('quick-fix');
+      }
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: open,
+        borderRadius: BorderRadius.circular(30),
+        child: Ink(
+          height: 232,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: colors.surface,
+            border: Border.all(color: colors.outlineVariant.withValues(alpha: 0.55)),
+            boxShadow: [
+              BoxShadow(
+                color: colors.shadow.withValues(alpha: 0.08),
+                blurRadius: 26,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (sessionId != null)
+                SessionVisualStage(
+                  sessionId: sessionId,
+                  height: 232,
+                  borderRadius: 30,
+                  imageAlignment: Alignment.centerRight,
+                  imageScale: 1.08,
+                )
+              else
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    gradient: LinearGradient(
+                      colors: [colors.primaryContainer, colors.surface],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                ),
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  gradient: LinearGradient(
+                    colors: [
+                      colors.surface.withValues(alpha: 0.98),
+                      colors.surface.withValues(alpha: 0.82),
+                      colors.surface.withValues(alpha: 0.08),
+                    ],
+                    stops: const [0, 0.48, 1],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                    width: 220,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          t.get('dashboard_for_you_now', fallback: 'For you now'),
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: colors.primary,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          title,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            height: 1.02,
+                          ),
+                        ),
+                        if (minutes != null) ...[
+                          const SizedBox(height: 10),
+                          Text(
+                            '$minutes ${t.get('session_duration_unit_min', fallback: 'min')}',
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: colors.onSurfaceVariant,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                        const Spacer(),
+                        FilledButton.icon(
+                          onPressed: open,
+                          icon: Icon(isResume ? Icons.play_arrow_rounded : Icons.arrow_forward_rounded),
+                          label: Text(
+                            isResume
+                                ? t.get('dashboard_continue_session', fallback: 'Continue')
+                                : t.get('dashboard_start_session', fallback: 'Start'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ActiveProgramCompactCard extends StatelessWidget {
+  const _ActiveProgramCompactCard({required this.program});
+
+  final RecoveryProgramDashboardProgress program;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final t = AppText.of(context);
+    final dayTitle = program.currentDayTitleFallback?.trim();
+    final programTitle = t.get(
+      program.titleKey,
+      fallback: program.titleFallback,
+    );
+
+    Widget content() {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    t.get('dashboard_active_program_title', fallback: 'Your program'),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: colors.primary.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '${program.completedDayCount}/${program.durationDays}',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: colors.primary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 9),
+            Text(
+              dayTitle?.isNotEmpty == true
+                  ? dayTitle!
+                  : t.get('dashboard_continue_program', fallback: 'Continue your program'),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: colors.onSurface,
+                fontWeight: FontWeight.w900,
+                height: 1.08,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ModernProgressTrack(value: program.progressFraction, height: 9),
+            const SizedBox(height: 10),
+            Text(
+              '${t.get('dashboard_day_label', fallback: 'Day')} ${program.currentDay}',
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: colors.onSurfaceVariant,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget image({required double height}) {
+      return SizedBox(
+        height: height,
+        width: double.infinity,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            _RemoteProgramCoverImage(
+              programId: program.programId,
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              fallbackBuilder: (_) => DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      colors.primary.withValues(alpha: 0.20),
+                      colors.tertiary.withValues(alpha: 0.12),
+                    ],
+                  ),
+                ),
+                child: Icon(Icons.route_rounded, color: colors.primary, size: 42),
+              ),
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.34),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
+            Positioned(
+              left: 14,
+              right: 14,
+              bottom: 12,
+              child: Text(
+                programTitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  height: 1.04,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(26),
+        onTap: () => context.pushNamed(
+          'recovery-program-detail',
+          pathParameters: {'id': program.programId},
+        ),
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(26),
+            color: colors.surface,
+            border: Border.all(
+              color: colors.outlineVariant.withValues(alpha: 0.55),
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(26),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth >= 620;
+                if (wide) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(width: 220, child: image(height: 176)),
+                      Expanded(child: content()),
+                    ],
+                  );
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    image(height: 132),
+                    content(),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _DashboardNotificationAction extends ConsumerWidget {
   const _DashboardNotificationAction({required this.userId});
@@ -1472,6 +2082,100 @@ class _SavedSessionTile extends StatelessWidget {
   }
 }
 
+class _DashboardVisualSessions extends StatelessWidget {
+  const _DashboardVisualSessions({required this.sessions});
+
+  final List<SessionSummary> sessions;
+
+  @override
+  Widget build(BuildContext context) {
+    if (sessions.isEmpty) return const SizedBox.shrink();
+    final t = AppText.of(context);
+    final width = MediaQuery.sizeOf(context).width;
+    final cardWidth = width >= 760 ? 240.0 : 184.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionTitleRow(
+          title: t.get('dashboard_recommended_title', fallback: 'Recommended today'),
+          actionLabel: t.get('dashboard_see_all', fallback: 'See all'),
+          onAction: () => context.goNamed('sessions'),
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 214,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: sessions.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            itemBuilder: (context, index) {
+              final session = sessions[index];
+              return SizedBox(
+                width: cardWidth,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(24),
+                    onTap: () => context.pushNamed(
+                      'session-detail',
+                      pathParameters: {'id': session.id},
+                    ),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.55),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SessionVisualStage(
+                            sessionId: session.id,
+                            height: 132,
+                            borderRadius: 24,
+                            compact: true,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  t.get(session.titleKey, fallback: session.titleFallback),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  '${session.durationMinutes} ${t.get('session_duration_unit_min', fallback: 'min')}',
+                                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _RecommendedTodaySection extends StatelessWidget {
   const _RecommendedTodaySection({
     required this.sessions,
@@ -1785,8 +2489,8 @@ class _BodyFocusCard extends StatelessWidget {
   }
 }
 
-class _PremiumCompactCard extends StatelessWidget {
-  const _PremiumCompactCard();
+class _DashboardPremiumShowcase extends StatelessWidget {
+  const _DashboardPremiumShowcase();
 
   @override
   Widget build(BuildContext context) {
@@ -1826,7 +2530,7 @@ class _PremiumCompactCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      t.get('dashboard_premium_title', fallback: 'Unlock full recovery'),
+                      t.get('dashboard_premium_title', fallback: 'Your complete recovery system'),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.titleMedium?.copyWith(
@@ -1839,7 +2543,7 @@ class _PremiumCompactCard extends StatelessWidget {
                     Text(
                       t.get(
                         'dashboard_premium_body',
-                        fallback: 'All programs, saved recovery paths, and advanced progress tools.',
+                        fallback: 'Guided programs, deeper insights, and every recovery session unlocked.',
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -1854,7 +2558,7 @@ class _PremiumCompactCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'PRO',
+                t.get('dashboard_premium_cta_short', fallback: 'Explore'),
                 style: theme.textTheme.labelLarge?.copyWith(
                   color: colors.primary,
                   fontWeight: FontWeight.w900,

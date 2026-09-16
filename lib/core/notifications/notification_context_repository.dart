@@ -67,9 +67,15 @@ abstract class NotificationContextRepository {
 
 class SupabaseNotificationContextRepository
     implements NotificationContextRepository {
-  SupabaseNotificationContextRepository(this._client);
+  SupabaseNotificationContextRepository(
+    this._client, {
+    required String languageCode,
+  }) : _languageCode = languageCode.toLowerCase();
 
   final SupabaseClient _client;
+  final String _languageCode;
+
+  bool get _wantsGerman => _languageCode == 'de';
 
   static const int _defaultHour = 18;
   static const int _defaultMinute = 30;
@@ -89,8 +95,10 @@ class SupabaseNotificationContextRepository
     plan ??= await _featureNudgePlan(userId);
     plan ??= RecoveryNotificationPlan(
       kind: RecoveryNotificationKind.dailyReset,
-      title: 'Time for a quick reset',
-      body: 'Take two focused minutes for your neck, back, or wrists.',
+      title: _wantsGerman ? 'Zeit für einen kurzen Reset' : 'Time for a quick reset',
+      body: _wantsGerman
+          ? 'Nimm dir zwei konzentrierte Minuten für Nacken, Rücken oder Handgelenke.'
+          : 'Take two focused minutes for your neck, back, or wrists.',
       hour: _defaultHour,
       minute: _defaultMinute,
       payload: 'posture_reset://quick_fix',
@@ -157,10 +165,14 @@ class SupabaseNotificationContextRepository
 
         return RecoveryNotificationPlan(
           kind: RecoveryNotificationKind.continueSession,
-          title: 'Finish your recovery session',
+          title: _wantsGerman ? 'Recovery-Session abschließen' : 'Finish your recovery session',
           body: title == null
-              ? 'You started a session. Finish it with one clean reset.'
-              : 'Continue $title and complete today’s reset.',
+              ? (_wantsGerman
+                  ? 'Du hast eine Session begonnen. Schließe sie mit einem kurzen Reset ab.'
+                  : 'You started a session. Finish it with one clean reset.')
+              : (_wantsGerman
+                  ? '$title fortsetzen und den heutigen Reset abschließen.'
+                  : 'Continue $title and complete today’s reset.'),
           hour: 18,
           minute: 15,
           payload: 'posture_reset://session/$sessionId',
@@ -200,10 +212,14 @@ class SupabaseNotificationContextRepository
 
       return RecoveryNotificationPlan(
         kind: RecoveryNotificationKind.continueProgram,
-        title: 'Continue your recovery program',
+        title: _wantsGerman ? 'Recovery-Programm fortsetzen' : 'Continue your recovery program',
         body: title == null
-            ? 'Day $currentDay is ready. Keep the recovery chain moving.'
-            : '$title — Day $currentDay is ready.',
+            ? (_wantsGerman
+                ? 'Mission $currentDay ist bereit. Bleib in deinem Rhythmus.'
+                : 'Day $currentDay is ready. Keep the recovery chain moving.')
+            : (_wantsGerman
+                ? '$title — Mission $currentDay ist bereit.'
+                : '$title — Day $currentDay is ready.'),
         hour: 18,
         minute: 30,
         payload: programId.isEmpty
@@ -238,8 +254,10 @@ class SupabaseNotificationContextRepository
 
       return RecoveryNotificationPlan(
         kind: RecoveryNotificationKind.returnToRecovery,
-        title: 'Restart with a short reset',
-        body: 'It has been $days days. Start with one low-friction desk recovery session.',
+        title: _wantsGerman ? 'Mit einem kurzen Reset wieder einsteigen' : 'Restart with a short reset',
+        body: _wantsGerman
+            ? 'Seit deiner letzten Session sind $days Tage vergangen. Starte mit einer kurzen Recovery-Session am Schreibtisch.'
+            : 'It has been $days days. Start with one low-friction desk recovery session.',
         hour: 18,
         minute: 45,
         payload: 'posture_reset://quick_fix',
@@ -280,8 +298,10 @@ class SupabaseNotificationContextRepository
 
       return RecoveryNotificationPlan(
         kind: RecoveryNotificationKind.featureNudge,
-        title: 'Unlock deeper recovery tools',
-        body: 'You checked $area. Core Access keeps programs, history, and premium sessions available.',
+        title: _wantsGerman ? 'Mehr Recovery-Funktionen freischalten' : 'Unlock deeper recovery tools',
+        body: _wantsGerman
+            ? 'Du hast $area angesehen. Core Access schaltet Programme, Verlauf und Premium-Sessions frei.'
+            : 'You checked $area. Core Access keeps programs, history, and premium sessions available.',
         hour: 19,
         minute: 15,
         payload: 'posture_reset://premium',
@@ -331,26 +351,34 @@ class SupabaseNotificationContextRepository
   String _tomorrowTitleFor(RecoveryNotificationKind kind) {
     switch (kind) {
       case RecoveryNotificationKind.continueSession:
-        return 'Continue tomorrow';
+        return _wantsGerman ? 'Morgen weitermachen' : 'Continue tomorrow';
       case RecoveryNotificationKind.continueProgram:
-        return 'Next program step tomorrow';
+        return _wantsGerman ? 'Nächste Programm-Mission morgen' : 'Next program step tomorrow';
       case RecoveryNotificationKind.returnToRecovery:
       case RecoveryNotificationKind.featureNudge:
       case RecoveryNotificationKind.dailyReset:
-        return 'Recovery reminder set for tomorrow';
+        return _wantsGerman
+            ? 'Recovery-Erinnerung für morgen geplant'
+            : 'Recovery reminder set for tomorrow';
     }
   }
 
   String _tomorrowBodyFor(RecoveryNotificationKind kind) {
     switch (kind) {
       case RecoveryNotificationKind.continueSession:
-        return 'You already completed recovery work today. Your session reminder will wait until tomorrow.';
+        return _wantsGerman
+            ? 'Du hast deine Recovery für heute bereits abgeschlossen. Deine Session-Erinnerung wartet bis morgen.'
+            : 'You already completed recovery work today. Your session reminder will wait until tomorrow.';
       case RecoveryNotificationKind.continueProgram:
-        return 'You already completed recovery work today. Your next program reminder will wait until tomorrow.';
+        return _wantsGerman
+            ? 'Du hast deine Recovery für heute bereits abgeschlossen. Die nächste Programm-Erinnerung wartet bis morgen.'
+            : 'You already completed recovery work today. Your next program reminder will wait until tomorrow.';
       case RecoveryNotificationKind.returnToRecovery:
       case RecoveryNotificationKind.featureNudge:
       case RecoveryNotificationKind.dailyReset:
-        return 'You already completed recovery work today. The next reminder will wait until tomorrow.';
+        return _wantsGerman
+            ? 'Du hast deine Recovery für heute bereits abgeschlossen. Die nächste Erinnerung kommt morgen.'
+            : 'You already completed recovery work today. The next reminder will wait until tomorrow.';
     }
   }
 
@@ -358,11 +386,15 @@ class SupabaseNotificationContextRepository
     try {
       final row = await _client
           .from('session_templates')
-          .select('title_fallback')
+          .select('title_fallback,title_de')
           .eq('id', sessionId)
           .maybeSingle();
       if (row == null) return null;
-      final title = _string((row as Map)['title_fallback']);
+      final map = row as Map;
+      final german = _string(map['title_de']);
+      final title = _wantsGerman && german.isNotEmpty
+          ? german
+          : _string(map['title_fallback']);
       return title.isEmpty ? null : title;
     } catch (_) {
       return null;

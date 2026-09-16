@@ -16,7 +16,6 @@ import '../../../access/domain/access_models.dart';
 import '../../../access/domain/access_policy.dart';
 import '../../../access/presentation/widgets/locked_feature_card.dart';
 import '../../application/session_continuity_providers.dart';
-import '../widgets/continue_session_card.dart';
 import '../widgets/session_history_card.dart';
 
 class SessionHistoryPage extends ConsumerWidget {
@@ -26,7 +25,6 @@ class SessionHistoryPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = AppText.of(context);
     final historyAsync = ref.watch(sessionHistoryItemsProvider);
-    final candidateAsync = ref.watch(continueSessionCandidateProvider);
     final accessAsync = ref.watch(accessSnapshotProvider);
 
     return ResponsivePageScaffold(
@@ -105,12 +103,6 @@ class SessionHistoryPage extends ConsumerWidget {
                 ResponsiveContentSection(
                   spacing: pageInfo.sectionSpacing,
                   children: [
-                    candidateAsync.maybeWhen(
-                      data: (candidate) => candidate == null
-                          ? const SizedBox.shrink()
-                          : ContinueSessionCard(candidate: candidate),
-                      orElse: () => const SizedBox.shrink(),
-                    ),
                     if (items.isEmpty)
                       const _SessionHistoryEmptyCard()
                     else

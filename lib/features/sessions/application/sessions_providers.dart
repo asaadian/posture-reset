@@ -2,6 +2,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/localization/app_locale_controller.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../data/supabase_saved_sessions_repository.dart';
 import '../data/supabase_sessions_repository.dart';
@@ -11,7 +12,8 @@ import '../domain/sessions_repository.dart';
 
 final sessionsRepositoryProvider = Provider<SessionsRepository>((ref) {
   final client = ref.watch(supabaseClientProvider);
-  return SupabaseSessionsRepository(client);
+  final languageCode = ref.watch(appLocaleControllerProvider).languageCode;
+  return SupabaseSessionsRepository(client, languageCode: languageCode);
 });
 
 final savedSessionsRepositoryProvider = Provider<SavedSessionsRepository>((ref) {

@@ -2,6 +2,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/localization/app_locale_controller.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../auth/application/auth_providers.dart';
 import '../data/supabase_recovery_programs_repository.dart';
@@ -10,7 +11,8 @@ import '../domain/recovery_program_models.dart';
 final recoveryProgramsRepositoryProvider =
     Provider<RecoveryProgramsRepository>((ref) {
   final client = ref.watch(supabaseClientProvider);
-  return SupabaseRecoveryProgramsRepository(client);
+  final languageCode = ref.watch(appLocaleControllerProvider).languageCode;
+  return SupabaseRecoveryProgramsRepository(client, languageCode: languageCode);
 });
 
 final recoveryProgramSummariesProvider =

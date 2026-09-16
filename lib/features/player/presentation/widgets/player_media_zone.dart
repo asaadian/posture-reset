@@ -23,6 +23,8 @@ class PlayerMediaZone extends StatefulWidget {
     this.isVideo = false,
     this.isPaused = false,
     this.isCompleted = false,
+    this.fillAvailableHeight = false,
+    this.mediaFit = BoxFit.contain,
   });
 
   final String stepTitle;
@@ -48,6 +50,12 @@ class PlayerMediaZone extends StatefulWidget {
   /// Mirrors the player pause/completed state so the video loop can pause visually.
   final bool isPaused;
   final bool isCompleted;
+
+  /// When true, the media stage fills the height supplied by its parent.
+  /// Useful for immersive portrait players where a 16:9 source is cropped
+  /// into a taller viewport.
+  final bool fillAvailableHeight;
+  final BoxFit mediaFit;
 
   @override
   State<PlayerMediaZone> createState() => _PlayerMediaZoneState();
@@ -107,10 +115,9 @@ class _PlayerMediaZoneState extends State<PlayerMediaZone> {
             borderRadius: BorderRadius.circular(radius),
             child: DecoratedBox(
               decoration: _stageDecoration(context, radius),
-              child: AspectRatio(
-                aspectRatio: 16 / 8.2,
-                child: Stack(
-                  fit: StackFit.expand,
+              child: widget.fillAvailableHeight
+                  ? Stack(
+                      fit: StackFit.expand,
                   children: [
                     _PremiumStageBackground(
                       bodyTargetCodes: widget.bodyTargetCodes,
@@ -122,10 +129,13 @@ class _PlayerMediaZoneState extends State<PlayerMediaZone> {
                         posterUrl: resolvedPosterUrl,
                         isPaused: widget.isPaused || widget.isCompleted || _fullscreenOpen,
                         muted: _muted,
-                        fit: BoxFit.contain,
+                        fit: widget.mediaFit,
                       )
                     else if (resolvedPosterUrl != null)
-                      _PosterImage(posterUrl: resolvedPosterUrl)
+                      _PosterImage(
+                        posterUrl: resolvedPosterUrl,
+                        fit: widget.mediaFit,
+                      )
                     else
                       _CalmMotionFallback(
                         bodyTargetCodes: widget.bodyTargetCodes,
@@ -145,6 +155,7 @@ class _PlayerMediaZoneState extends State<PlayerMediaZone> {
                         exerciseDurationSeconds: widget.exerciseDurationSeconds,
                         visualDurationSeconds: widget.visualDurationSeconds,
                         muted: _muted,
+                        mediaFit: widget.mediaFit,
                         onExpandStart: () => setState(() => _fullscreenOpen = true),
                         onExpandEnd: () {
                           if (mounted) {
@@ -173,8 +184,85 @@ class _PlayerMediaZoneState extends State<PlayerMediaZone> {
                       const _PausedOverlay(),
                     if (widget.isCompleted) const _CompletedBadge(),
                   ],
-                ),
-              ),
+                )
+                  : AspectRatio(
+                      aspectRatio: 16 / 8.2,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          _PremiumStageBackground(
+                            bodyTargetCodes: widget.bodyTargetCodes,
+                          ),
+                          if (shouldRenderVideo)
+                            _LoopingStepVideo(
+                              key: ValueKey(resolvedUrl),
+                              videoUrl: resolvedUrl,
+                              posterUrl: resolvedPosterUrl,
+                              isPaused: widget.isPaused ||
+                                  widget.isCompleted ||
+                                  _fullscreenOpen,
+                              muted: _muted,
+                              fit: widget.mediaFit,
+                            )
+                          else if (resolvedPosterUrl != null)
+                            _PosterImage(
+                              posterUrl: resolvedPosterUrl,
+                              fit: widget.mediaFit,
+                            )
+                          else
+                            _CalmMotionFallback(
+                              bodyTargetCodes: widget.bodyTargetCodes,
+                            ),
+                          _SubtleMediaScrim(
+                            hasRealMedia:
+                                shouldRenderVideo || resolvedPosterUrl != null,
+                          ),
+                          Positioned(
+                            right: 10,
+                            bottom: 10,
+                            child: _ExpandMediaButton(
+                              stepTitle: widget.stepTitle,
+                              stepTypeLabel: widget.stepTypeLabel,
+                              videoUrl: shouldRenderVideo ? resolvedUrl : null,
+                              posterUrl: resolvedPosterUrl,
+                              exerciseDurationSeconds:
+                                  widget.exerciseDurationSeconds,
+                              visualDurationSeconds:
+                                  widget.visualDurationSeconds,
+                              muted: _muted,
+                              mediaFit: widget.mediaFit,
+                              onExpandStart: () =>
+                                  setState(() => _fullscreenOpen = true),
+                              onExpandEnd: () {
+                                if (mounted) {
+                                  setState(() => _fullscreenOpen = false);
+                                }
+                              },
+                            ),
+                          ),
+                          if (shouldRenderVideo)
+                            Positioned(
+                              right: 56,
+                              bottom: 10,
+                              child: _SoundToggleButton(
+                                muted: _muted,
+                                onPressed: () =>
+                                    setState(() => _muted = !_muted),
+                              ),
+                            ),
+                          Positioned(
+                            left: 10,
+                            bottom: 10,
+                            child: _ZoneGlowBadge(
+                              bodyTargetCodes: widget.bodyTargetCodes,
+                            ),
+                          ),
+                          if (widget.isPaused && !widget.isCompleted)
+                            const _PausedOverlay(),
+                          if (widget.isCompleted) const _CompletedBadge(),
+                        ],
+                      ),
+                    ),
             ),
           ),
         );
@@ -356,15 +444,16 @@ class _LoopingStepVideoState extends State<_LoopingStepVideo> {
 }
 
 class _PosterImage extends StatelessWidget {
-  const _PosterImage({required this.posterUrl});
+  const _PosterImage({required this.posterUrl, this.fit = BoxFit.cover});
 
   final String posterUrl;
+  final BoxFit fit;
 
   @override
   Widget build(BuildContext context) {
     return Image.network(
       posterUrl,
-      fit: BoxFit.cover,
+      fit: fit,
       errorBuilder: (_, __, ___) => const _CalmMotionFallback(),
       loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) return child;
@@ -383,6 +472,7 @@ class _ExpandMediaButton extends StatelessWidget {
     required this.exerciseDurationSeconds,
     required this.visualDurationSeconds,
     required this.muted,
+    required this.mediaFit,
     required this.onExpandStart,
     required this.onExpandEnd,
   });
@@ -394,6 +484,7 @@ class _ExpandMediaButton extends StatelessWidget {
   final int? exerciseDurationSeconds;
   final int? visualDurationSeconds;
   final bool muted;
+  final BoxFit mediaFit;
   final VoidCallback onExpandStart;
   final VoidCallback onExpandEnd;
 
@@ -458,7 +549,7 @@ class _ExpandMediaButton extends StatelessWidget {
                                 posterUrl: posterUrl,
                                 isPaused: false,
                                 muted: muted,
-                                fit: BoxFit.contain,
+                                fit: mediaFit,
                               )
                             : const _CalmMotionFallback(),
                       ),

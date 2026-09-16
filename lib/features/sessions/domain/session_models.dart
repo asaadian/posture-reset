@@ -216,6 +216,10 @@ class SessionStep {
     this.avoidMistakes = const <String>[],
     this.coachTip,
     this.playerFocusNote,
+    this.shortInstruction,
+    this.voiceScript,
+    this.voiceScriptDe,
+    this.voiceAudioUrl,
     this.isAssessmentStep = false,
     this.isRetestStep = false,
   });
@@ -266,6 +270,10 @@ class SessionStep {
   final List<String> avoidMistakes;
   final String? coachTip;
   final String? playerFocusNote;
+  final String? shortInstruction;
+  final String? voiceScript;
+  final String? voiceScriptDe;
+  final String? voiceAudioUrl;
   final bool isAssessmentStep;
   final bool isRetestStep;
 
@@ -414,6 +422,10 @@ class SessionStep {
     List<String>? avoidMistakes,
     String? coachTip,
     String? playerFocusNote,
+    String? shortInstruction,
+    String? voiceScript,
+    String? voiceScriptDe,
+    String? voiceAudioUrl,
     bool? isAssessmentStep,
     bool? isRetestStep,
   }) {
@@ -456,6 +468,10 @@ class SessionStep {
       avoidMistakes: avoidMistakes ?? this.avoidMistakes,
       coachTip: coachTip ?? this.coachTip,
       playerFocusNote: playerFocusNote ?? this.playerFocusNote,
+      shortInstruction: shortInstruction ?? this.shortInstruction,
+      voiceScript: voiceScript ?? this.voiceScript,
+      voiceScriptDe: voiceScriptDe ?? this.voiceScriptDe,
+      voiceAudioUrl: voiceAudioUrl ?? this.voiceAudioUrl,
       isAssessmentStep: isAssessmentStep ?? this.isAssessmentStep,
       isRetestStep: isRetestStep ?? this.isRetestStep,
     );

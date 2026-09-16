@@ -39,16 +39,8 @@ class QuickFixRecommendationEngine {
             b.recommendation.score.compareTo(a.recommendation.score);
         if (byScore != 0) return byScore;
 
-        final durationDeltaA =
-            (a.recommendation.session.durationMinutes -
-                    (int.tryParse(state.selectedTimeId) ?? 0))
-                .abs();
-        final durationDeltaB =
-            (b.recommendation.session.durationMinutes -
-                    (int.tryParse(state.selectedTimeId) ?? 0))
-                .abs();
-
-        final byDuration = durationDeltaA.compareTo(durationDeltaB);
+        final byDuration = a.recommendation.session.durationMinutes
+            .compareTo(b.recommendation.session.durationMinutes);
         if (byDuration != 0) return byDuration;
 
         return a.recommendation.session.titleFallback
@@ -89,9 +81,6 @@ class QuickFixRecommendationEngine {
   double _scoreSession(QuickFixState state, SessionSummary session) {
     double score = 0;
 
-    final desiredMinutes = int.tryParse(state.selectedTimeId) ?? 0;
-    final durationDelta = (session.durationMinutes - desiredMinutes).abs();
-
     final problemScore = _scoreProblem(state.selectedProblemId, session);
     if (problemScore <= 0) {
       return 0;
@@ -110,16 +99,14 @@ class QuickFixRecommendationEngine {
       score += 1.25;
     }
 
-    if (durationDelta == 0) {
-      score += 8;
-    } else if (durationDelta == 1) {
-      score += 6;
-    } else if (durationDelta == 2) {
-      score += 4;
-    } else if (durationDelta <= 4) {
-      score += 2;
-    } else {
-      score -= 2;
+    // Quick Fix remains biased toward shorter sessions without asking the user
+    // to choose a duration. Body-area relevance always carries more weight.
+    if (session.durationMinutes <= 6) {
+      score += 2.5;
+    } else if (session.durationMinutes <= 9) {
+      score += 1.5;
+    } else if (session.durationMinutes > 12) {
+      score -= 1.5;
     }
 
     return score;
@@ -441,53 +428,23 @@ class QuickFixRecommendationEngine {
   }
 
   bool _hasRequiredEquipment(QuickFixState state, SessionSummary session) {
-    final selected = state.selectedEquipmentIds.toSet();
-    if (selected.isEmpty) return false;
+    final selected = _selectedSpecialEquipment(state.selectedEquipmentIds.toSet());
+    final required = _requiredSpecialEquipment(session);
 
-    final selectedSpecial = _selectedSpecialEquipment(selected);
-    final requiredSpecial = _requiredSpecialEquipment(session);
-
-    if (selectedSpecial.isNotEmpty) {
-      return requiredSpecial.isNotEmpty &&
-          requiredSpecial.any(selectedSpecial.contains) &&
-          requiredSpecial.every(selected.contains);
-    }
-
-    if (requiredSpecial.isEmpty) return true;
-    return requiredSpecial.every(selected.contains);
+    // Sessions that only use normal office fixtures (chair, desk or wall) are
+    // always available. Optional equipment means the user has it available;
+    // it must not exclude equipment-free sessions.
+    if (required.isEmpty) return true;
+    return required.every(selected.contains);
   }
 
   double _scoreEquipment(QuickFixState state, SessionSummary session) {
-    final selected = state.selectedEquipmentIds.toSet();
-    final selectedSpecial = _selectedSpecialEquipment(selected);
-    final requiredSpecial = _requiredSpecialEquipment(session);
+    final selected = _selectedSpecialEquipment(state.selectedEquipmentIds.toSet());
+    final required = _requiredSpecialEquipment(session);
 
-    if (selectedSpecial.isNotEmpty && requiredSpecial.isEmpty) return 0;
-    if (requiredSpecial.isEmpty) return 2.5;
-    if (!requiredSpecial.every(selected.contains)) return 0;
-
-    if (requiredSpecial.any(
-      (item) => item == 'long_band' || item == 'mini_band',
-    )) {
-      return 6;
-    }
-
-    if (requiredSpecial.any(
-      (item) => item == 'foam_roller' || item == 'massage_ball',
-    )) {
-      return 5.5;
-    }
-
-    if (requiredSpecial.any(
-      (item) => item == 'water_bottle' ||
-          item == 'soft_ball' ||
-          item == 'dowel' ||
-          item == 'towel',
-    )) {
-      return 5;
-    }
-
-    return 3;
+    if (required.isEmpty) return 2.5;
+    if (!required.every(selected.contains)) return 0;
+    return required.intersection(selected).isNotEmpty ? 4.5 : 0;
   }
 
   Set<String> _requiredSpecialEquipment(SessionSummary session) {

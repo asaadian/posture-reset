@@ -42,7 +42,12 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
   @override
   Future<QuickFixState> build() async {
     final initial = await _repository.getInitialState();
-    final preferences = await ref.watch(userPreferencesControllerProvider.future);
+    UserPreferences? preferences;
+    try {
+      preferences = await ref.watch(userPreferencesControllerProvider.future);
+    } catch (_) {
+      preferences = null;
+    }
     final seeded = _applyPreferenceBaseline(initial, preferences);
     return _recompute(seeded, trackRecommendation: true);
   }
@@ -51,7 +56,12 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final initial = await _repository.getInitialState();
-      final preferences = await ref.read(userPreferencesControllerProvider.future);
+      UserPreferences? preferences;
+      try {
+        preferences = await ref.read(userPreferencesControllerProvider.future);
+      } catch (_) {
+        preferences = null;
+      }
       final seeded = _applyPreferenceBaseline(initial, preferences);
       return _recompute(seeded, trackRecommendation: true);
     });
@@ -99,15 +109,19 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
     if (trackRecommendation &&
         result.primary != null &&
         next.lastTrackedRecommendationId != result.primary!.session.id) {
-      await _eventsRepository.trackEvent(
-        actionType: QuickFixActionType.recommendationShown,
-        state: next,
-        recommendedSessionId: result.primary!.session.id,
-        metadata: {
-          'score': result.primary!.score,
-          'has_user_interacted': next.hasUserInteracted,
-        },
-      );
+      try {
+        await _eventsRepository.trackEvent(
+          actionType: QuickFixActionType.recommendationShown,
+          state: next,
+          recommendedSessionId: result.primary!.session.id,
+          metadata: {
+            'score': result.primary!.score,
+            'has_user_interacted': next.hasUserInteracted,
+          },
+        );
+      } catch (_) {
+        // Analytics must never block the Quick Fix experience.
+      }
 
       next = next.copyWith(
         lastTrackedRecommendationId: result.primary!.session.id,
@@ -149,23 +163,13 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
     );
   }
 
-  Future<void> selectTime(String id) async {
-    final current = _current();
-    if (current == null || current.selectedTimeId == id) return;
-
-    await _apply(
-      current.copyWith(
-        selectedTimeId: id,
-        hasUserInteracted: true,
-      ),
-    );
-  }
-
   Future<void> setEquipment(Set<String> ids) async {
     final current = _current();
     if (current == null) return;
 
-    final safeSelected = ids.isEmpty ? <String>['none'] : (ids.toList()..sort());
+    final normalized = ids.toSet();
+    if (normalized.length > 1) normalized.remove('none');
+    final safeSelected = normalized.isEmpty ? <String>['none'] : (normalized.toList()..sort());
 
     await _apply(
       current.copyWith(
@@ -294,14 +298,19 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
     final recommendation = current?.primaryRecommendation;
     if (current == null || recommendation == null) return;
 
-    await _eventsRepository.trackEvent(
-      actionType: actionType,
-      state: current,
-      recommendedSessionId: recommendation.session.id,
-      metadata: {
-        'score': recommendation.score,
-        'has_user_interacted': current.hasUserInteracted,
-      },
-    );
+    try {
+      await _eventsRepository.trackEvent(
+        actionType: actionType,
+        state: current,
+        recommendedSessionId: recommendation.session.id,
+        metadata: {
+          'score': recommendation.score,
+          'has_user_interacted': current.hasUserInteracted,
+        },
+      );
+    } catch (_) {
+      // Analytics is best-effort. A database or network failure must never
+      // prevent opening session details or starting the player.
+    }
   }
 }

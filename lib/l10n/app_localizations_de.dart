@@ -33,106 +33,108 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonBackHome => 'Zum Dashboard';
 
   @override
-  String get common_back => 'Back';
+  String get common_back => 'Zurück';
 
   @override
-  String get saved_sessions_title => 'Saved Sessions';
+  String get saved_sessions_title => 'Gespeicherte Sessions';
 
   @override
-  String get saved_sessions_empty_title => 'No saved sessions yet';
+  String get saved_sessions_empty_title => 'Noch keine Sessions gespeichert';
 
   @override
   String get saved_sessions_empty_body =>
-      'Save sessions from the library or detail page to build your continuity list.';
+      'Speichere Sessions aus der Übersicht oder Detailseite, um deine persönliche Liste aufzubauen.';
 
   @override
-  String get saved_sessions_browse_cta => 'Browse Sessions';
+  String get saved_sessions_browse_cta => 'Sessions ansehen';
 
   @override
-  String get saved_sessions_error => 'Could not load saved sessions.';
+  String get saved_sessions_error =>
+      'Gespeicherte Sessions konnten nicht geladen werden.';
 
   @override
-  String get session_history_title => 'Session History';
+  String get session_history_title => 'Session-Verlauf';
 
   @override
-  String get session_history_empty_title => 'No session history yet';
+  String get session_history_empty_title => 'Noch kein Session-Verlauf';
 
   @override
   String get session_history_empty_body =>
-      'Your completed and unfinished session runs will appear here.';
+      'Deine abgeschlossenen und nicht beendeten Sessions erscheinen hier.';
 
   @override
-  String get session_history_error => 'Could not load session history.';
+  String get session_history_error =>
+      'Der Session-Verlauf konnte nicht geladen werden.';
 
   @override
-  String get continuity_continue_title => 'Continue Session';
+  String get continuity_continue_title => 'Session fortsetzen';
 
   @override
-  String get continuity_resume_title => 'Resume Session';
+  String get continuity_resume_title => 'Session wieder aufnehmen';
 
   @override
-  String get continuity_repeat_title => 'Do It Again';
+  String get continuity_repeat_title => 'Noch einmal machen';
 
   @override
-  String get continuity_start_title => 'Start Session';
+  String get continuity_start_title => 'Session starten';
 
   @override
-  String get continuity_continue_cta => 'Continue';
+  String get continuity_continue_cta => 'Fortsetzen';
 
   @override
-  String get continuity_resume_cta => 'Resume';
+  String get continuity_resume_cta => 'Wieder aufnehmen';
 
   @override
-  String get continuity_repeat_cta => 'Do Again';
+  String get continuity_repeat_cta => 'Wiederholen';
 
   @override
-  String get continuity_start_cta => 'Start';
+  String get continuity_start_cta => 'Starten';
 
   @override
-  String get continuity_open_detail => 'Open Detail';
+  String get continuity_open_detail => 'Details öffnen';
 
   @override
   String get continuity_reason_active =>
-      'You still have an active recovery run.';
+      'Du hast noch eine aktive Recovery-Session.';
 
   @override
   String get continuity_reason_resumable =>
-      'You left this session unfinished and can pick it up again.';
+      'Du hast diese Session nicht beendet und kannst sie wieder aufnehmen.';
 
   @override
   String get continuity_reason_saved =>
-      'This saved session is your best next continuity pick.';
+      'Diese gespeicherte Session ist deine beste nächste Option.';
 
   @override
   String get continuity_reason_repeat =>
-      'This is the most recent session worth repeating.';
+      'Diese zuletzt absolvierte Session eignet sich zum Wiederholen.';
 
   @override
-  String get continuity_resume_available => 'Resume available';
+  String get continuity_resume_available => 'Fortsetzen verfügbar';
 
   @override
-  String get continuity_status_started => 'Started';
+  String get continuity_status_started => 'Gestartet';
 
   @override
-  String get continuity_status_completed => 'Completed';
+  String get continuity_status_completed => 'Abgeschlossen';
 
   @override
-  String get continuity_status_abandoned => 'Ended early';
+  String get continuity_status_abandoned => 'Vorzeitig beendet';
 
   @override
-  String get continuity_label_active => 'Active run';
+  String get continuity_label_active => 'Aktive Session';
 
   @override
-  String get continuity_label_resumable => 'Unfinished';
+  String get continuity_label_resumable => 'Nicht beendet';
 
   @override
-  String get continuity_label_repeatable => 'Played before';
+  String get continuity_label_repeatable => 'Bereits absolviert';
 
   @override
-  String get continuity_label_saved => 'Saved';
+  String get continuity_label_saved => 'Gespeichert';
 
   @override
-  String get continuity_strip_title => 'Pick up where you left off';
+  String get continuity_strip_title => 'Mach dort weiter, wo du aufgehört hast';
 
   @override
   String get startupLoadingTitle => 'App wird gestartet';
@@ -1245,4 +1247,1590 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get dashboard_next_session_reason_resume =>
       'Eine starke Empfehlung basierend auf deiner letzten Aktivität';
+
+  @override
+  String get update_later_cta => 'Später';
+
+  @override
+  String get update_now_cta => 'Aktualisieren';
+
+  @override
+  String get notification_permission_prompt_title =>
+      'Recovery-Erinnerungen aktivieren?';
+
+  @override
+  String get notification_permission_prompt_body =>
+      'Erhalte täglich eine sanfte Erinnerung für einen kurzen Haltungs-Reset.';
+
+  @override
+  String get common_not_now => 'Nicht jetzt';
+
+  @override
+  String get notification_enable_cta => 'Aktivieren';
+
+  @override
+  String get guide_skip_cta => 'Überspringen';
+
+  @override
+  String get guide_got_it_cta => 'Verstanden';
+
+  @override
+  String get guide_next_cta => 'Weiter';
+
+  @override
+  String get startup_error_body =>
+      'Die App konnte den Start nicht abschließen. Prüfe deine Verbindung und versuche es erneut.';
+
+  @override
+  String get startup_error_retry_cta => 'Erneut versuchen';
+
+  @override
+  String get nav_training => 'Training';
+
+  @override
+  String get nav_programs => 'Programme';
+
+  @override
+  String get notification_center_title => 'Benachrichtigungen';
+
+  @override
+  String get notification_center_refresh => 'Erinnerungen aktualisieren';
+
+  @override
+  String get notification_center_mark_all_read => 'Alle als gelesen markieren';
+
+  @override
+  String get notification_center_error_title =>
+      'Benachrichtigungen konnten nicht geladen werden';
+
+  @override
+  String get notification_center_empty_title => 'Keine Erinnerungen geplant';
+
+  @override
+  String get notification_center_empty_body =>
+      'Aktiviere die Recovery-Erinnerungen in den Einstellungen und ziehe diese Seite anschließend zum Aktualisieren nach unten.';
+
+  @override
+  String get notification_center_header_title => 'Recovery-Erinnerungen';
+
+  @override
+  String get notification_center_status_upcoming => 'Bevorstehend';
+
+  @override
+  String get notification_center_status_opened => 'Geöffnet';
+
+  @override
+  String get notification_center_status_new => 'Neu';
+
+  @override
+  String get notification_center_status_scheduled => 'Geplant';
+
+  @override
+  String get quick_fix_page_step_hint =>
+      'Wähle einen Bereich und starte dann deine Session';
+
+  @override
+  String get guide_quick_fix_body_title => 'Körper auswählen';
+
+  @override
+  String get guide_quick_fix_body_body =>
+      'Wähle den Bereich aus, der sich verspannt anfühlt. Die Empfehlung wird darauf ausgerichtet.';
+
+  @override
+  String get guide_quick_fix_filters_title => 'Einfache Filter';
+
+  @override
+  String get guide_quick_fix_filters_body =>
+      'Wähle verfügbare Ausrüstung. Halte es einfach.';
+
+  @override
+  String get guide_quick_fix_match_title => 'Passende Session erhalten';
+
+  @override
+  String get guide_quick_fix_match_body =>
+      'Tippe auf Passende Session finden, um eine Session für deine aktuelle Situation zu erhalten.';
+
+  @override
+  String get quick_fix_match_session_cta => 'Passende Session finden';
+
+  @override
+  String get quick_fix_selected_target_empty => 'Kein Bereich';
+
+  @override
+  String get quick_fix_matched_title => 'Passende Session';
+
+  @override
+  String get quick_fix_matching_title => 'Dein Reset wird gesucht …';
+
+  @override
+  String get quick_fix_selected_count_suffix => 'ausgewählt';
+
+  @override
+  String get quick_fix_equipment_title => 'Ausrüstung';
+
+  @override
+  String get common_apply => 'Übernehmen';
+
+  @override
+  String get quick_fix_body_map_hint_step => 'Körperpunkt antippen';
+
+  @override
+  String get body_map_front => 'Vorderseite';
+
+  @override
+  String get body_map_back => 'Zurück';
+
+  @override
+  String get quick_fix_recommended_badge => 'Beste Übereinstimmung';
+
+  @override
+  String get quick_fix_start_session => 'Session starten';
+
+  @override
+  String get quick_fix_alternatives_title => 'Weitere gute Optionen';
+
+  @override
+  String get quick_fix_none_selected => 'Nichts ausgewählt';
+
+  @override
+  String get common_close => 'Schließen';
+
+  @override
+  String get common_cancel => 'Abbrechen';
+
+  @override
+  String get profile_title => 'Profil';
+
+  @override
+  String get profile_settings_tooltip => 'Einstellungen öffnen';
+
+  @override
+  String get profile_primary_continue => 'Recovery fortsetzen';
+
+  @override
+  String get profile_primary_open_sessions => 'Training starten';
+
+  @override
+  String get profile_sign_in_cta => 'Anmelden';
+
+  @override
+  String get profile_sync_connected => 'Synchronisiert';
+
+  @override
+  String get profile_sync_local => 'Lokal';
+
+  @override
+  String get profile_guest_subtitle => 'Gastprofil';
+
+  @override
+  String get profile_metric_saved => 'Gespeichert';
+
+  @override
+  String get profile_metric_runs => 'Durchläufe';
+
+  @override
+  String get profile_metric_status => 'Status';
+
+  @override
+  String get profile_action_premium => 'Core Access';
+
+  @override
+  String get profile_action_premium_subtitle_large =>
+      'Schalte alle Sessions, Programme, Quick Fix und Insights frei.';
+
+  @override
+  String get profile_action_saved_short => 'Gespeichert';
+
+  @override
+  String get profile_action_saved_subtitle_short => 'Sitzungen';
+
+  @override
+  String get session_history_title_compact => 'Verlauf';
+
+  @override
+  String get profile_action_history_subtitle_short => 'Verläufe';
+
+  @override
+  String get profile_action_programs => 'Programme';
+
+  @override
+  String get profile_action_programs_subtitle_short => 'Pläne';
+
+  @override
+  String get profile_account_section_title => 'Konto';
+
+  @override
+  String get profile_account_section_subtitle => 'Profil- und App-Steuerung.';
+
+  @override
+  String get profile_edit_title => 'Profil bearbeiten';
+
+  @override
+  String get profile_edit_subtitle => 'Name und Foto';
+
+  @override
+  String get profile_action_settings => 'Einstellungen';
+
+  @override
+  String get profile_action_settings_subtitle_compact => 'App';
+
+  @override
+  String get profile_sign_out_cta => 'Abmelden';
+
+  @override
+  String get profile_create_account_cta => 'Konto erstellen';
+
+  @override
+  String get profile_sign_out_subtitle => 'Dieses Gerät verlassen';
+
+  @override
+  String get profile_create_account_subtitle => 'Fortschritt synchronisieren';
+
+  @override
+  String get profile_danger_zone_title => 'Gefahrenbereich';
+
+  @override
+  String get profile_danger_zone_subtitle => 'Konto und Daten entfernen.';
+
+  @override
+  String get settings_reset_app_data_title => 'App-Daten zurücksetzen';
+
+  @override
+  String get settings_reset_app_data_loading => 'App-Daten werden gelöscht …';
+
+  @override
+  String get settings_reset_app_data_subtitle_short =>
+      'Fortschritt, gespeicherte Inhalte und Verlauf löschen.';
+
+  @override
+  String get settings_delete_account_section_title => 'Konto löschen';
+
+  @override
+  String get settings_delete_account_loading => 'Konto wird gelöscht …';
+
+  @override
+  String get settings_delete_account_section_subtitle =>
+      'Konto und App-Daten dauerhaft entfernen.';
+
+  @override
+  String get settings_reset_app_data_dialog_title => 'App-Daten zurücksetzen?';
+
+  @override
+  String get settings_reset_app_data_dialog_body =>
+      'Dadurch werden Trainingsverlauf, gespeicherte Sessions, Programmfortschritt, Quick-Fix-Verlauf, Feedback, Profil und Einstellungen entfernt. Dein Anmeldekonto bleibt aktiv. Dies kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get settings_reset_app_data_confirm => 'Daten zurücksetzen';
+
+  @override
+  String get settings_reset_app_data_sign_in_required =>
+      'Melde dich zuerst an, um deine App-Daten zurückzusetzen.';
+
+  @override
+  String get settings_reset_app_data_success =>
+      'Deine App-Daten wurden zurückgesetzt.';
+
+  @override
+  String get settings_reset_app_data_failed =>
+      'App-Daten konnten nicht zurückgesetzt werden.';
+
+  @override
+  String get settings_delete_account_dialog_title => 'Konto löschen?';
+
+  @override
+  String get settings_delete_account_dialog_body =>
+      'Dein Profil, deine Einstellungen, gespeicherte Sessions, Verläufe, Kaufzugänge und Kontodaten werden entfernt. Dies kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get settings_delete_account_confirm => 'Löschen';
+
+  @override
+  String get settings_delete_account_sign_in_required =>
+      'Melde dich zuerst an, um dein Konto zu löschen.';
+
+  @override
+  String get settings_delete_account_success => 'Dein Konto wurde gelöscht.';
+
+  @override
+  String get settings_delete_account_failed =>
+      'Dein Konto konnte nicht gelöscht werden. Bitte kontaktiere den Support.';
+
+  @override
+  String get profile_core_access_badge => 'CORE ACCESS';
+
+  @override
+  String get profile_core_access_cta_short => 'Öffnen';
+
+  @override
+  String get profile_edit_saved => 'Profil aktualisiert.';
+
+  @override
+  String get profile_avatar_updated => 'Profilfoto aktualisiert.';
+
+  @override
+  String get profile_edit_error =>
+      'Das Profil konnte nicht aktualisiert werden. Bitte versuche es erneut.';
+
+  @override
+  String get profile_change_photo_cta => 'Foto ändern';
+
+  @override
+  String get profile_remove_photo_cta => 'Entfernen';
+
+  @override
+  String get profile_display_name_label => 'Anzeigename';
+
+  @override
+  String get profile_save_cta => 'Speichern';
+
+  @override
+  String get settings_title => 'Einstellungen';
+
+  @override
+  String get settings_hero_title => 'App-Steuerung';
+
+  @override
+  String get settings_hero_subtitle =>
+      'Sprache, Design, Support und rechtliche Informationen.';
+
+  @override
+  String get settings_preferences_compact_title => 'Einstellungen';
+
+  @override
+  String get settings_preferences_compact_subtitle =>
+      'Sprache, Design und Synchronisierung.';
+
+  @override
+  String get settings_language_section_title => 'Sprache';
+
+  @override
+  String get settings_appearance_section_title => 'Darstellung';
+
+  @override
+  String get notification_settings_title_compact => 'Benachrichtigungen';
+
+  @override
+  String get notification_settings_inline_subtitle =>
+      'Recovery-Erinnerungen und haptisches Feedback.';
+
+  @override
+  String get notification_settings_error =>
+      'Benachrichtigungseinstellungen konnten nicht geladen werden.';
+
+  @override
+  String get notification_settings_guest_hint =>
+      'Melde dich an, um deine Benachrichtigungseinstellungen zu speichern.';
+
+  @override
+  String get notification_settings_enable_title => 'Recovery-Erinnerungen';
+
+  @override
+  String get notification_settings_enabled_short =>
+      'Die tägliche Erinnerung ist aktiv.';
+
+  @override
+  String get notification_settings_disabled_short =>
+      'Standardmäßig deaktiviert. Aktiviere Erinnerungen bei Bedarf.';
+
+  @override
+  String get notification_permission_denied =>
+      'Die Berechtigung für Benachrichtigungen wurde nicht erteilt.';
+
+  @override
+  String get notification_settings_time_title => 'Erinnerungszeit';
+
+  @override
+  String get notification_settings_time_error =>
+      'Die Erinnerungszeit konnte nicht geladen werden.';
+
+  @override
+  String get notification_settings_haptics_title => 'Haptisches Feedback';
+
+  @override
+  String get notification_settings_haptics_short =>
+      'Spürbare Bestätigung auf unterstützten Geräten.';
+
+  @override
+  String get notification_time_morning => 'Morgen';
+
+  @override
+  String get notification_time_afternoon => 'Nachmittag';
+
+  @override
+  String get notification_time_evening => 'Abend';
+
+  @override
+  String get settings_support_legal_title => 'Support & Rechtliches';
+
+  @override
+  String get settings_support_legal_subtitle =>
+      'Hilfe, Richtlinien und Kontoinformationen.';
+
+  @override
+  String get settings_contact_email_label => 'E-Mail-Support';
+
+  @override
+  String get settings_privacy_policy_title => 'Datenschutzerklärung';
+
+  @override
+  String get settings_external_link_subtitle => 'Im Browser öffnen';
+
+  @override
+  String get settings_terms_title => 'Nutzungsbedingungen';
+
+  @override
+  String get settings_account_data_deletion_info_title =>
+      'Richtlinie zur Datenlöschung';
+
+  @override
+  String get settings_app_version_loading => 'Version wird geladen …';
+
+  @override
+  String get settings_app_version_title => 'App-Version';
+
+  @override
+  String get settings_theme_system_title => 'System';
+
+  @override
+  String get settings_theme_system_short => 'Auto';
+
+  @override
+  String get settings_theme_light_title => 'Leicht';
+
+  @override
+  String get settings_theme_light_short => 'Leicht';
+
+  @override
+  String get settings_theme_dark_title => 'Dunkel';
+
+  @override
+  String get settings_theme_dark_short => 'Dunkel';
+
+  @override
+  String get settings_preferences_error_short =>
+      'Cloud-Einstellungen konnten nicht geladen werden.';
+
+  @override
+  String get settings_preferences_guest_hint =>
+      'Melde dich an, um Einstellungen geräteübergreifend zu synchronisieren.';
+
+  @override
+  String get settings_preferences_synced_short =>
+      'Einstellungen sind synchronisiert.';
+
+  @override
+  String get settings_link_open_failed =>
+      'Der Link konnte nicht geöffnet werden.';
+
+  @override
+  String get settings_email_open_failed =>
+      'Deine E-Mail-App konnte nicht geöffnet werden.';
+
+  @override
+  String get premium_purchase_cancelled => 'Der Kauf wurde abgebrochen.';
+
+  @override
+  String get premium_restore_no_purchase_found =>
+      'Für dieses Google-Play-Konto wurde kein früherer Core-Access-Kauf gefunden.';
+
+  @override
+  String get premium_purchase_failed =>
+      'Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es erneut.';
+
+  @override
+  String get premium_page_title => 'Core Access';
+
+  @override
+  String get premium_status_core_active => 'Freigeschaltet';
+
+  @override
+  String get premium_visual_pill => 'Core einmalig freischalten';
+
+  @override
+  String get premium_hero_unlocked_title => 'Core Access ist aktiv.';
+
+  @override
+  String get premium_visual_title_v2 =>
+      'Schalte das vollständige Erholungssystem frei.';
+
+  @override
+  String get premium_hero_unlocked_body_v2 =>
+      'Programme, vollständige Sessions, Quick Fix, Insights, gespeicherte Inhalte und Verlauf sind verfügbar.';
+
+  @override
+  String get premium_visual_body_v2 =>
+      'Programme, vollständige Sessions, Quick Fix, Insights, gespeicherte Inhalte und Verlauf – mit einer Freischaltung.';
+
+  @override
+  String get premium_programs_badge => 'Programme';
+
+  @override
+  String get premium_value_programs_title => 'Recovery-Programme';
+
+  @override
+  String get premium_value_sessions_title => 'Alle Sessions';
+
+  @override
+  String get premium_value_quick_fix_title => 'Quick Fix';
+
+  @override
+  String get premium_value_insights_title => 'Insights';
+
+  @override
+  String get premium_value_active_title => 'Deine freigeschalteten Funktionen';
+
+  @override
+  String get premium_value_title => 'Das bietet Core';
+
+  @override
+  String get premium_value_subtitle_v2 =>
+      'Vollständiger Zugriff mit einer Freischaltung.';
+
+  @override
+  String get premium_product_price_unavailable => 'Preis nicht verfügbar';
+
+  @override
+  String get premium_plan_unlocked_subtitle =>
+      'Dein vollständiges Recovery-Paket ist freigeschaltet.';
+
+  @override
+  String get premium_plan_subtitle_v2 =>
+      'Einmalig freischalten. Kein Abonnement. Jederzeit mit demselben Google-Play-Konto wiederherstellen.';
+
+  @override
+  String get premium_sign_in_hint =>
+      'Melde dich zuerst an, damit der Zugriff später wiederhergestellt werden kann.';
+
+  @override
+  String get premium_plan_title => 'Core Access';
+
+  @override
+  String get premium_plan_lifetime_badge => 'Einmalig';
+
+  @override
+  String get premium_signal_lifetime => 'Lebenslang';
+
+  @override
+  String get premium_signal_restore => 'Wiederherstellung unterstützt';
+
+  @override
+  String get premium_signal_no_subscription => 'Kein Abonnement';
+
+  @override
+  String get premium_already_unlocked_cta => 'Bereits freigeschaltet';
+
+  @override
+  String get premium_restore_cta => 'Wiederherstellen';
+
+  @override
+  String get premium_loading_products_cta => 'Store wird geprüft …';
+
+  @override
+  String get premium_purchasing_cta => 'Store wird geöffnet …';
+
+  @override
+  String get premium_verifying_cta => 'Wird überprüft …';
+
+  @override
+  String get premium_product_unavailable_cta => 'Produkt nicht verfügbar';
+
+  @override
+  String get access_unlock_core_cta => 'Core freischalten';
+
+  @override
+  String get premium_error_purchase_linked_to_another_account =>
+      'Dieser Kauf ist bereits mit einem anderen Konto verknüpft. Melde dich mit dem Konto an, das für die ursprüngliche Freischaltung verwendet wurde.';
+
+  @override
+  String get premium_error_not_authenticated =>
+      'Melde dich zuerst an, damit dein Kauf überprüft werden kann.';
+
+  @override
+  String get premium_error_missing_purchase_payload =>
+      'Der Store hat keinen gültigen Kaufbeleg zurückgegeben. Versuche die Wiederherstellung oder kontaktiere den Support.';
+
+  @override
+  String get premium_error_product_mismatch =>
+      'Das Store-Produkt passt nicht zu dieser App-Version. Aktualisiere die App oder kontaktiere den Support.';
+
+  @override
+  String get premium_error_purchase_not_completed =>
+      'Der Kauf wurde nicht abgeschlossen. Bitte versuche es erneut.';
+
+  @override
+  String get premium_error_unsupported_platform =>
+      'Käufe sind derzeit nur unter Android verfügbar.';
+
+  @override
+  String get premium_error_store_unavailable =>
+      'Google-Play-Abrechnung ist auf diesem Gerät nicht verfügbar. Installiere die App bitte über Google Play.';
+
+  @override
+  String get premium_error_product_unavailable =>
+      'Core Access ist derzeit nicht im Store verfügbar. Bitte versuche es später erneut.';
+
+  @override
+  String get premium_error_purchase_failed =>
+      'Der Kauf konnte nicht gestartet werden. Bitte versuche es erneut.';
+
+  @override
+  String get premium_error_verification_failed =>
+      'Der Kauf konnte nicht überprüft werden. Versuche die Wiederherstellung oder kontaktiere den Support.';
+
+  @override
+  String get premium_billing_error_body =>
+      'Die Abrechnung ist noch nicht bereit oder der Kauf konnte nicht überprüft werden. Bitte versuche es erneut.';
+
+  @override
+  String get logs_page_title => 'Protokolle';
+
+  @override
+  String get logs_locked_title => 'Verhaltensprotokolle gehören zu Core Access';
+
+  @override
+  String get logs_locked_message =>
+      'Schalte Core einmalig frei, um Recovery-Protokolle aus Sessions, Feedback, Quick Fix, Statusdaten und Player-Ereignissen zu prüfen.';
+
+  @override
+  String get logs_hero_title => 'Recovery-Protokolle';
+
+  @override
+  String get logs_hero_body_short =>
+      'Aktuelle Signale aus Sessions und Quick Fix.';
+
+  @override
+  String get logs_positive_label => 'Positiv';
+
+  @override
+  String get logs_warning_label => 'Warnungen';
+
+  @override
+  String get logs_neutral_label => 'Neutral';
+
+  @override
+  String get logs_recent_title => 'Letzte Protokolleinträge';
+
+  @override
+  String get insights_logs_empty =>
+      'Schließe einige Sessions ab, um Recovery-Notizen zu erzeugen.';
+
+  @override
+  String get logs_error_title => 'Protokolle konnten nicht geladen werden';
+
+  @override
+  String get insights_title => 'Einblicke';
+
+  @override
+  String get guide_insights_signal_title => 'Erholungssignal';
+
+  @override
+  String get guide_insights_signal_body =>
+      'Dieser Bereich fasst deinen aktuellen Erholungsrhythmus zusammen, nachdem du Insights freigeschaltet hast.';
+
+  @override
+  String get guide_insights_metrics_title => 'Wichtige Werte';
+
+  @override
+  String get guide_insights_metrics_body =>
+      'Hier siehst du Minuten, Regelmäßigkeit, Fokusbereiche und Quick-Fix-Aktivität.';
+
+  @override
+  String get guide_insights_patterns_title => 'Trends und Muster';
+
+  @override
+  String get guide_insights_patterns_body =>
+      'Diagramme zeigen dir, was sich verbessert und wo Verspannungen wiederkehren.';
+
+  @override
+  String get insights_journey_intelligence_title => 'Fortschrittsanalyse';
+
+  @override
+  String get insights_journey_intelligence_empty_title =>
+      'Therapiesignal aufbauen';
+
+  @override
+  String get insights_journey_intelligence_body =>
+      'Dein aktueller Weg baut Muster für Regelmäßigkeit, Reaktion und Abschluss auf.';
+
+  @override
+  String get insights_journey_intelligence_empty_body =>
+      'Starte einen Therapiepfad, um Sessions mit deinem langfristigen Fortschritt zu verbinden.';
+
+  @override
+  String get insights_focus_completion_title => 'Abschluss';
+
+  @override
+  String get insights_focus_helpful_title => 'Hilfreich';
+
+  @override
+  String get insights_summary_consistency_title => 'Rhythmus';
+
+  @override
+  String get insights_locked_preview_title => 'Insights freischalten';
+
+  @override
+  String get insights_locked_preview_body =>
+      'Core Access zeigt dir deine echten Trends.';
+
+  @override
+  String get insights_range_7_short => '7 Tage';
+
+  @override
+  String get insights_range_14_short => '14 Tage';
+
+  @override
+  String get insights_range_28_short => '28 Tage';
+
+  @override
+  String get insights_intro_title => 'Erholungssignal';
+
+  @override
+  String get insights_intro_body_short =>
+      'Muster aus deiner letzten Recovery-Arbeit.';
+
+  @override
+  String get insights_focus_zone_title => 'Fokus';
+
+  @override
+  String get insights_range_compact => 'Zeitraum';
+
+  @override
+  String get insights_streak_compact => 'Serie';
+
+  @override
+  String get insights_summary_minutes_title => 'Minuten';
+
+  @override
+  String get insights_summary_minutes_subtitle => 'Abgeschlossen';
+
+  @override
+  String get insights_active_days_title => 'Aktive Tage';
+
+  @override
+  String get insights_helpful_title => 'Hilfreich';
+
+  @override
+  String get insights_helpful_subtitle => 'Aus Feedback';
+
+  @override
+  String get insights_relief_title => 'Entlastung';
+
+  @override
+  String get insights_relief_subtitle => 'Durchschnittswert';
+
+  @override
+  String get insights_recovery_minutes_title => 'Recovery-Trend';
+
+  @override
+  String get insights_recovery_minutes_subtitle_short =>
+      'Minuten im Zeitverlauf';
+
+  @override
+  String get insights_chart_peak => 'Höchstwert';
+
+  @override
+  String get insights_chart_average => 'Ø';
+
+  @override
+  String get insights_rhythm_title => 'Erholungsrhythmus';
+
+  @override
+  String get insights_rhythm_subtitle_short => 'Aktive Tage zuletzt';
+
+  @override
+  String get insights_rhythm_active_days => 'Aktiv';
+
+  @override
+  String get insights_rhythm_minutes => 'Minuten';
+
+  @override
+  String get insights_patterns_title => 'Musterhinweise';
+
+  @override
+  String get insights_patterns_subtitle_short => 'Aktuelle Signale';
+
+  @override
+  String get insights_logs_action => 'Alle anzeigen';
+
+  @override
+  String get insights_error_title => 'Insights konnten nicht geladen werden';
+
+  @override
+  String get pain_forearms => 'Unterarme';
+
+  @override
+  String get pain_hands => 'Hände';
+
+  @override
+  String get pain_hips_glutes => 'Hüfte & Gesäß';
+
+  @override
+  String get pain_eyes => 'Augen';
+
+  @override
+  String get session_history_locked_title => 'Vergangene Sessions ansehen';
+
+  @override
+  String get session_history_locked_message =>
+      'Schalte die Funktion frei, um deine Recovery zu verfolgen.';
+
+  @override
+  String get player_access_locked_title => 'Core Access erforderlich';
+
+  @override
+  String get player_access_locked_message =>
+      'Diese Session gehört zu Core Access. Schalte Core einmalig frei, um das vollständige Recovery-Paket zu nutzen.';
+
+  @override
+  String get guide_player_header_title => 'Session-Fortschritt';
+
+  @override
+  String get guide_player_header_body =>
+      'Die obere Karte zeigt den Session-Titel und deinen Gesamtfortschritt. Tippe nur auf Schließen, wenn du die Session verlassen möchtest.';
+
+  @override
+  String get guide_player_video_title => 'Bewegungsdemo';
+
+  @override
+  String get guide_player_video_body =>
+      'Folge dem Video für eine sichere Bewegungsausführung. Du kannst es vergrößern oder stummschalten, ohne den Player zu verlassen.';
+
+  @override
+  String get guide_player_timer_title => 'Haupttimer';
+
+  @override
+  String get guide_player_timer_body =>
+      'Nutze diesen großen Timer als maßgebliche Zeitangabe für den aktuellen Schritt.';
+
+  @override
+  String get guide_player_instruction_title => 'Anleitungskarte';
+
+  @override
+  String get guide_player_instruction_body =>
+      'Lies hier die kurze Anleitung. Zusätzliche Coaching-, Atem- und Sicherheitshinweise bleiben kompakt in dieser Karte.';
+
+  @override
+  String get guide_player_controls_title => 'Steuerung';
+
+  @override
+  String get guide_player_controls_body =>
+      'Steuere die Session hier: zurück, wiederholen, pausieren, überspringen, weiter oder beim letzten Schritt beenden.';
+
+  @override
+  String get guide_done_cta => 'Fertig';
+
+  @override
+  String get movement_pattern_setup => 'Vorbereitung';
+
+  @override
+  String get movement_pattern_assessment => 'Überprüfung';
+
+  @override
+  String get movement_pattern_mobility => 'Mobilität';
+
+  @override
+  String get movement_pattern_stretch => 'Dehnung';
+
+  @override
+  String get movement_pattern_release => 'Lösen';
+
+  @override
+  String get movement_pattern_activation => 'Aktivierung';
+
+  @override
+  String get movement_pattern_strength => 'Kraft';
+
+  @override
+  String get movement_pattern_endurance => 'Ausdauer';
+
+  @override
+  String get movement_pattern_posture => 'Haltung';
+
+  @override
+  String get movement_pattern_breathing => 'Atmung';
+
+  @override
+  String get movement_pattern_cooldown => 'Abschluss';
+
+  @override
+  String get movement_pattern_habit => 'Gewohnheit';
+
+  @override
+  String get continuity_preview_cta => 'Vorschau';
+
+  @override
+  String get player_pre_state_subtitle_compact =>
+      'Lege deinen Ausgangspunkt fest. Das dauert nur wenige Sekunden.';
+
+  @override
+  String get player_feedback_subtitle_compact =>
+      'Ein kurzes Feedback hilft, deine nächste Empfehlung zu verbessern.';
+
+  @override
+  String get player_media_expand_tooltip => 'Größer anzeigen';
+
+  @override
+  String get player_media_unmute_tooltip => 'Ton einschalten';
+
+  @override
+  String get player_media_mute_tooltip => 'Ton ausschalten';
+
+  @override
+  String get guide_dashboard_topbar_title => 'Obere Leiste';
+
+  @override
+  String get guide_dashboard_topbar_body =>
+      'Nutze die obere Leiste für Benachrichtigungen und dein Konto. Kostenlose Mitglieder können direkt über das Kontosymbol upgraden.';
+
+  @override
+  String get guide_dashboard_home_title => 'Deine Erholungsübersicht';
+
+  @override
+  String get guide_dashboard_home_body =>
+      'Starte mit dem empfohlenen nächsten Schritt und prüfe danach Status, Programmfortschritt und letzte Aktivität.';
+
+  @override
+  String get guide_dashboard_bottom_nav_title => 'Untere Navigation';
+
+  @override
+  String get guide_dashboard_bottom_nav_body =>
+      'Nutze die unteren Tabs, um Training, Quick Fix, Insights und Programme zu öffnen.';
+
+  @override
+  String get dashboard_greeting => 'Hallo';
+
+  @override
+  String get dashboard_new_quick_fix_title => 'Wo spürst du Verspannung?';
+
+  @override
+  String get dashboard_new_quick_fix_body =>
+      'Tippe auf einen Körperbereich und erhalte in Sekunden den passenden Reset.';
+
+  @override
+  String get dashboard_quick_fix_title => 'Finde deinen Reset';
+
+  @override
+  String get dashboard_for_you_now => 'Jetzt für dich';
+
+  @override
+  String get session_duration_unit_min => 'Min.';
+
+  @override
+  String get dashboard_continue_session => 'Fortsetzen';
+
+  @override
+  String get dashboard_start_session => 'Starten';
+
+  @override
+  String get dashboard_active_program_title => 'Dein Programm';
+
+  @override
+  String get dashboard_continue_program => 'Programm fortsetzen';
+
+  @override
+  String get dashboard_day_label => 'Tag';
+
+  @override
+  String get profile_action_notifications => 'Benachrichtigungen';
+
+  @override
+  String get dashboard_command_title => 'Erholungszentrale';
+
+  @override
+  String get dashboard_command_active_body =>
+      'Dein Weg, dein Erholungssignal und der nächste Schritt an einem Ort.';
+
+  @override
+  String get dashboard_command_empty_body =>
+      'Starte einen Therapiepfad, um ein klares Erholungssignal aufzubauen.';
+
+  @override
+  String get dashboard_readiness_label => 'Bereitschaft';
+
+  @override
+  String get dashboard_helpful_label => 'Hilfreich';
+
+  @override
+  String get dashboard_rhythm_label => 'Rhythmus';
+
+  @override
+  String get dashboard_snapshot_error_title =>
+      'Dashboard-Daten sind nicht verfügbar';
+
+  @override
+  String get dashboard_weekly_minutes_label => 'Min. diese Woche';
+
+  @override
+  String get dashboard_completed_week_label => 'Sessions';
+
+  @override
+  String get dashboard_run_completed => 'Abgeschlossen';
+
+  @override
+  String get dashboard_run_abandoned => 'Pausiert';
+
+  @override
+  String get dashboard_run_started => 'Gestartet';
+
+  @override
+  String get dashboard_programs_active_title => 'Setze deinen Weg fort';
+
+  @override
+  String get dashboard_programs_title => 'Therapiepfade';
+
+  @override
+  String get common_view_all => 'Alle anzeigen';
+
+  @override
+  String get dashboard_program_discovery_pill_guided => 'Geführt';
+
+  @override
+  String get dashboard_program_discovery_title => 'Wähle einen Therapiepfad';
+
+  @override
+  String get dashboard_program_discovery_cta => 'Pfade ansehen';
+
+  @override
+  String get program_active_badge => 'Aktiv';
+
+  @override
+  String get dashboard_programs_continue_cta => 'Fortsetzen';
+
+  @override
+  String get program_day_unit => 'Etappen';
+
+  @override
+  String get program_start_cta => 'Starten';
+
+  @override
+  String get dashboard_saved_title => 'Für später gespeichert';
+
+  @override
+  String get dashboard_recommended_title => 'Heute empfohlen';
+
+  @override
+  String get dashboard_see_all => 'Alle anzeigen';
+
+  @override
+  String get sessions_title => 'Training';
+
+  @override
+  String get dashboard_momentum_title => 'Dein Fortschritt';
+
+  @override
+  String get dashboard_program_days_label => 'Programmetappen';
+
+  @override
+  String get dashboard_streak_label => 'Serie';
+
+  @override
+  String get dashboard_saved_count_label => 'gespeichert';
+
+  @override
+  String get dashboard_body_focus_title => 'Brauchst du jetzt Entlastung?';
+
+  @override
+  String get dashboard_body_focus_body =>
+      'Wähle in Quick Fix den Körperbereich aus, der Aufmerksamkeit braucht.';
+
+  @override
+  String get dashboard_premium_title => 'Dein vollständiges Erholungssystem';
+
+  @override
+  String get dashboard_premium_body =>
+      'Geführte Programme, tiefere Einblicke und alle Recovery-Sessions freigeschaltet.';
+
+  @override
+  String get dashboard_premium_cta_short => 'Entdecken';
+
+  @override
+  String get programs_title => 'Programme';
+
+  @override
+  String get programs_browse_all_title => 'Wähle deinen Recovery-Pfad';
+
+  @override
+  String get programs_more_journeys_title => 'Weitere Programme';
+
+  @override
+  String get programs_section_subtitle =>
+      'Strukturierte Pläne für kontinuierlichen Fortschritt.';
+
+  @override
+  String get programs_header_active => 'Halte deinen Schwung';
+
+  @override
+  String get programs_header_new => 'Baue einen gesünderen Arbeitstag auf';
+
+  @override
+  String get programs_header_body =>
+      'Geführte Programme mit klarer täglicher Struktur.';
+
+  @override
+  String get program_premium_badge => 'Premium';
+
+  @override
+  String get programs_error_title =>
+      'Programme sind vorübergehend nicht verfügbar';
+
+  @override
+  String get programs_error_body =>
+      'Prüfe deine Verbindung und versuche es erneut.';
+
+  @override
+  String get programs_empty_title => 'Noch keine Programme verfügbar';
+
+  @override
+  String get programs_empty_body =>
+      'Ziehe nach unten oder aktualisiere die Seite.';
+
+  @override
+  String get common_refresh => 'Aktualisieren';
+
+  @override
+  String get program_detail_title => 'Programm';
+
+  @override
+  String get program_switch_title => 'Weg wechseln?';
+
+  @override
+  String get program_start_title => 'Diesen Weg starten?';
+
+  @override
+  String get program_switch_body =>
+      'Dein Fortschritt im aktuellen Weg bleibt gespeichert. Dieser Weg wird dein aktiver Pfad.';
+
+  @override
+  String get program_start_body =>
+      'Deine erste Etappe wird jetzt freigeschaltet. Der Fortschritt wird nach jeder abgeschlossenen Etappe gespeichert.';
+
+  @override
+  String get program_switch_cta => 'Weg wechseln';
+
+  @override
+  String get program_begin_cta => 'Weg beginnen';
+
+  @override
+  String get program_phase_recovery => 'Erholung';
+
+  @override
+  String get program_completed_label => 'Abgeschlossen';
+
+  @override
+  String get program_continue_recovery_cta => 'Recovery fortsetzen';
+
+  @override
+  String get program_about_journey_label => 'Über diesen Weg';
+
+  @override
+  String get program_path_label => 'Recovery-Programm';
+
+  @override
+  String get program_unlocked_label => 'Freigeschaltet';
+
+  @override
+  String get program_no_days_title => 'Noch keine Etappen verfügbar.';
+
+  @override
+  String get program_view_full_plan_title => 'Wegübersicht';
+
+  @override
+  String get program_sequential_hint =>
+      'Wähle eine Phase, um ihre Etappen und den Fortschritt anzusehen.';
+
+  @override
+  String get program_day_missing_session => 'Session fehlt';
+
+  @override
+  String get program_phase_start_label => 'Phasenstart';
+
+  @override
+  String get program_phase_end_label => 'Phasenende';
+
+  @override
+  String get program_assessment_label => 'Überprüfung';
+
+  @override
+  String get program_repeat_label => 'Wiederholen';
+
+  @override
+  String get program_today_badge => 'HEUTE';
+
+  @override
+  String get program_expected_label => 'Erwartet';
+
+  @override
+  String get program_detail_error_title =>
+      'Dieser Weg konnte nicht geladen werden.';
+
+  @override
+  String get program_detail_error_body =>
+      'Prüfe deine Verbindung und versuche es erneut. Dein Fortschritt ist sicher.';
+
+  @override
+  String get program_progress_sync_warning =>
+      'Der Weg wurde geladen, aber der Fortschritt konnte nicht synchronisiert werden. Einige Zustände könnten veraltet sein.';
+
+  @override
+  String get program_not_found_title => 'Dieser Weg ist nicht mehr verfügbar.';
+
+  @override
+  String get program_not_found_body =>
+      'Kehre zu Programme zurück und wähle einen anderen Therapiepfad.';
+
+  @override
+  String get access_core_badge => 'Core';
+
+  @override
+  String get sessions_load_error_title =>
+      'Training konnte nicht geladen werden.';
+
+  @override
+  String get guide_training_sessions_title => 'Sessions sind einzelne Resets';
+
+  @override
+  String get guide_training_sessions_body =>
+      'Nutze Sessions, wenn du jetzt eine einzelne kurze Recovery-Übung machen möchtest.';
+
+  @override
+  String get guide_training_filter_title => 'Suchen und filtern';
+
+  @override
+  String get guide_training_filter_body =>
+      'Filtere nach Körperbereich oder sortiere die Sessions passend zu deinem Bedarf.';
+
+  @override
+  String get common_clear => 'Löschen';
+
+  @override
+  String get training_programs_title => 'Programme';
+
+  @override
+  String get training_programs_subtitle =>
+      'Geführte Therapiepfade für strukturierte Recovery.';
+
+  @override
+  String get training_sessions_section_title => 'Sitzungen';
+
+  @override
+  String get training_sessions_section_subtitle =>
+      'Einzelne Recovery-Sessions, die du jederzeit starten kannst.';
+
+  @override
+  String get sessions_search_hint_compact => 'Sessions suchen';
+
+  @override
+  String get sessions_category_lower_back_hips => 'Unterer Rücken & Hüfte';
+
+  @override
+  String get sessions_category_wrists_hands => 'Handgelenke & Hände';
+
+  @override
+  String get sessions_sort_shortest => 'Dauer: kürzeste zuerst';
+
+  @override
+  String get sessions_sort_alpha => 'Alphabetisch';
+
+  @override
+  String get sessions_sort_short_recommended => 'Standard';
+
+  @override
+  String get sessions_sort_short_shortest => 'Kürzeste';
+
+  @override
+  String get sessions_sort_short_az => 'A–Z';
+
+  @override
+  String get session_detail_nav_title => 'Session-Details';
+
+  @override
+  String get premium_title => 'Premium';
+
+  @override
+  String get session_detail_label => 'Session';
+
+  @override
+  String get session_detail_body_target_general => 'Allgemein';
+
+  @override
+  String get session_detail_body_targets_title => 'Körper';
+
+  @override
+  String get session_detail_equipment_none => 'Keine Ausrüstung';
+
+  @override
+  String get session_detail_steps_title_compact => 'Schritte';
+
+  @override
+  String get session_detail_safety_title => 'Sicherheit';
+
+  @override
+  String get session_detail_safety_compact_subtitle => 'Vor dem Start prüfen.';
+
+  @override
+  String get session_detail_warning_title => 'Vorsicht bei';
+
+  @override
+  String get session_detail_avoid_title => 'Vermeiden oder stoppen bei';
+
+  @override
+  String get session_detail_error_title =>
+      'Session konnte nicht geladen werden';
+
+  @override
+  String get session_detail_error_subtitle =>
+      'Beim Laden dieser Session ist ein Fehler aufgetreten. Bitte versuche es erneut.';
+
+  @override
+  String get equipment_chair => 'Stuhl';
+
+  @override
+  String get equipment_desk => 'Schreibtisch';
+
+  @override
+  String get equipment_wall => 'Wand';
+
+  @override
+  String get equipment_towel => 'Handtuch';
+
+  @override
+  String get equipment_small_cushion => 'Kleines Kissen';
+
+  @override
+  String get equipment_lumbar_roll => 'Lendenrolle';
+
+  @override
+  String get equipment_mini_band => 'Mini-Band';
+
+  @override
+  String get equipment_long_band => 'Widerstandsband';
+
+  @override
+  String get equipment_massage_ball => 'Massageball';
+
+  @override
+  String get equipment_soft_ball => 'Weicher Ball';
+
+  @override
+  String get equipment_water_bottle => 'Wasserflasche';
+
+  @override
+  String get equipment_dowel => 'Stab / Besenstiel';
+
+  @override
+  String get equipment_yoga_mat => 'Yogamatte';
+
+  @override
+  String get equipment_foam_roller => 'Faszienrolle';
+
+  @override
+  String get session_level_free_starter => 'Starter';
+
+  @override
+  String get session_level_therapy => 'Therapie';
+
+  @override
+  String get session_level_advanced_therapy => 'Fortgeschrittene Therapie';
+
+  @override
+  String get session_level_flagship => 'Flagship';
+
+  @override
+  String get saved_sessions_locked_title =>
+      'Speichere deine Lieblings-Sessions';
+
+  @override
+  String get saved_sessions_locked_message =>
+      'Schalte die Funktion frei, um sie hier zu speichern.';
+
+  @override
+  String get auth_callback_title => 'Anmeldung wird abgeschlossen …';
+
+  @override
+  String get auth_callback_subtitle =>
+      'Bitte warte, während deine Kontositzung vorbereitet wird.';
+
+  @override
+  String get auth_terms_required =>
+      'Bitte akzeptiere zuerst die Nutzungsbedingungen und die Datenschutzerklärung.';
+
+  @override
+  String get auth_google_not_started =>
+      'Die Google-Anmeldung konnte nicht gestartet werden.';
+
+  @override
+  String get auth_google_unknown_error =>
+      'Die Google-Anmeldung ist fehlgeschlagen. Bitte versuche es erneut.';
+
+  @override
+  String get auth_apple_coming_soon =>
+      'Die Anmeldung mit Apple wird bald hinzugefügt.';
+
+  @override
+  String get auth_reset_email_required =>
+      'Gib zuerst deine E-Mail-Adresse ein.';
+
+  @override
+  String get auth_reset_email_sent =>
+      'Die E-Mail zum Zurücksetzen des Passworts wurde gesendet. Prüfe deinen Posteingang.';
+
+  @override
+  String get auth_link_open_failed => 'Der Link konnte nicht geöffnet werden.';
+
+  @override
+  String get auth_invalid_credentials =>
+      'E-Mail-Adresse oder Passwort ist falsch.';
+
+  @override
+  String get auth_email_not_confirmed =>
+      'Bitte bestätige deine E-Mail-Adresse, bevor du dich anmeldest.';
+
+  @override
+  String get auth_user_already_registered =>
+      'Für diese E-Mail-Adresse besteht bereits ein Konto.';
+
+  @override
+  String get auth_or_email_short => 'oder mit E-Mail fortfahren';
+
+  @override
+  String get auth_app_badge => 'Desk Workout';
+
+  @override
+  String get auth_sign_up_tab_short => 'Erstellen';
+
+  @override
+  String get auth_google_short => 'Google';
+
+  @override
+  String get auth_apple_short => 'Apple';
+
+  @override
+  String get auth_toggle_password_visibility =>
+      'Passwortsichtbarkeit umschalten';
+
+  @override
+  String get auth_forgot_password => 'Passwort vergessen?';
+
+  @override
+  String get auth_accept_terms_text =>
+      'Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung.';
+
+  @override
+  String get auth_legal_note_sign_in_compact =>
+      'Indem du fortfährst, stimmst du unseren rechtlichen Bedingungen zu.';
+
+  @override
+  String get auth_legal_note_sign_up_compact =>
+      'Lies unsere rechtlichen Bedingungen, bevor du dein Konto erstellst.';
+
+  @override
+  String get auth_privacy_policy_link => 'Datenschutzerklärung';
+
+  @override
+  String get auth_terms_of_use_link => 'Nutzungsbedingungen';
+
+  @override
+  String get common_retry => 'Erneut versuchen';
+
+  @override
+  String get session_detail_save_cta => 'Speichern';
+
+  @override
+  String get session_detail_saved_cta => 'Gespeichert';
+
+  @override
+  String get session_detail_start_cta => 'Session starten';
+
+  @override
+  String get startup_error_title => 'Start fehlgeschlagen';
+
+  @override
+  String get update_available_body =>
+      'Eine neue Version von Desk Workout ist verfügbar.';
+
+  @override
+  String get quick_fix_equipment_none => 'Keine zusätzliche Ausrüstung';
+
+  @override
+  String get quick_fix_equipment_towel => 'Handtuch';
+
+  @override
+  String get quick_fix_equipment_long_band => 'Widerstandsband';
+
+  @override
+  String get quick_fix_equipment_mini_band => 'Mini-Band';
+
+  @override
+  String get quick_fix_equipment_foam_roller => 'Faszienrolle';
+
+  @override
+  String get quick_fix_equipment_massage_ball => 'Massageball';
+
+  @override
+  String get quick_fix_equipment_soft_ball => 'Weicher Ball';
+
+  @override
+  String get quick_fix_equipment_water_bottle => 'Wasserflasche';
+
+  @override
+  String get quick_fix_equipment_dowel => 'Stab / Besenstiel';
+
+  @override
+  String get quick_fix_problem_forearms => 'Unterarme';
+
+  @override
+  String get quick_fix_problem_hands => 'Hände & Finger';
+
+  @override
+  String get quick_fix_problem_hips_glutes => 'Hüfte & Gesäß';
+
+  @override
+  String get quick_fix_problem_upper_back => 'Oberer Rücken';
+
+  @override
+  String get quick_fix_signal_equipment_based =>
+      'Passt zu deiner verfügbaren Ausrüstung';
+
+  @override
+  String get player_left => 'VERBLEIBEND';
+
+  @override
+  String get player_more_guidance => 'Mehr Anleitung';
+
+  @override
+  String get player_voice_on => 'Stimme an';
+
+  @override
+  String get player_voice_off => 'Stimme aus';
+
+  @override
+  String get program_days_suffix => 'Tage';
+
+  @override
+  String program_minutes_per_day(Object count) {
+    return '$count Min./Tag';
+  }
+
+  @override
+  String get program_difficulty_beginner => 'Einsteiger';
+
+  @override
+  String get program_difficulty_intermediate => 'Mittel';
+
+  @override
+  String get program_difficulty_advanced => 'Fortgeschritten';
+
+  @override
+  String get program_recovery_route => 'Erholungsweg';
+
+  @override
+  String get insights_active_suffix => 'aktiv';
+
+  @override
+  String get player_reps_suffix => 'Wdh.';
+
+  @override
+  String player_step_of(Object current, Object total) {
+    return 'Schritt $current von $total';
+  }
 }

@@ -527,7 +527,7 @@ class _MissionBriefingSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${day.phaseTitle} • Mission ${day.dayNumber}',
+                        '${day.phaseTitle} • ${AppText.of(context).get('program_mission_label', fallback: 'Mission')} ${day.dayNumber}',
                         style: theme.textTheme.labelLarge?.copyWith(
                           color: colors.primary,
                           fontWeight: FontWeight.w800,
@@ -564,21 +564,23 @@ class _MissionBriefingSheet extends StatelessWidget {
               children: [
                 _MissionBriefChip(
                   icon: Icons.schedule_rounded,
-                  label: minutes > 0 ? '$minutes min' : 'Short session',
+                  label: minutes > 0
+                      ? '$minutes ${AppText.of(context).get('common_min', fallback: 'min')}'
+                      : AppText.of(context).get('program_short_session', fallback: 'Short session'),
                 ),
                 _MissionBriefChip(
                   icon: Icons.bolt_rounded,
-                  label: 'Load ${day.loadLevel}/5',
+                  label: '${AppText.of(context).get('program_load_label', fallback: 'Load')} ${day.loadLevel}/5',
                 ),
                 if (day.isAssessmentDay)
-                  const _MissionBriefChip(
+                  _MissionBriefChip(
                     icon: Icons.analytics_outlined,
-                    label: 'Assessment',
+                    label: AppText.of(context).get('program_assessment_label', fallback: 'Assessment'),
                   ),
                 if (day.isRecoveryDay)
-                  const _MissionBriefChip(
+                  _MissionBriefChip(
                     icon: Icons.spa_outlined,
-                    label: 'Recovery',
+                    label: AppText.of(context).get('program_recovery_label', fallback: 'Recovery'),
                   ),
               ],
             ),
@@ -586,14 +588,14 @@ class _MissionBriefingSheet extends StatelessWidget {
             if (objective.isNotEmpty)
               infoCard(
                 icon: Icons.track_changes_rounded,
-                label: 'Today’s target',
+                label: AppText.of(context).get('program_today_target', fallback: 'Today’s target'),
                 value: objective,
               ),
             if (whyToday.isNotEmpty) ...[
               const SizedBox(height: 10),
               infoCard(
                 icon: Icons.lightbulb_outline_rounded,
-                label: 'Why this mission',
+                label: AppText.of(context).get('program_why_mission', fallback: 'Why this mission'),
                 value: whyToday,
               ),
             ],
@@ -601,7 +603,7 @@ class _MissionBriefingSheet extends StatelessWidget {
               const SizedBox(height: 10),
               infoCard(
                 icon: Icons.auto_graph_rounded,
-                label: 'What to notice after',
+                label: AppText.of(context).get('program_notice_after', fallback: 'What to notice after'),
                 value: expected,
               ),
             ],
@@ -623,7 +625,7 @@ class _MissionBriefingSheet extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: () => Navigator.of(context).pop(true),
                 icon: const Icon(Icons.play_arrow_rounded),
-                label: const Text('Start mission'),
+                label: Text(AppText.of(context).get('program_start_mission', fallback: 'Start mission')),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(54),
                   shape: RoundedRectangleBorder(
@@ -1545,7 +1547,7 @@ class _PhaseNavigator extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Recovery route',
+              AppText.get(context, key: 'program_recovery_route', fallback: 'Recovery route'),
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.w900,
                   ),
@@ -2459,7 +2461,7 @@ Future<void> _showCompletedMissionSheet({
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () => Navigator.of(sheetContext).pop(),
-                  child: const Text('Done'),
+                  child: Text(AppText.of(context).get('common_done', fallback: 'Done')),
                 ),
               ),
             ],
@@ -2538,7 +2540,7 @@ Future<void> _showLockedMissionSheet({
                 width: double.infinity,
                 child: FilledButton.tonal(
                   onPressed: () => Navigator.of(sheetContext).pop(),
-                  child: const Text('Back to current mission'),
+                  child: Text(AppText.of(context).get('program_back_current_mission', fallback: 'Back to current mission')),
                 ),
               ),
             ],

@@ -459,7 +459,7 @@ class _SessionDetailHeroPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          height: 232,
+          height: 208,
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(28),
@@ -585,8 +585,6 @@ class _SessionDetailHeroPanel extends StatelessWidget {
               if (description.trim().isNotEmpty)
                 Text(
                   description,
-                  maxLines: 5,
-                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: colors.onSurfaceVariant,
                     fontWeight: FontWeight.w600,
@@ -697,86 +695,82 @@ class _SessionDetailInfoPanel extends StatelessWidget {
     final bodyItems = targetLabels.isEmpty
         ? <String>[t.get('session_detail_body_target_general', fallback: 'General')]
         : targetLabels;
-
     final equipmentItems = equipment
         .map((item) => item.trim())
         .where((item) => item.isNotEmpty)
         .toList(growable: false);
-
+    final resolvedEquipment = equipmentItems.isEmpty
+        ? <String>[t.get('session_detail_equipment_none', fallback: 'No equipment')]
+        : equipmentItems;
     final stepsText = t
         .get('session_detail_steps_count_format', fallback: '{count} steps')
         .replaceAll('{count}', stepCount.toString());
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+      padding: const EdgeInsets.all(9),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [
-                  colors.surfaceContainerHigh.withValues(alpha: 0.56),
-                  colors.surface.withValues(alpha: 0.38),
-                ]
-              : [
-                  colors.surface.withValues(alpha: 0.98),
-                  colors.surfaceContainerLowest.withValues(alpha: 0.92),
-                ],
-        ),
+        borderRadius: BorderRadius.circular(22),
+        color: isDark
+            ? colors.surfaceContainerHigh.withValues(alpha: 0.42)
+            : colors.surface.withValues(alpha: 0.98),
         border: Border.all(
-          color: colors.outlineVariant.withValues(alpha: isDark ? 0.58 : 0.42),
+          color: colors.outlineVariant.withValues(alpha: isDark ? 0.52 : 0.38),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.12 : 0.045),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _CompactInfoRow(
-            icon: Icons.accessibility_new_rounded,
-            title: t.get(
-              'session_detail_body_targets_title',
-              fallback: 'Body',
-            ),
-            items: bodyItems,
-            emptyFallback: t.get(
-              'session_detail_body_target_general',
-              fallback: 'General',
-            ),
-            maxVisibleItems: 2,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _CompactInfoTile(
+                  icon: Icons.accessibility_new_rounded,
+                  title: t.get(
+                    'session_detail_body_targets_title',
+                    fallback: 'Body',
+                  ),
+                  items: bodyItems,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _CompactInfoTile(
+                  icon: Icons.inventory_2_outlined,
+                  title: t.get(
+                    'session_detail_equipment_title',
+                    fallback: 'Equipment',
+                  ),
+                  items: resolvedEquipment,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 7),
-          _CompactInfoRow(
-            icon: Icons.inventory_2_outlined,
-            title: t.get(
-              'session_detail_equipment_title',
-              fallback: 'Equipment',
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                color: colors.primary.withValues(alpha: isDark ? 0.14 : 0.08),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.format_list_numbered_rounded, size: 14, color: colors.primary),
+                  const SizedBox(width: 5),
+                  Text(
+                    stepsText,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: colors.primary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            items: equipmentItems,
-            emptyFallback: t.get(
-              'session_detail_equipment_none',
-              fallback: 'No equipment',
-            ),
-            maxVisibleItems: 3,
-          ),
-          const SizedBox(height: 7),
-          _CompactInfoRow(
-            icon: Icons.format_list_numbered_rounded,
-            title: t.get(
-              'session_detail_steps_title_compact',
-              fallback: 'Steps',
-            ),
-            items: <String>[stepsText],
-            emptyFallback: stepsText,
-            maxVisibleItems: 1,
-            emphasized: true,
           ),
         ],
       ),
@@ -784,158 +778,64 @@ class _SessionDetailInfoPanel extends StatelessWidget {
   }
 }
 
-class _CompactInfoRow extends StatelessWidget {
-  const _CompactInfoRow({
+class _CompactInfoTile extends StatelessWidget {
+  const _CompactInfoTile({
     required this.icon,
     required this.title,
     required this.items,
-    required this.emptyFallback,
-    required this.maxVisibleItems,
-    this.emphasized = false,
   });
 
   final IconData icon;
   final String title;
   final List<String> items;
-  final String emptyFallback;
-  final int maxVisibleItems;
-  final bool emphasized;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    final resolvedItems = items.isEmpty ? <String>[emptyFallback] : items;
-    final visibleItems = resolvedItems.take(maxVisibleItems).toList(growable: false);
-    final hiddenCount = resolvedItems.length - visibleItems.length;
-
-    return Tooltip(
-      message: resolvedItems.join(' • '),
-      waitDuration: const Duration(milliseconds: 420),
-      child: Container(
-        height: 34,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(17),
-          color: emphasized
-              ? colors.primary.withValues(alpha: isDark ? 0.13 : 0.08)
-              : isDark
-                  ? colors.surface.withValues(alpha: 0.32)
-                  : colors.surfaceContainerLowest.withValues(alpha: 0.76),
-          border: Border.all(
-            color: emphasized
-                ? colors.primary.withValues(alpha: 0.18)
-                : colors.outlineVariant.withValues(alpha: isDark ? 0.42 : 0.30),
-          ),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 26,
-              height: 26,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(11),
-                color: colors.primary.withValues(alpha: isDark ? 0.16 : 0.10),
-              ),
-              child: Icon(icon, color: colors.primary, size: 15),
-            ),
-            const SizedBox(width: 8),
-            SizedBox(
-              width: 78,
-              child: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: colors.onSurfaceVariant,
-                  fontWeight: FontWeight.w900,
-                  height: 1.0,
-                ),
-              ),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: _InlineInfoChips(
-                items: visibleItems,
-                hiddenCount: hiddenCount,
-                emphasized: emphasized,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _InlineInfoChips extends StatelessWidget {
-  const _InlineInfoChips({
-    required this.items,
-    required this.hiddenCount,
-    required this.emphasized,
-  });
-
-  final List<String> items;
-  final int hiddenCount;
-  final bool emphasized;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            items.join(' • '),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: emphasized ? colors.primary : colors.onSurface,
-              fontWeight: FontWeight.w900,
-              height: 1.0,
-            ),
-          ),
-        ),
-        if (hiddenCount > 0) ...[
-          const SizedBox(width: 6),
-          _InfoOverflowPill(count: hiddenCount),
-        ],
-      ],
-    );
-  }
-}
-
-class _InfoOverflowPill extends StatelessWidget {
-  const _InfoOverflowPill({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      constraints: const BoxConstraints(minHeight: 72),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        color: colors.primary.withValues(alpha: 0.11),
+        borderRadius: BorderRadius.circular(16),
+        color: isDark
+            ? colors.surface.withValues(alpha: 0.34)
+            : colors.surfaceContainerLowest.withValues(alpha: 0.78),
         border: Border.all(
-          color: colors.primary.withValues(alpha: 0.18),
+          color: colors.outlineVariant.withValues(alpha: isDark ? 0.38 : 0.28),
         ),
       ),
-      child: Text(
-        '+$count',
-        maxLines: 1,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: colors.primary,
-          fontWeight: FontWeight.w900,
-          height: 1.0,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 15, color: colors.primary),
+              const SizedBox(width: 5),
+              Expanded(
+                child: Text(
+                  title,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: colors.onSurfaceVariant,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          Text(
+            items.join(' • '),
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: colors.onSurface,
+              fontWeight: FontWeight.w800,
+              height: 1.22,
+            ),
+          ),
+        ],
       ),
     );
   }

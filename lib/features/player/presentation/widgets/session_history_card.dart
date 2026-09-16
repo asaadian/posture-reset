@@ -216,8 +216,6 @@ class _HistoryCopy extends StatelessWidget {
             fontWeight: FontWeight.w900,
             height: 1.04,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 5),
         Row(

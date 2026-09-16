@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/auth/application/auth_providers.dart';
 import '../../features/profile/application/profile_providers.dart';
+import '../localization/app_locale_controller.dart';
 import '../supabase/supabase_providers.dart';
 import 'local_notification_service.dart';
 import 'notification_context_repository.dart';
@@ -18,7 +19,8 @@ final localNotificationServiceProvider = Provider<LocalNotificationService>((ref
 final notificationContextRepositoryProvider =
     Provider<NotificationContextRepository>((ref) {
   final client = ref.watch(supabaseClientProvider);
-  return SupabaseNotificationContextRepository(client);
+  final languageCode = ref.watch(appLocaleControllerProvider).languageCode;
+  return SupabaseNotificationContextRepository(client, languageCode: languageCode);
 });
 
 final notificationReminderSyncControllerProvider =

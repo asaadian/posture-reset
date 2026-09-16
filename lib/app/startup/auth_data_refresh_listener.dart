@@ -35,6 +35,7 @@ class AuthDataRefreshListener extends ConsumerWidget {
   }
 
   void _invalidateUserScopedData(WidgetRef ref) {
+    ref.read(insightsRefreshSignalProvider.notifier).markDirty();
     ref.invalidate(accessSnapshotProvider);
 
     ref.invalidate(currentUserProfileProvider);

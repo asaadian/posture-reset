@@ -195,32 +195,6 @@ Deno.serve(async (req) => {
 
     const tokenHash = await sha256Hex(purchaseToken);
 
-    const { data: existingTransaction, error: existingError } =
-      await serviceClient
-        .from('purchase_transactions')
-        .select('id,user_id,status')
-        .eq('platform', 'android')
-        .eq('purchase_token_hash', tokenHash)
-        .maybeSingle();
-
-    if (existingError) {
-      throw existingError;
-    }
-
-    if (
-      existingTransaction &&
-      existingTransaction.user_id &&
-      existingTransaction.user_id !== user.id
-    ) {
-      return jsonResponse(
-        {
-          ok: false,
-          error: 'purchase_token_already_used',
-        },
-        409,
-      );
-    }
-
     let acknowledgementResult: 'already_acknowledged' | 'acknowledged' =
       'already_acknowledged';
 
@@ -258,14 +232,78 @@ Deno.serve(async (req) => {
       },
     };
 
-    const { error: transactionError } = await serviceClient
+    const {
+      data: insertedTransaction,
+      error: transactionInsertError,
+    } = await serviceClient
       .from('purchase_transactions')
-      .upsert(transactionPayload, {
-        onConflict: 'platform,purchase_token_hash',
-      });
+      .insert(transactionPayload)
+      .select('id,user_id')
+      .single();
 
-    if (transactionError) {
-      throw transactionError;
+    if (transactionInsertError) {
+      if (transactionInsertError.code !== '23505') {
+        throw transactionInsertError;
+      }
+
+      const {
+        data: transactionByToken,
+        error: transactionByTokenError,
+      } = await serviceClient
+        .from('purchase_transactions')
+        .select('id,user_id,status')
+        .eq('platform', 'android')
+        .eq('purchase_token_hash', tokenHash)
+        .maybeSingle();
+
+      if (transactionByTokenError) {
+        throw transactionByTokenError;
+      }
+
+      let existingTransaction = transactionByToken;
+
+      if (!existingTransaction && googlePurchase.orderId) {
+        const {
+          data: transactionByOrder,
+          error: transactionByOrderError,
+        } = await serviceClient
+          .from('purchase_transactions')
+          .select('id,user_id,status')
+          .eq('platform', 'android')
+          .eq('store_transaction_id', googlePurchase.orderId)
+          .maybeSingle();
+
+        if (transactionByOrderError) {
+          throw transactionByOrderError;
+        }
+
+        existingTransaction = transactionByOrder;
+      }
+
+      if (!existingTransaction) {
+        throw transactionInsertError;
+      }
+
+      if (existingTransaction.user_id !== user.id) {
+        return jsonResponse(
+          {
+            ok: false,
+            error: 'purchase_token_already_used',
+          },
+          409,
+        );
+      }
+
+      const { error: transactionUpdateError } = await serviceClient
+        .from('purchase_transactions')
+        .update(transactionPayload)
+        .eq('id', existingTransaction.id);
+
+      if (transactionUpdateError) {
+        throw transactionUpdateError;
+      }
+    } else if (!insertedTransaction) {
+      throw new Error('purchase_transaction_insert_missing');
     }
 
     const { data: entitlement, error: entitlementError } = await serviceClient
@@ -320,7 +358,6 @@ Deno.serve(async (req) => {
       {
         ok: false,
         error: 'verify_purchase_failed',
-        reason: message,
       },
       500,
     );
@@ -337,8 +374,9 @@ async function recordRejectedPurchase(args: {
 }) {
   const tokenHash = await sha256Hex(args.purchaseToken);
 
-  await args.serviceClient.from('purchase_transactions').upsert(
-    {
+  const { error } = await args.serviceClient
+    .from('purchase_transactions')
+    .insert({
       user_id: args.userId,
       platform: 'android',
       store: 'google_play',
@@ -352,11 +390,14 @@ async function recordRejectedPurchase(args: {
       metadata: {
         rejection_reason: args.reason,
       },
-    },
-    {
-      onConflict: 'platform,purchase_token_hash',
-    },
-  );
+    });
+
+  if (error && error.code !== '23505') {
+    console.error('record_rejected_purchase_failed', {
+      code: error.code,
+      message: error.message,
+    });
+  }
 }
 
 async function verifyGooglePlayProductPurchase(args: {

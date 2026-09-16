@@ -71,10 +71,6 @@ class RecoveryProgramsPage extends ConsumerWidget {
                   ResponsiveContentSection(
                     spacing: 18,
                     children: [
-                      _ProgramsIntroHeader(
-                        count: sorted.length,
-                        hasActiveProgram: active != null,
-                      ),
                       if (active != null && activeSummary != null)
                         _ActiveJourneyCard(
                           program: activeSummary,
@@ -90,11 +86,6 @@ class RecoveryProgramsPage extends ConsumerWidget {
                                 'programs_more_journeys_title',
                                 fallback: 'More programs',
                               ),
-                        subtitle: t.get(
-                          'programs_section_subtitle',
-                          fallback:
-                              'Structured plans designed for consistent progress.',
-                        ),
                       ),
                       if (sorted.isEmpty)
                         _EmptyProgramsCard(
@@ -423,6 +414,7 @@ class _ProgramCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final t = AppText.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Material(
       color: Colors.transparent,
@@ -431,33 +423,34 @@ class _ProgramCard extends StatelessWidget {
           'recovery-program-detail',
           pathParameters: {'id': program.id},
         ),
-        borderRadius: BorderRadius.circular(26),
+        borderRadius: BorderRadius.circular(24),
         child: Ink(
+          height: 126,
           decoration: BoxDecoration(
-            color: colors.surface,
-            borderRadius: BorderRadius.circular(26),
+            borderRadius: BorderRadius.circular(24),
+            color: isDark
+                ? colors.surfaceContainerHigh.withValues(alpha: 0.62)
+                : colors.surface,
             border: Border.all(
-              color: colors.outlineVariant.withValues(alpha: 0.48),
+              color: colors.outlineVariant.withValues(alpha: 0.42),
             ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(
-                  alpha: theme.brightness == Brightness.dark ? 0.20 : 0.06,
+                  alpha: isDark ? 0.14 : 0.045,
                 ),
-                blurRadius: 24,
-                offset: const Offset(0, 10),
+                blurRadius: 18,
+                offset: const Offset(0, 7),
               ),
             ],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AspectRatio(
-                aspectRatio: 16 / 9,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(25),
-                  ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 118,
+                  height: double.infinity,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
@@ -471,94 +464,117 @@ class _ProgramCard extends StatelessWidget {
                         ),
                       ),
                       _RemoteProgramCoverImage(programId: program.id),
-                      const DecoratedBox(
+                      DecoratedBox(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.transparent, Color(0xB8000000)],
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.28),
+                            ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
                         ),
                       ),
-                      Positioned(
-                        left: 14,
-                        top: 14,
-                        child: _GlassBadge(
-                          icon: isLocked
-                              ? Icons.workspace_premium_rounded
-                              : Icons.route_rounded,
-                          label: isLocked
-                              ? t.get('program_premium_badge', fallback: 'Premium')
-                              : '${program.durationDays} days',
+                      if (isLocked)
+                        Positioned(
+                          left: 9,
+                          top: 9,
+                          child: Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black.withValues(alpha: 0.34),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.34),
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.workspace_premium_rounded,
+                              size: 15,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(17, 16, 17, 17),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      t.get(program.titleKey, fallback: program.titleFallback),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: colors.onSurface,
-                        fontWeight: FontWeight.w900,
-                        height: 1.12,
-                      ),
-                    ),
-                    const SizedBox(height: 7),
-                    Text(
-                      t.get(
-                        program.subtitleKey,
-                        fallback: program.subtitleFallback.isNotEmpty
-                            ? program.subtitleFallback
-                            : program.programGoalFallback,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                        height: 1.35,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Row(
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 13, 12, 13),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _MetaChip(
-                          icon: Icons.schedule_rounded,
-                          label: '${program.estimatedMinutesPerDay} min/day',
+                        Row(
+                          children: [
+                            Container(
+                              width: 24,
+                              height: 3,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(999),
+                                gradient: LinearGradient(
+                                  colors: _programGradient(program.id),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 7),
+                            Text(
+                              t.get(
+                                'program_card_label',
+                                fallback: 'GUIDED PROGRAM',
+                              ),
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: colors.onSurfaceVariant,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.7,
+                                fontSize: 9.5,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        _MetaChip(
-                          icon: Icons.signal_cellular_alt_rounded,
-                          label: _difficultyLabel(program.difficulty),
+                        const SizedBox(height: 9),
+                        Text(
+                          t.get(
+                            program.titleKey,
+                            fallback: program.titleFallback,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: colors.onSurface,
+                            fontWeight: FontWeight.w900,
+                            height: 1.12,
+                          ),
                         ),
-                        const Spacer(),
-                        Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: colors.primary.withValues(alpha: 0.10),
-                          ),
-                          child: Icon(
-                            Icons.arrow_forward_rounded,
-                            color: colors.primary,
-                            size: 19,
-                          ),
+                        const SizedBox(height: 9),
+                        Row(
+                          children: [
+                            Text(
+                              t.get(
+                                'program_card_open',
+                                fallback: 'View program',
+                              ),
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                color: colors.primary,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 16,
+                              color: colors.primary,
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -676,35 +692,21 @@ class _MetaChip extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title, required this.subtitle});
+  const _SectionHeader({required this.title});
 
   final String title;
-  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: theme.textTheme.titleLarge?.copyWith(
-            color: colors.onSurface,
-            fontWeight: FontWeight.w900,
-            height: 1.05,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          subtitle,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: colors.onSurfaceVariant,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
+    return Text(
+      title,
+      style: theme.textTheme.titleLarge?.copyWith(
+        color: colors.onSurface,
+        fontWeight: FontWeight.w900,
+        height: 1.05,
+      ),
     );
   }
 }
@@ -720,10 +722,9 @@ class _ProgramsLoadingView extends StatelessWidget {
         ResponsiveContentSection(
           spacing: 16,
           children: [
-            _Skeleton(height: 110),
             _Skeleton(height: 290),
-            _Skeleton(height: 80),
-            _Skeleton(height: 310),
+            _Skeleton(height: 42),
+            _Skeleton(height: 210),
           ],
         ),
       ],
@@ -880,14 +881,15 @@ class _RemoteProgramCoverImage extends StatelessWidget {
   }
 }
 
-String _difficultyLabel(RecoveryProgramDifficulty difficulty) {
+String _difficultyLabel(BuildContext context, RecoveryProgramDifficulty difficulty) {
+  final t = AppText.of(context);
   switch (difficulty) {
     case RecoveryProgramDifficulty.beginner:
-      return 'Beginner';
+      return t.get('program_difficulty_beginner', fallback: 'Beginner');
     case RecoveryProgramDifficulty.intermediate:
-      return 'Intermediate';
+      return t.get('program_difficulty_intermediate', fallback: 'Intermediate');
     case RecoveryProgramDifficulty.advanced:
-      return 'Advanced';
+      return t.get('program_difficulty_advanced', fallback: 'Advanced');
   }
 }
 

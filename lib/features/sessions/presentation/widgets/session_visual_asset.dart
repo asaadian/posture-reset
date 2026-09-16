@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 class SessionVisualAsset {
   const SessionVisualAsset._();
 
+  static const String remoteBaseUrl =
+      'https://weglabs.com/data/desk-workout/covers/sessions';
+
+  static String remoteUrlForSessionId(String sessionId) {
+    return '$remoteBaseUrl/$sessionId.webp';
+  }
+
   static String pathForSessionId(String sessionId) {
     return 'assets/images/sessions/$sessionId.png';
   }
@@ -107,17 +114,34 @@ class SessionVisualStage extends StatelessWidget {
               child: Transform.scale(
                 scale: imageScale,
                 alignment: imageAlignment,
-                child: Image.asset(
-                  assetPath,
+                child: Image.network(
+                  SessionVisualAsset.remoteUrlForSessionId(sessionId),
                   fit: BoxFit.contain,
                   alignment: imageAlignment,
                   filterQuality: FilterQuality.high,
-                  errorBuilder: (_, __, ___) {
-                    return _SessionVisualFallback(
-                      compact: compact,
-                      isLocked: isLocked,
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return Image.asset(
+                      assetPath,
+                      fit: BoxFit.contain,
+                      alignment: imageAlignment,
+                      filterQuality: FilterQuality.high,
+                      errorBuilder: (_, __, ___) => _SessionVisualFallback(
+                        compact: compact,
+                        isLocked: isLocked,
+                      ),
                     );
                   },
+                  errorBuilder: (_, __, ___) => Image.asset(
+                    assetPath,
+                    fit: BoxFit.contain,
+                    alignment: imageAlignment,
+                    filterQuality: FilterQuality.high,
+                    errorBuilder: (_, __, ___) => _SessionVisualFallback(
+                      compact: compact,
+                      isLocked: isLocked,
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -161,7 +161,7 @@ class InsightsNextBestAction {
 
   const InsightsNextBestAction.empty()
       : title = 'Build your recovery signal',
-        body = 'Complete a few sessions so Posture Reset can recommend the next best action.',
+        body = 'Complete a few sessions so Desk Workout can recommend the next best action.',
         reason = 'Not enough recent data yet.',
         sessionId = null;
 

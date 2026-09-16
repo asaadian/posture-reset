@@ -258,6 +258,9 @@ class _NotificationHistoryTile extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final isUnread = item.isUnread;
     final isUpcoming = item.isUpcoming;
+    final t = AppText.of(context);
+    final displayTitle = t.get('notification_dynamic_title', fallback: item.title);
+    final displayBody = t.get('notification_dynamic_body', fallback: item.body);
 
     return Material(
       color: Colors.transparent,
@@ -320,7 +323,7 @@ class _NotificationHistoryTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.title,
+                      displayTitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.titleSmall?.copyWith(
@@ -331,7 +334,7 @@ class _NotificationHistoryTile extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      item.body,
+                      displayBody,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall?.copyWith(

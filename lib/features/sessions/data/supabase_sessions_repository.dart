@@ -7,9 +7,15 @@ import '../domain/session_models.dart';
 import '../domain/sessions_repository.dart';
 
 class SupabaseSessionsRepository implements SessionsRepository {
-  SupabaseSessionsRepository(this._client);
+  SupabaseSessionsRepository(
+    this._client, {
+    required String languageCode,
+  }) : _languageCode = languageCode.toLowerCase();
 
   final SupabaseClient _client;
+  final String _languageCode;
+
+  bool get _wantsGerman => _languageCode == 'de';
 
   static const String _templatesTable = 'session_templates';
   static const String _stepsTable = 'session_steps';
@@ -26,7 +32,7 @@ class SupabaseSessionsRepository implements SessionsRepository {
     final rows = (response as List)
         .map(
           (item) => _SessionTemplateRow.fromJson(
-            Map<String, dynamic>.from(item as Map),
+            _localizedTemplateJson(Map<String, dynamic>.from(item as Map)),
           ),
         )
         .toList(growable: false);
@@ -54,13 +60,13 @@ class SupabaseSessionsRepository implements SessionsRepository {
         .order('step_order', ascending: true);
 
     final template = _SessionTemplateRow.fromJson(
-      Map<String, dynamic>.from(templateResponse as Map),
+      _localizedTemplateJson(Map<String, dynamic>.from(templateResponse as Map)),
     );
 
     final steps = (stepsResponse as List)
         .map(
           (item) => _SessionStepRow.fromJson(
-            Map<String, dynamic>.from(item as Map),
+            _localizedStepJson(Map<String, dynamic>.from(item as Map)),
           ),
         )
         .toList(growable: false);
@@ -83,7 +89,7 @@ class SupabaseSessionsRepository implements SessionsRepository {
     final rows = (response as List)
         .map(
           (item) => _SessionTemplateRow.fromJson(
-            Map<String, dynamic>.from(item as Map),
+            _localizedTemplateJson(Map<String, dynamic>.from(item as Map)),
           ),
         )
         .toList(growable: false);
@@ -224,9 +230,71 @@ class SupabaseSessionsRepository implements SessionsRepository {
       avoidMistakes: row.avoidMistakes,
       coachTip: row.coachTip,
       playerFocusNote: row.playerFocusNote,
+      shortInstruction: row.shortInstruction,
+      voiceScript: row.voiceScript,
+      voiceScriptDe: row.voiceScriptDe,
+      voiceAudioUrl: row.voiceAudioUrl,
       isAssessmentStep: row.isAssessmentStep,
       isRetestStep: row.isRetestStep,
     );
+  }
+
+  Map<String, dynamic> _localizedTemplateJson(Map<String, dynamic> json) {
+    if (!_wantsGerman) return json;
+
+    final localized = Map<String, dynamic>.from(json);
+    _preferLocalizedText(localized, source: 'title_de', target: 'title_fallback');
+    _preferLocalizedText(localized, source: 'subtitle_de', target: 'subtitle_fallback');
+    _preferLocalizedText(localized, source: 'short_description_de', target: 'short_description_fallback');
+    _preferLocalizedText(localized, source: 'long_description_de', target: 'long_description_fallback');
+    _preferLocalizedText(localized, source: 'why_it_helps_de', target: 'why_it_helps_fallback');
+    _preferLocalizedValue(localized, source: 'preparation_notes_de', target: 'preparation_notes');
+    _preferLocalizedValue(localized, source: 'cautions_de', target: 'cautions');
+    _preferLocalizedValue(localized, source: 'contraindications_de', target: 'contraindications');
+    return localized;
+  }
+
+  Map<String, dynamic> _localizedStepJson(Map<String, dynamic> json) {
+    if (!_wantsGerman) return json;
+
+    final localized = Map<String, dynamic>.from(json);
+    _preferLocalizedText(localized, source: 'title_de', target: 'title_fallback');
+    _preferLocalizedText(localized, source: 'instruction_de', target: 'instruction_fallback');
+    _preferLocalizedText(localized, source: 'short_instruction_de', target: 'short_instruction');
+    _preferLocalizedText(localized, source: 'breathing_cue_de', target: 'breathing_cue_fallback');
+    _preferLocalizedText(localized, source: 'safety_note_de', target: 'safety_note_fallback');
+    _preferLocalizedText(localized, source: 'coaching_cue_de', target: 'coaching_cue_fallback');
+    _preferLocalizedText(localized, source: 'step_purpose_label_de', target: 'step_purpose_label');
+    _preferLocalizedText(localized, source: 'step_goal_de', target: 'step_goal');
+    _preferLocalizedText(localized, source: 'what_to_notice_de', target: 'what_to_notice');
+    _preferLocalizedValue(localized, source: 'avoid_mistakes_de', target: 'avoid_mistakes');
+    _preferLocalizedText(localized, source: 'coach_tip_de', target: 'coach_tip');
+    _preferLocalizedText(localized, source: 'player_focus_note_de', target: 'player_focus_note');
+    // voice_script and voice_script_de intentionally remain separate. The
+    // player already chooses the correct TTS script for the current locale.
+    return localized;
+  }
+
+  void _preferLocalizedText(
+    Map<String, dynamic> json, {
+    required String source,
+    required String target,
+  }) {
+    final value = json[source];
+    if (value is String && value.trim().isNotEmpty) {
+      json[target] = value;
+    }
+  }
+
+  void _preferLocalizedValue(
+    Map<String, dynamic> json, {
+    required String source,
+    required String target,
+  }) {
+    final value = json[source];
+    if (value != null) {
+      json[target] = value;
+    }
   }
 
   String? _publicUrlFromStoragePath(String? rawPath) {
@@ -631,6 +699,10 @@ class _SessionStepRow {
     this.avoidMistakes = const <String>[],
     this.coachTip,
     this.playerFocusNote,
+    this.shortInstruction,
+    this.voiceScript,
+    this.voiceScriptDe,
+    this.voiceAudioUrl,
     this.isAssessmentStep = false,
     this.isRetestStep = false,
   });
@@ -675,6 +747,10 @@ class _SessionStepRow {
   final List<String> avoidMistakes;
   final String? coachTip;
   final String? playerFocusNote;
+  final String? shortInstruction;
+  final String? voiceScript;
+  final String? voiceScriptDe;
+  final String? voiceAudioUrl;
   final bool isAssessmentStep;
   final bool isRetestStep;
 
@@ -723,6 +799,10 @@ class _SessionStepRow {
       avoidMistakes: _readStringList(json['avoid_mistakes']),
       coachTip: json['coach_tip'] as String?,
       playerFocusNote: json['player_focus_note'] as String?,
+      shortInstruction: json['short_instruction'] as String?,
+      voiceScript: json['voice_script'] as String?,
+      voiceScriptDe: json['voice_script_de'] as String?,
+      voiceAudioUrl: json['voice_audio_url'] as String?,
       isAssessmentStep: json['is_assessment_step'] as bool? ?? false,
       isRetestStep: json['is_retest_step'] as bool? ?? false,
     );

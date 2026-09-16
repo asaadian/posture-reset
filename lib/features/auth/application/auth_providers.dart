@@ -2,13 +2,18 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../core/config/app_env.dart';
 
 class AuthService {
   AuthService(this._client);
 
   final SupabaseClient _client;
+
+  Future<void>? _googleInitialization;
 
   static const String oauthRedirectUrl = 'posturereset://auth/callback';
 
@@ -38,12 +43,40 @@ class AuthService {
     );
   }
 
-  Future<bool> signInWithGoogle() {
-    return _client.auth.signInWithOAuth(
-      OAuthProvider.google,
-      redirectTo: kIsWeb ? null : oauthRedirectUrl,
-      authScreenLaunchMode: LaunchMode.externalApplication,
+  Future<bool> signInWithGoogle() async {
+    if (kIsWeb) {
+      return _client.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: null,
+        authScreenLaunchMode: LaunchMode.platformDefault,
+      );
+    }
+
+    final serverClientId = AppEnv.googleWebClientId.trim();
+    if (serverClientId.isEmpty) {
+      throw AuthException(
+        'Google Sign-In is not configured. Missing GOOGLE_WEB_CLIENT_ID.',
+      );
+    }
+
+    _googleInitialization ??= GoogleSignIn.instance.initialize(
+      serverClientId: serverClientId,
     );
+    await _googleInitialization;
+
+    final googleUser = await GoogleSignIn.instance.authenticate();
+    final idToken = googleUser.authentication.idToken;
+
+    if (idToken == null || idToken.isEmpty) {
+      throw AuthException('Google Sign-In did not return an ID token.');
+    }
+
+    await _client.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+    );
+
+    return true;
   }
 
   Future<void> resetPasswordForEmail({
@@ -55,8 +88,16 @@ class AuthService {
     );
   }
 
-  Future<void> signOut() {
-    return _client.auth.signOut();
+  Future<void> signOut() async {
+    await _client.auth.signOut();
+
+    if (!kIsWeb && _googleInitialization != null) {
+      try {
+        await GoogleSignIn.instance.signOut();
+      } on GoogleSignInException {
+        // Supabase sign-out already succeeded; native Google cleanup is best-effort.
+      }
+    }
   }
 }
 

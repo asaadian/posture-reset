@@ -17,12 +17,10 @@ class QuickFixOption {
 class QuickFixState {
   const QuickFixState({
     required this.problems,
-    required this.timeOptions,
     required this.equipmentOptions,
     required this.energyOptions,
     required this.modes,
     required this.selectedProblemId,
-    required this.selectedTimeId,
     required this.selectedEquipmentIds,
     required this.selectedEnergyId,
     required this.selectedModeIds,
@@ -35,13 +33,11 @@ class QuickFixState {
   });
 
   final List<QuickFixOption> problems;
-  final List<QuickFixOption> timeOptions;
   final List<QuickFixOption> equipmentOptions;
   final List<QuickFixOption> energyOptions;
   final List<QuickFixOption> modes;
 
   final String selectedProblemId;
-  final String selectedTimeId;
   final List<String> selectedEquipmentIds;
   final String selectedEnergyId;
   final List<String> selectedModeIds;
@@ -55,12 +51,10 @@ class QuickFixState {
 
   QuickFixState copyWith({
     List<QuickFixOption>? problems,
-    List<QuickFixOption>? timeOptions,
     List<QuickFixOption>? equipmentOptions,
     List<QuickFixOption>? energyOptions,
     List<QuickFixOption>? modes,
     String? selectedProblemId,
-    String? selectedTimeId,
     List<String>? selectedEquipmentIds,
     String? selectedEnergyId,
     List<String>? selectedModeIds,
@@ -75,12 +69,10 @@ class QuickFixState {
   }) {
     return QuickFixState(
       problems: problems ?? this.problems,
-      timeOptions: timeOptions ?? this.timeOptions,
       equipmentOptions: equipmentOptions ?? this.equipmentOptions,
       energyOptions: energyOptions ?? this.energyOptions,
       modes: modes ?? this.modes,
       selectedProblemId: selectedProblemId ?? this.selectedProblemId,
-      selectedTimeId: selectedTimeId ?? this.selectedTimeId,
       selectedEquipmentIds: selectedEquipmentIds ?? this.selectedEquipmentIds,
       selectedEnergyId: selectedEnergyId ?? this.selectedEnergyId,
       selectedModeIds: selectedModeIds ?? this.selectedModeIds,

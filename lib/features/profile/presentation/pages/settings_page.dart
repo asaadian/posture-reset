@@ -50,14 +50,6 @@ class SettingsPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.fromLTRB(0, 2, 0, pageInfo.isCompact ? 128 : 40),
           children: [
-            _SettingsHero(
-              title: t.get('settings_hero_title', fallback: 'App controls'),
-              subtitle: t.get(
-                'settings_hero_subtitle',
-                fallback: 'Language, theme, support, and legal information.',
-              ),
-            ),
-            const SizedBox(height: 14),
             if (isWide)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

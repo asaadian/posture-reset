@@ -1,6 +1,6 @@
-# Posture Reset
+# Desk Workout
 
-**Posture Reset** is a premium posture, mobility, and recovery app for programmers, remote workers, desk-heavy professionals, and busy parents.
+**Desk Workout** is a premium posture, mobility, and recovery app for programmers, remote workers, desk-heavy professionals, and busy parents.
 
 The app helps users recover from long sitting sessions, posture fatigue, stiffness, and work-related tension through short guided recovery routines, body-zone-based recommendations, Quick Fix flows, and a modern dark-mode mobile experience.
 
@@ -143,3 +143,19 @@ Before wider production release:
 - Avoid hardcoded UI text.
 - Avoid bottom overflow on small devices.
 - Keep the premium model based on entitlement state, not hardcoded product names.
+---
+
+## Local configuration
+
+The app expects build-time values through `--dart-define`:
+
+```bash
+flutter run \
+  --dart-define=SUPABASE_URL=https://YOUR_PROJECT.supabase.co \
+  --dart-define=SUPABASE_ANON_KEY=YOUR_PUBLISHABLE_KEY \
+  --dart-define=GOOGLE_WEB_CLIENT_ID=YOUR_WEB_OAUTH_CLIENT_ID.apps.googleusercontent.com
+```
+
+`GOOGLE_WEB_CLIENT_ID` must be the OAuth **Web application** client ID configured for the Google provider in Supabase. For Android native Google Sign-In, also create an Android OAuth client for package `com.weglabs.posturereset` with the SHA-1 fingerprints of the debug and Play App Signing certificates.
+
+Never commit or share `android/key.properties`, release keystores, Google service-account JSON files, `.env` files, or crash dumps.

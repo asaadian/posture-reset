@@ -23,13 +23,11 @@ class SavedSessionCard extends StatelessWidget {
       key: item.session.titleKey,
       fallback: item.session.titleFallback,
     );
-
     final subtitle = AppText.get(
       context,
       key: item.session.shortDescriptionKey,
       fallback: item.session.shortDescriptionFallback,
     );
-
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
@@ -37,52 +35,77 @@ class SavedSessionCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(26),
-        onTap: () {
-          context.pushNamed(
-            'session-detail',
-            pathParameters: {'id': item.session.id},
-          );
-        },
+        borderRadius: BorderRadius.circular(24),
+        onTap: () => context.pushNamed(
+          'session-detail',
+          pathParameters: {'id': item.session.id},
+        ),
         child: Ink(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(26),
-            gradient: LinearGradient(
-              colors: isDark
-                  ? [
-                      colors.surfaceContainerHigh.withValues(alpha: 0.78),
-                      colors.surface.withValues(alpha: 0.96),
-                    ]
-                  : [
-                      colors.surface.withValues(alpha: 0.98),
-                      colors.surfaceContainerLow.withValues(alpha: 0.90),
-                    ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: colors.outlineVariant.withValues(alpha: isDark ? 0.72 : 0.56),
+              color: colors.outlineVariant.withValues(alpha: isDark ? 0.62 : 0.48),
             ),
             boxShadow: [
               BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.14)
-                    : colors.primary.withValues(alpha: 0.045),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
+                color: Colors.black.withValues(alpha: isDark ? 0.12 : 0.035),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _SavedSessionVisual(sessionId: item.session.id),
+              SessionVisualStage(
+                sessionId: item.session.id,
+                width: 76,
+                height: 86,
+                compact: true,
+                padding: const EdgeInsets.fromLTRB(6, 7, 6, 4),
+                borderRadius: 20,
+              ),
               const SizedBox(width: 12),
               Expanded(
-                child: _SavedSessionCopy(
-                  title: title,
-                  subtitle: subtitle,
-                  item: item,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: colors.onSurface,
+                        fontWeight: FontWeight.w900,
+                        height: 1.15,
+                      ),
+                    ),
+                    if (subtitle.trim().isNotEmpty) ...[
+                      const SizedBox(height: 5),
+                      Text(
+                        subtitle,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colors.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 9),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        _MetaText(label: '${item.session.durationMinutes} min'),
+                        _MetaText(label: _intensityLabel(context, item.session.intensity)),
+                        if (item.latestRun != null)
+                          _MetaText(
+                            label: _actionLabel(context, item.action),
+                            emphasized: true,
+                          ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 10),
@@ -95,76 +118,30 @@ class SavedSessionCard extends StatelessWidget {
   }
 }
 
-class _SavedSessionVisual extends StatelessWidget {
-  const _SavedSessionVisual({required this.sessionId});
+class _MetaText extends StatelessWidget {
+  const _MetaText({required this.label, this.emphasized = false});
 
-  final String sessionId;
-
-  @override
-  Widget build(BuildContext context) {
-    return SessionVisualStage(
-      sessionId: sessionId,
-      width: 82,
-      height: 94,
-      compact: true,
-      padding: const EdgeInsets.fromLTRB(6, 7, 6, 4),
-      borderRadius: 22,
-    );
-  }
-}
-
-class _SavedSessionCopy extends StatelessWidget {
-  const _SavedSessionCopy({
-    required this.title,
-    required this.subtitle,
-    required this.item,
-  });
-
-  final String title;
-  final String subtitle;
-  final SavedSessionContinuityItem item;
+  final String label;
+  final bool emphasized;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          children: [
-            _Tag(label: '${item.session.durationMinutes} min'),
-            _Tag(label: _intensityLabel(context, item.session.intensity)),
-            if (item.latestRun != null)
-              _Tag(label: _actionLabel(context, item.action), emphasized: true),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: colors.onSurface,
-            fontWeight: FontWeight.w900,
-            height: 1.02,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          subtitle,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: colors.onSurfaceVariant,
-            fontWeight: FontWeight.w600,
-            height: 1.18,
-          ),
-        ),
-      ],
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        color: (emphasized ? colors.secondary : colors.primary)
+            .withValues(alpha: 0.075),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: emphasized ? colors.secondary : colors.onSurfaceVariant,
+              fontWeight: FontWeight.w800,
+              height: 1.05,
+            ),
+      ),
     );
   }
 }
@@ -177,76 +154,27 @@ class _QuickStartButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final label = _cta(context, item.action);
+    final colors = Theme.of(context).colorScheme;
 
     return Semantics(
       button: true,
       label: label,
       child: InkWell(
-        borderRadius: BorderRadius.circular(18),
-        onTap: () {
-          context.pushNamed(
-            'session-player',
-            pathParameters: {'id': item.session.id},
-            queryParameters: const {'source': 'profile'},
-          );
-        },
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => context.pushNamed(
+          'session-player',
+          pathParameters: {'id': item.session.id},
+          queryParameters: const {'source': 'profile'},
+        ),
         child: Container(
-          width: 48,
-          height: 48,
+          width: 44,
+          height: 44,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            color: Theme.of(context).colorScheme.primary,
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.20),
-                blurRadius: 16,
-                offset: const Offset(0, 8),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(16),
+            color: colors.primary,
           ),
-          child: const Icon(
-            Icons.play_arrow_rounded,
-            color: Colors.white,
-            size: 26,
-          ),
+          child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
         ),
-      ),
-    );
-  }
-}
-
-class _Tag extends StatelessWidget {
-  const _Tag({
-    required this.label,
-    this.emphasized = false,
-  });
-
-  final String label;
-  final bool emphasized;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final color = emphasized ? colors.secondary : colors.primary;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        color: color.withValues(alpha: emphasized ? 0.14 : 0.09),
-        border: Border.all(
-          color: color.withValues(alpha: emphasized ? 0.22 : 0.14),
-        ),
-      ),
-      child: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w900,
-              height: 1.0,
-            ),
       ),
     );
   }
@@ -255,64 +183,31 @@ class _Tag extends StatelessWidget {
 String _cta(BuildContext context, ContinuityActionType action) {
   switch (action) {
     case ContinuityActionType.continueSession:
-      return AppText.get(
-        context,
-        key: 'continuity_continue_cta',
-        fallback: 'Continue',
-      );
+      return AppText.get(context, key: 'continuity_continue_cta', fallback: 'Continue');
     case ContinuityActionType.resumeSession:
-      return AppText.get(
-        context,
-        key: 'continuity_resume_cta',
-        fallback: 'Resume',
-      );
+      return AppText.get(context, key: 'continuity_resume_cta', fallback: 'Resume');
     case ContinuityActionType.repeatSession:
-      return AppText.get(
-        context,
-        key: 'continuity_repeat_cta',
-        fallback: 'Do Again',
-      );
+      return AppText.get(context, key: 'continuity_repeat_cta', fallback: 'Do Again');
     case ContinuityActionType.startSession:
-      return AppText.get(
-        context,
-        key: 'continuity_start_cta',
-        fallback: 'Start',
-      );
+      return AppText.get(context, key: 'continuity_start_cta', fallback: 'Start');
   }
 }
 
 String _actionLabel(BuildContext context, ContinuityActionType action) {
   switch (action) {
     case ContinuityActionType.continueSession:
-      return AppText.get(
-        context,
-        key: 'continuity_label_active',
-        fallback: 'Active run',
-      );
+      return AppText.get(context, key: 'continuity_label_active', fallback: 'Active run');
     case ContinuityActionType.resumeSession:
-      return AppText.get(
-        context,
-        key: 'continuity_label_resumable',
-        fallback: 'Unfinished',
-      );
+      return AppText.get(context, key: 'continuity_label_resumable', fallback: 'Unfinished');
     case ContinuityActionType.repeatSession:
-      return AppText.get(
-        context,
-        key: 'continuity_label_repeatable',
-        fallback: 'Played before',
-      );
+      return AppText.get(context, key: 'continuity_label_repeatable', fallback: 'Played before');
     case ContinuityActionType.startSession:
-      return AppText.get(
-        context,
-        key: 'continuity_label_saved',
-        fallback: 'Saved',
-      );
+      return AppText.get(context, key: 'continuity_label_saved', fallback: 'Saved');
   }
 }
 
 String _intensityLabel(BuildContext context, SessionIntensity intensity) {
   final t = AppText.of(context);
-
   switch (intensity) {
     case SessionIntensity.gentle:
       return t.get('session_intensity_gentle', fallback: 'Gentle');

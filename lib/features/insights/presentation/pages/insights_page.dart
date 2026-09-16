@@ -65,14 +65,7 @@ class InsightsPage extends ConsumerWidget {
 
     return ResponsivePageScaffold(
       title: Text(t.get('insights_title', fallback: 'Insights')),
-      actions: [
-        _RangeMenu(
-          selectedRange: range,
-          onSelected: (value) {
-            ref.read(insightsSelectedRangeProvider.notifier).setRange(value);
-          },
-        ),
-      ],
+      actions: const [],
       bodyBuilder: (context, pageInfo) {
         final accessSnapshot = accessAsync.maybeWhen(
           data: (value) => value,
@@ -145,6 +138,13 @@ class InsightsPage extends ConsumerWidget {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: EdgeInsets.only(bottom: pageInfo.isCompact ? 120 : 48),
                 children: [
+                  _InsightsRangeCard(
+                    selectedRange: range,
+                    onSelected: (value) {
+                      ref.read(insightsSelectedRangeProvider.notifier).setRange(value);
+                    },
+                  ),
+                  const SizedBox(height: 10),
                   _InsightsCompactHero(
                     snapshot: snapshot,
                     pageInfo: pageInfo,
@@ -761,8 +761,8 @@ class _InsightsLockedViewedTrackerState
   }
 }
 
-class _RangeMenu extends StatelessWidget {
-  const _RangeMenu({
+class _InsightsRangeCard extends StatelessWidget {
+  const _InsightsRangeCard({
     required this.selectedRange,
     required this.onSelected,
   });
@@ -773,43 +773,69 @@ class _RangeMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppText.of(context);
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
-    return PopupMenuButton<InsightsRange>(
-      tooltip: t.get(
-        'insights_date_range_tooltip',
-        fallback: 'Change date range',
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerLow.withValues(alpha: isDark ? 0.72 : 0.96),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: colors.outlineVariant.withValues(alpha: isDark ? 0.64 : 0.48),
+        ),
       ),
-      icon: const Icon(Icons.tune_rounded),
-      onSelected: onSelected,
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: InsightsRange.last7Days,
-          child: Text(
-            t.get(
-              'insights_range_7_days',
-              fallback: 'Last 7 days',
+      child: Row(
+        children: InsightsRange.values.map((range) {
+          final selected = range == selectedRange;
+          final label = switch (range) {
+            InsightsRange.last7Days => t.get('insights_range_7_short', fallback: '7 days'),
+            InsightsRange.last14Days => t.get('insights_range_14_short', fallback: '14 days'),
+            InsightsRange.last28Days => t.get('insights_range_28_short', fallback: '28 days'),
+          };
+
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(17),
+                  onTap: () => onSelected(range),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 190),
+                    curve: Curves.easeOutCubic,
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    decoration: BoxDecoration(
+                      color: selected ? colors.surface : Colors.transparent,
+                      borderRadius: BorderRadius.circular(17),
+                      boxShadow: selected
+                          ? [
+                              BoxShadow(
+                                color: colors.shadow.withValues(alpha: isDark ? 0.18 : 0.08),
+                                blurRadius: 14,
+                                offset: const Offset(0, 5),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: selected ? colors.primary : colors.onSurfaceVariant,
+                        fontWeight: selected ? FontWeight.w900 : FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-        PopupMenuItem(
-          value: InsightsRange.last14Days,
-          child: Text(
-            t.get(
-              'insights_range_14_days',
-              fallback: 'Last 14 days',
-            ),
-          ),
-        ),
-        PopupMenuItem(
-          value: InsightsRange.last28Days,
-          child: Text(
-            t.get(
-              'insights_range_28_days',
-              fallback: 'Last 28 days',
-            ),
-          ),
-        ),
-      ],
+          );
+        }).toList(growable: false),
+      ),
     );
   }
 }
@@ -2213,32 +2239,7 @@ class _InsightsPremiumIntelligenceDeck extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isWide = MediaQuery.sizeOf(context).width >= 760;
-
-    final score = _RecoveryScorePremiumCard(snapshot: snapshot);
-    final anatomy = _BodyZoneAnatomyCard(snapshot: snapshot);
-    if (isWide) {
-      return Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 9, child: score),
-              const SizedBox(width: 10),
-              Expanded(flex: 11, child: anatomy),
-            ],
-          ),
-        ],
-      );
-    }
-
-    return Column(
-      children: [
-        score,
-        const SizedBox(height: 10),
-        anatomy,
-      ],
-    );
+    return _RecoveryScorePremiumCard(snapshot: snapshot);
   }
 }
 
@@ -2249,6 +2250,7 @@ class _RecoveryScorePremiumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppText.of(context);
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
@@ -2300,7 +2302,7 @@ class _RecoveryScorePremiumCard extends StatelessWidget {
                 wide ? CrossAxisAlignment.start : CrossAxisAlignment.center,
             children: [
               Text(
-                snapshot.recoveryScoreTitle,
+                AppText.get(context, key: 'insights_recovery_score_dynamic_title', fallback: snapshot.recoveryScoreTitle),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: wide ? TextAlign.start : TextAlign.center,
@@ -2329,7 +2331,7 @@ class _RecoveryScorePremiumCard extends StatelessWidget {
                 runSpacing: 7,
                 children: [
                   _InsightMiniPill(label: '${snapshot.recoveryMinutes} min'),
-                  _InsightMiniPill(label: '${snapshot.activeDaysCount} active'),
+                  _InsightMiniPill(label: '${snapshot.activeDaysCount} ${t.get('insights_active_suffix', fallback: 'active')}'),
                   if (snapshot.bestDayLabel != null &&
                       snapshot.bestDayMinutes > 0)
                     _InsightMiniPill(
@@ -2447,349 +2449,6 @@ class _LargeRecoveryRing extends StatelessWidget {
       ),
     );
   }
-}
-
-class _BodyZoneAnatomyCard extends StatelessWidget {
-  const _BodyZoneAnatomyCard({required this.snapshot});
-
-  final InsightsSnapshot snapshot;
-
-  @override
-  Widget build(BuildContext context) {
-    final zones = snapshot.bodyZones.take(7).toList(growable: false);
-    final dominant = zones.isEmpty ? null : zones.first;
-    final undertrained = snapshot.undertrainedBodyZoneCodes
-        .map((code) => _painAreaLabel(context, code))
-        .take(2)
-        .join(' • ');
-
-    return _InsightGlassPanel(
-      icon: Icons.accessibility_new_rounded,
-      title: AppText.get(
-        context,
-        key: 'insights_body_intelligence_title',
-        fallback: 'Body map',
-      ),
-      subtitle: dominant == null
-          ? AppText.get(
-              context,
-              key: 'insights_body_intelligence_empty',
-              fallback: 'Complete sessions to reveal your map.',
-            )
-          : '${_painAreaLabel(context, dominant.painAreaCode)} ${(dominant.share * 100).round()}%',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _InsightsBodyMap(
-            zones: zones,
-            dominantCode: dominant?.painAreaCode,
-          ),
-          const SizedBox(height: 10),
-          _BodyZoneChipRow(zones: zones),
-          if (undertrained.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            _InsightCoachNote(
-              icon: Icons.balance_rounded,
-              text: 'Undertrained: $undertrained',
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _InsightsBodyMap extends StatelessWidget {
-  const _InsightsBodyMap({
-    required this.zones,
-    required this.dominantCode,
-  });
-
-  final List<InsightsBodyZoneStat> zones;
-  final String? dominantCode;
-
-  @override
-  Widget build(BuildContext context) {
-    final zoneShares = {
-      for (final zone in zones) zone.painAreaCode: zone.share,
-    };
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final narrow = constraints.maxWidth < 380;
-        final mapHeight = narrow ? 292.0 : 330.0;
-
-        return SizedBox(
-          height: mapHeight,
-          child: Row(
-            children: [
-              Expanded(
-                child: _InsightBodySilhouette(
-                  label: AppText.get(context, key: 'body_map_front', fallback: 'Front'),
-                  imagePath: 'assets/images/body_map/front.png',
-                  side: _InsightBodySide.front,
-                  zoneShares: zoneShares,
-                  dominantCode: dominantCode,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _InsightBodySilhouette(
-                  label: AppText.get(context, key: 'body_map_back', fallback: 'Back'),
-                  imagePath: 'assets/images/body_map/back.png',
-                  side: _InsightBodySide.back,
-                  zoneShares: zoneShares,
-                  dominantCode: dominantCode,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-enum _InsightBodySide { front, back }
-
-class _InsightBodySilhouette extends StatelessWidget {
-  const _InsightBodySilhouette({
-    required this.label,
-    required this.imagePath,
-    required this.side,
-    required this.zoneShares,
-    required this.dominantCode,
-  });
-
-  final String label;
-  final String imagePath;
-  final _InsightBodySide side;
-  final Map<String, double> zoneShares;
-  final String? dominantCode;
-
-  static const double _imageAspectRatio = 654 / 1080;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final entries = _insightHotspotsForSide(side, zoneShares);
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            colors: [
-              colors.primary.withValues(alpha: isDark ? 0.12 : 0.07),
-              colors.surfaceContainerHighest.withValues(alpha: isDark ? 0.20 : 0.34),
-              Colors.transparent,
-            ],
-          ),
-          border: Border.all(
-            color: colors.outlineVariant.withValues(alpha: isDark ? 0.36 : 0.28),
-          ),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            var artboardHeight = constraints.maxHeight - 32;
-            var artboardWidth = artboardHeight * _imageAspectRatio;
-
-            if (artboardWidth > constraints.maxWidth * 0.98) {
-              artboardWidth = constraints.maxWidth * 0.98;
-              artboardHeight = artboardWidth / _imageAspectRatio;
-            }
-
-            return Stack(
-              children: [
-                Positioned(
-                  top: 8,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: _InsightMiniPill(label: label),
-                  ),
-                ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: SizedBox(
-                      width: artboardWidth,
-                      height: artboardHeight,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Positioned.fill(
-                            child: Image.asset(
-                              imagePath,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => Icon(
-                                Icons.accessibility_new_rounded,
-                                size: 92,
-                                color: colors.primary.withValues(alpha: 0.42),
-                              ),
-                            ),
-                          ),
-                          ...entries.map((entry) {
-                            final dominant = entry.code == dominantCode;
-                            return Positioned(
-                              left: (artboardWidth * entry.x) - 18,
-                              top: (artboardHeight * entry.y) - 18,
-                              child: _InsightBodyGlowNode(
-                                share: entry.share,
-                                dominant: dominant,
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _InsightBodyGlowNode extends StatelessWidget {
-  const _InsightBodyGlowNode({
-    required this.share,
-    required this.dominant,
-  });
-
-  final double share;
-  final bool dominant;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final nodeSize = dominant ? 34.0 : 24.0 + (share.clamp(0.0, 0.35) * 28);
-    final coreSize = dominant ? 15.0 : 9.0 + (share.clamp(0.0, 0.35) * 18);
-
-    return SizedBox(
-      width: 42,
-      height: 42,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: nodeSize.clamp(20.0, 36.0),
-            height: nodeSize.clamp(20.0, 36.0),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colors.primary.withValues(alpha: dominant ? 0.20 : 0.12),
-              border: Border.all(
-                color: colors.primary.withValues(alpha: dominant ? 0.55 : 0.34),
-                width: dominant ? 1.7 : 1.2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: colors.primary.withValues(alpha: dominant ? 0.38 : 0.22),
-                  blurRadius: dominant ? 22 : 14,
-                  spreadRadius: dominant ? 3 : 1,
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: coreSize.clamp(9.0, 17.0),
-            height: coreSize.clamp(9.0, 17.0),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colors.primary,
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.90),
-                width: 1.4,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BodyZoneChipRow extends StatelessWidget {
-  const _BodyZoneChipRow({required this.zones});
-
-  final List<InsightsBodyZoneStat> zones;
-
-  @override
-  Widget build(BuildContext context) {
-    if (zones.isEmpty) {
-      return const _EmptyInsightLine(message: 'No body-zone signal yet.');
-    }
-
-    return Wrap(
-      spacing: 7,
-      runSpacing: 7,
-      children: zones.take(4).map((zone) {
-        return _InsightMiniPill(
-          label:
-              '${_painAreaLabel(context, zone.painAreaCode)} ${(zone.share * 100).round()}%',
-        );
-      }).toList(growable: false),
-    );
-  }
-}
-
-List<({String code, double x, double y, double share})> _insightHotspotsForSide(
-  _InsightBodySide side,
-  Map<String, double> shares,
-) {
-  final result = <({String code, double x, double y, double share})>[];
-
-  void add(String code, List<({double x, double y})> points) {
-    final share = shares[code] ?? 0;
-    if (share <= 0) return;
-
-    for (final point in points) {
-      result.add((code: code, x: point.x, y: point.y, share: share));
-    }
-  }
-
-  if (side == _InsightBodySide.back) {
-    add('neck', const [(x: 0.50, y: 0.145)]);
-    add('shoulders', const [(x: 0.34, y: 0.235), (x: 0.66, y: 0.235)]);
-    add('upper_back', const [(x: 0.50, y: 0.275)]);
-    add('lower_back', const [(x: 0.50, y: 0.445)]);
-    add('hips_glutes', const [(x: 0.42, y: 0.565), (x: 0.58, y: 0.565)]);
-    add('hamstrings', const [(x: 0.41, y: 0.735), (x: 0.59, y: 0.735)]);
-  } else {
-    add('eyes', const [(x: 0.50, y: 0.078)]);
-    add('neck', const [(x: 0.50, y: 0.165)]);
-    add('shoulders', const [(x: 0.34, y: 0.235), (x: 0.66, y: 0.235)]);
-    add('upper_back', const [(x: 0.50, y: 0.305)]);
-    add('lower_back', const [(x: 0.50, y: 0.455)]);
-    add('hips_glutes', const [(x: 0.42, y: 0.575), (x: 0.58, y: 0.575)]);
-    add('forearms', const [(x: 0.20, y: 0.465), (x: 0.80, y: 0.465)]);
-    add('wrists', const [(x: 0.16, y: 0.535), (x: 0.84, y: 0.535)]);
-    add('hands', const [(x: 0.12, y: 0.595), (x: 0.88, y: 0.595)]);
-  }
-
-  return result;
-}
-
-String _focusedRecoveryLine(InsightsSnapshot snapshot) {
-  if (snapshot.totalRuns <= 0) {
-    return 'Start a few sessions to build your recovery baseline.';
-  }
-
-  final helpful = (snapshot.helpRate * 100).round();
-  if (helpful >= 75 && snapshot.recoveryMinutes > 0) {
-    return '${snapshot.recoveryMinutes} minutes logged with strong helpful feedback.';
-  }
-
-  if (snapshot.recoveryMinutes > 0) {
-    return '${snapshot.recoveryMinutes} minutes logged across ${snapshot.activeDaysCount} active days.';
-  }
-
-  return 'Complete a short session to create your first signal.';
 }
 
 class _InsightGlassPanel extends StatelessWidget {
@@ -3019,6 +2678,23 @@ class _InsightsErrorState extends StatelessWidget {
       ),
     );
   }
+}
+
+String _focusedRecoveryLine(InsightsSnapshot snapshot) {
+  if (snapshot.totalRuns <= 0) {
+    return 'Start a few sessions to build your recovery baseline.';
+  }
+
+  final helpful = (snapshot.helpRate * 100).round();
+  if (helpful >= 75 && snapshot.recoveryMinutes > 0) {
+    return '${snapshot.recoveryMinutes} minutes logged with strong helpful feedback.';
+  }
+
+  if (snapshot.recoveryMinutes > 0) {
+    return '${snapshot.recoveryMinutes} minutes logged across ${snapshot.activeDaysCount} active days.';
+  }
+
+  return 'Complete a short session to create your first signal.';
 }
 
 String _painAreaLabel(BuildContext context, String? code) {

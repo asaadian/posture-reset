@@ -6,15 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app/shell/app.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  FlutterError.onError = (details) {
-    FlutterError.presentError(details);
-  };
-
+void main() {
   runZonedGuarded(
     () {
+      WidgetsFlutterBinding.ensureInitialized();
+
+      FlutterError.onError = (details) {
+        FlutterError.presentError(details);
+      };
+
       runApp(const ProviderScope(child: PostureResetApp()));
     },
     (error, stackTrace) {

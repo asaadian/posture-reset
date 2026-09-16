@@ -49,53 +49,57 @@ class PlayerControlPanel extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        color: isDark
-            ? colors.surface.withValues(alpha: 0.92)
-            : colors.surfaceContainerLowest.withValues(alpha: 0.96),
+        borderRadius: BorderRadius.circular(28),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [
+                  colors.surface.withValues(alpha: 0.96),
+                  colors.surfaceContainerHigh.withValues(alpha: 0.86),
+                ]
+              : [
+                  Colors.white.withValues(alpha: 0.98),
+                  colors.surfaceContainerLowest.withValues(alpha: 0.94),
+                ],
+        ),
         border: Border.all(
-          color: colors.outlineVariant.withValues(alpha: isDark ? 0.62 : 0.50),
+          color: colors.outlineVariant.withValues(alpha: isDark ? 0.40 : 0.30),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.24 : 0.08),
-            blurRadius: 22,
+            color: Colors.black.withValues(alpha: isDark ? 0.22 : 0.08),
+            blurRadius: 24,
             offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(7),
+        padding: const EdgeInsets.all(8),
         child: Row(
           children: [
-            _RoundControlButton(
+            _IconActionButton(
               icon: Icons.skip_previous_rounded,
               tooltip: t.get('player_previous_cta', fallback: 'Previous'),
               onPressed: canGoPrevious ? onPreviousPressed : null,
             ),
-            const SizedBox(width: 4),
-            _RoundControlButton(
+            const SizedBox(width: 8),
+            _IconActionButton(
               icon: Icons.replay_rounded,
               tooltip: t.get('player_replay_cta', fallback: 'Replay'),
               onPressed: canReplay && !isCompleted ? onReplayPressed : null,
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 10),
             _PrimaryPauseButton(
               isPaused: isPaused,
               isCompleted: isCompleted,
               onPressed: onPauseResumePressed,
             ),
-            const SizedBox(width: 4),
-            _RoundControlButton(
-              icon: Icons.fast_forward_rounded,
-              tooltip: t.get('player_skip_cta', fallback: 'Skip'),
-              onPressed: canSkip && !isCompleted ? onSkipPressed : null,
-            ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 10),
             Expanded(
-              child: _NextControlButton(
+              child: _NextHeroButton(
                 label: nextLabel,
-                icon: isLastStep ? Icons.check_rounded : Icons.skip_next_rounded,
+                icon: isLastStep ? Icons.check_rounded : Icons.play_arrow_rounded,
                 onPressed: isCompleted
                     ? null
                     : isLastStep
@@ -112,8 +116,8 @@ class PlayerControlPanel extends StatelessWidget {
   }
 }
 
-class _RoundControlButton extends StatelessWidget {
-  const _RoundControlButton({
+class _IconActionButton extends StatelessWidget {
+  const _IconActionButton({
     required this.icon,
     required this.tooltip,
     required this.onPressed,
@@ -125,20 +129,28 @@ class _RoundControlButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final enabled = onPressed != null;
+
     return Tooltip(
       message: tooltip,
       child: SizedBox(
-        width: 40,
-        height: 44,
-        child: OutlinedButton(
-          onPressed: onPressed,
-          style: OutlinedButton.styleFrom(
-            padding: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(17),
+        width: 52,
+        height: 52,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            color: enabled
+                ? colors.surfaceContainerHighest.withValues(alpha: 0.58)
+                : colors.surfaceContainerHighest.withValues(alpha: 0.28),
+            border: Border.all(
+              color: colors.outlineVariant.withValues(alpha: enabled ? 0.34 : 0.16),
             ),
           ),
-          child: Icon(icon, size: 20),
+          child: IconButton(
+            onPressed: onPressed,
+            icon: Icon(icon, size: 22),
+          ),
         ),
       ),
     );
@@ -165,19 +177,19 @@ class _PrimaryPauseButton extends StatelessWidget {
           ? t.get('player_resume_cta', fallback: 'Resume')
           : t.get('player_pause_cta', fallback: 'Pause'),
       child: SizedBox(
-        width: 54,
-        height: 44,
+        width: 72,
+        height: 52,
         child: FilledButton(
           onPressed: isCompleted ? null : onPressed,
           style: FilledButton.styleFrom(
             padding: EdgeInsets.zero,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(20),
             ),
           ),
           child: Icon(
             isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
-            size: 28,
+            size: 30,
           ),
         ),
       ),
@@ -185,8 +197,8 @@ class _PrimaryPauseButton extends StatelessWidget {
   }
 }
 
-class _NextControlButton extends StatelessWidget {
-  const _NextControlButton({
+class _NextHeroButton extends StatelessWidget {
+  const _NextHeroButton({
     required this.icon,
     required this.label,
     required this.onPressed,
@@ -200,21 +212,21 @@ class _NextControlButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return FilledButton.tonalIcon(
+    return FilledButton.icon(
       onPressed: onPressed,
-      icon: Icon(icon, size: 20),
+      icon: Icon(icon, size: 22),
       label: FittedBox(
         fit: BoxFit.scaleDown,
         child: Text(label, maxLines: 1),
       ),
       style: FilledButton.styleFrom(
-        minimumSize: const Size(0, 44),
-        padding: const EdgeInsets.symmetric(horizontal: 6),
-        textStyle: theme.textTheme.titleSmall?.copyWith(
+        minimumSize: const Size(0, 52),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        textStyle: theme.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w900,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
     );

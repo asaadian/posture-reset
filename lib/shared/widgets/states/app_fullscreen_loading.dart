@@ -1,266 +1,203 @@
 import 'package:flutter/material.dart';
 
+/// Lightweight full-screen loading state used while app-level data is prepared.
+///
+/// It intentionally avoids photography and heavy copy so it feels calm during
+/// startup, authentication callbacks, and account switching.
 class AppFullscreenLoading extends StatefulWidget {
   const AppFullscreenLoading({super.key});
 
-  static const String loadingImagePath = 'assets/images/app_loading.webp';
+  static const String logoAssetPath =
+      'assets/branding/desk_workout_icon.png';
 
   @override
   State<AppFullscreenLoading> createState() => _AppFullscreenLoadingState();
 }
 
 class _AppFullscreenLoadingState extends State<AppFullscreenLoading>
-    with TickerProviderStateMixin {
-  late final AnimationController _progressController;
-  late final AnimationController _imageController;
-  late final Animation<double> _imageScale;
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-
-    _progressController = AnimationController(
+    _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 2200),
     )..repeat();
-
-    _imageController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 3200),
-    )..repeat(reverse: true);
-
-    _imageScale = Tween<double>(begin: 1, end: 1.025).animate(
-      CurvedAnimation(
-        parent: _imageController,
-        curve: Curves.easeInOut,
-      ),
-    );
   }
 
   @override
   void dispose() {
-    _progressController.dispose();
-    _imageController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colors = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF2E5D5),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          AnimatedBuilder(
-            animation: _imageScale,
-            builder: (context, child) {
-              return Transform.scale(
-                scale: _imageScale.value,
-                child: child,
-              );
-            },
-            child: Image.asset(
-              AppFullscreenLoading.loadingImagePath,
-              fit: BoxFit.cover,
-              alignment: Alignment.center,
-              filterQuality: FilterQuality.high,
-              errorBuilder: (_, __, ___) => DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      const Color(0xFFF5E8D8),
-                      colorScheme.primaryContainer,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // Soft overlays preserve the photo while keeping the loading UI readable.
-          const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [0, 0.48, 0.72, 1],
-                colors: [
-                  Color(0x12000000),
-                  Color(0x00000000),
-                  Color(0x420D0906),
-                  Color(0xCC0D0906),
-                ],
-              ),
-            ),
-          ),
-
-          SafeArea(
-            minimum: const EdgeInsets.fromLTRB(24, 20, 24, 28),
-            child: Column(
-              children: [
-                const Spacer(),
-                _LoadingPanel(
-                  progressAnimation: _progressController,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LoadingPanel extends StatelessWidget {
-  const _LoadingPanel({required this.progressAnimation});
-
-  final Animation<double> progressAnimation;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-      decoration: BoxDecoration(
-        color: const Color(0xB81B1511),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.18),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.22),
-            blurRadius: 30,
-            offset: const Offset(0, 14),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.12),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.16),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.self_improvement_rounded,
-                  color: Colors.white,
-                  size: 21,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Getting your sessions ready…',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      'Preparing your personalized Desk Workout experience',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.72),
-                        height: 1.3,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          _ModernIndeterminateProgress(animation: progressAnimation),
-        ],
-      ),
-    );
-  }
-}
-
-class _ModernIndeterminateProgress extends StatelessWidget {
-  const _ModernIndeterminateProgress({required this.animation});
-
-  final Animation<double> animation;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        const segmentFraction = 0.34;
-        final trackWidth = constraints.maxWidth;
-        final segmentWidth = trackWidth * segmentFraction;
-        final travelDistance = trackWidth + segmentWidth;
-
-        return Container(
-          height: 7,
-          width: double.infinity,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.14),
-            borderRadius: BorderRadius.circular(99),
-          ),
+      backgroundColor: colors.surface,
+      body: SafeArea(
+        child: Center(
           child: AnimatedBuilder(
-            animation: animation,
-            builder: (context, _) {
-              final easedValue = Curves.easeInOutCubic.transform(animation.value);
-              final offset = (travelDistance * easedValue) - segmentWidth;
+            animation: _controller,
+            builder: (context, child) {
+              final t = _controller.value;
+              final pulseA = 1.0 + (0.12 * t);
+              final pulseB = 0.94 + (0.10 * ((t + 0.5) % 1.0));
+              final fadeA = 0.22 * (1.0 - t) + 0.08;
+              final fadeB = 0.18 * (1.0 - ((t + 0.5) % 1.0)) + 0.06;
+              final shimmer = 0.96 + (0.04 * (0.5 - (t - 0.5).abs()) * 2);
 
-              return Stack(
+              return Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Transform.translate(
-                    offset: Offset(offset, 0),
-                    child: Container(
-                      width: segmentWidth,
-                      height: 7,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(99),
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFFFFD6A0),
-                            Color(0xFFFFA94D),
-                            Color(0xFFFFE3BD),
-                          ],
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x66FFB35C),
-                            blurRadius: 9,
+                  SizedBox(
+                    width: 182,
+                    height: 182,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Transform.scale(
+                          scale: pulseA,
+                          child: Container(
+                            width: 168,
+                            height: 168,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: colors.primary.withValues(alpha: fadeA),
+                                width: 2.2,
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                        Transform.scale(
+                          scale: pulseB,
+                          child: Container(
+                            width: 132,
+                            height: 132,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: colors.tertiary.withValues(alpha: fadeB),
+                                width: 1.8,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 128,
+                          height: 128,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: RadialGradient(
+                              colors: [
+                                colors.primary.withValues(alpha: isDark ? 0.18 : 0.15),
+                                colors.primary.withValues(alpha: 0.02),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Transform.scale(
+                          scale: shimmer,
+                          child: Container(
+                            width: 92,
+                            height: 92,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(28),
+                              color: isDark
+                                  ? colors.surfaceContainerHigh
+                                  : colors.surface,
+                              border: Border.all(
+                                color: colors.outlineVariant.withValues(alpha: 0.44),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: colors.shadow.withValues(alpha: isDark ? 0.18 : 0.08),
+                                  blurRadius: 28,
+                                  offset: const Offset(0, 16),
+                                ),
+                              ],
+                            ),
+                            child: Image.asset(
+                              AppFullscreenLoading.logoAssetPath,
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.high,
+                              errorBuilder: (_, __, ___) => Icon(
+                                Icons.self_improvement_rounded,
+                                size: 44,
+                                color: colors.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Desk Workout',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: colors.onSurface,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Preparing your recovery space',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colors.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  _LoadingDots(progress: t),
                 ],
               );
             },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoadingDots extends StatelessWidget {
+  const _LoadingDots({required this.progress});
+
+  final double progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (index) {
+        final phase = (progress + (index * 0.18)) % 1.0;
+        final scale = 0.72 + (0.36 * (1.0 - (phase - 0.5).abs() * 2).clamp(0.0, 1.0));
+        final opacity = 0.28 + (0.72 * (1.0 - (phase - 0.5).abs() * 2).clamp(0.0, 1.0));
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Transform.scale(
+            scale: scale,
+            child: Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colors.primary.withValues(alpha: opacity),
+              ),
+            ),
           ),
         );
-      },
+      }),
     );
   }
 }

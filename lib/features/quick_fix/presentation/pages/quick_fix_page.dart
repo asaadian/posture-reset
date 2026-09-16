@@ -10,6 +10,7 @@ import '../../../../shared/onboarding/page_onboarding.dart';
 import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../player/domain/session_feedback_models.dart';
 import '../../../sessions/domain/session_models.dart';
+import '../../../sessions/presentation/widgets/session_visual_asset.dart';
 import '../../domain/quick_fix_models.dart';
 import '../../domain/quick_fix_state.dart';
 import '../controllers/quick_fix_controller.dart';
@@ -51,7 +52,7 @@ class _QuickFixPageTitle extends StatelessWidget {
         Text(
           t.get(
             'quick_fix_page_step_hint',
-            fallback: 'Tap body point → set filters',
+            fallback: 'Choose an area, then start your session',
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -79,7 +80,6 @@ class _QuickFixPageState extends ConsumerState<QuickFixPage> {
 
     return [
       state.selectedProblemId,
-      state.selectedTimeId,
       state.selectedEnergyId,
       equipment.join(','),
       modes.join(','),
@@ -739,32 +739,6 @@ class _QuickFixFiltersPanel extends ConsumerWidget {
 
   final QuickFixState state;
 
-  String _singleSummary(
-    BuildContext context,
-    List<QuickFixOption> options,
-    String selectedId,
-    String emptyFallback,
-  ) {
-    final match = options.cast<QuickFixOption?>().firstWhere(
-          (item) => item?.id == selectedId,
-          orElse: () => null,
-        );
-
-    if (match == null) {
-      return AppText.get(
-        context,
-        key: 'quick_fix_none_selected',
-        fallback: emptyFallback,
-      );
-    }
-
-    return AppText.get(
-      context,
-      key: match.labelKey,
-      fallback: match.labelFallback,
-    );
-  }
-
   String _multiSummary(
     BuildContext context,
     List<QuickFixOption> options,
@@ -804,25 +778,6 @@ class _QuickFixFiltersPanel extends ConsumerWidget {
     )}';
   }
 
-  Future<void> _showSinglePicker({
-    required BuildContext context,
-    required String title,
-    required List<QuickFixOption> options,
-    required String selectedId,
-    required ValueChanged<String> onSelected,
-  }) async {
-    final result = await _showQuickFixCompactPicker(
-      context: context,
-      title: title,
-      options: options,
-      selectedIds: {selectedId},
-      multiSelect: false,
-    );
-
-    if (result == null || result.isEmpty) return;
-    onSelected(result.first);
-  }
-
   Future<void> _showMultiPicker({
     required BuildContext context,
     required String title,
@@ -852,44 +807,8 @@ class _QuickFixFiltersPanel extends ConsumerWidget {
     final controller = ref.read(quickFixControllerProvider.notifier);
     final colors = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final timeTitle = t.get('quick_fix_time_title', fallback: 'Time');
-    final equipmentTitle = t.get('quick_fix_equipment_title', fallback: 'Equipment');
-
-    final items = [
-      _QuickFixCompactFilterTile(
-        icon: Icons.timer_outlined,
-        label: timeTitle,
-        value: _singleSummary(context, state.timeOptions, state.selectedTimeId, 'Any'),
-        emphasizedValue: true,
-        onTap: () => _showSinglePicker(
-          context: context,
-          title: timeTitle,
-          options: state.timeOptions,
-          selectedId: state.selectedTimeId,
-          onSelected: controller.selectTime,
-        ),
-      ),
-      _QuickFixCompactFilterTile(
-        icon: Icons.construction_rounded,
-        label: equipmentTitle,
-        value: _multiSummary(
-          context,
-          state.equipmentOptions,
-          state.selectedEquipmentIds.toSet(),
-          'None',
-        ),
-        onTap: () => _showMultiPicker(
-          context: context,
-          title: equipmentTitle,
-          options: state.equipmentOptions,
-          selectedIds: state.selectedEquipmentIds.toSet(),
-          fallbackId: 'none',
-          exclusiveFallback: true,
-          onChanged: controller.setEquipment,
-        ),
-      ),
-    ];
+    final equipmentTitle =
+        t.get('quick_fix_equipment_title', fallback: 'Equipment');
 
     return Container(
       width: double.infinity,
@@ -903,12 +822,25 @@ class _QuickFixFiltersPanel extends ConsumerWidget {
           color: colors.outlineVariant.withValues(alpha: isDark ? 0.62 : 0.48),
         ),
       ),
-      child: Row(
-        children: [
-          Expanded(child: items[0]),
-          const SizedBox(width: 7),
-          Expanded(child: items[1]),
-        ],
+      child: _QuickFixCompactFilterTile(
+        icon: Icons.widgets_outlined,
+        label: equipmentTitle,
+        value: _multiSummary(
+          context,
+          state.equipmentOptions,
+          state.selectedEquipmentIds.toSet(),
+          'No extra equipment',
+        ),
+        emphasizedValue: true,
+        onTap: () => _showMultiPicker(
+          context: context,
+          title: equipmentTitle,
+          options: state.equipmentOptions,
+          selectedIds: state.selectedEquipmentIds.toSet(),
+          fallbackId: 'none',
+          exclusiveFallback: true,
+          onChanged: controller.setEquipment,
+        ),
       ),
     );
   }
@@ -2182,8 +2114,6 @@ class _QuickFixRecommendationPreview extends ConsumerWidget {
     final session = selected.session;
     final quickFixSource = SessionEntrySource.quickFix.dbValue;
     final title = t.get(session.titleKey, fallback: session.titleFallback);
-    final subtitle = t.get(session.subtitleKey, fallback: session.subtitleFallback);
-    final signals = selected.signals.take(3).toList(growable: false);
 
     Future<void> openMainDetails() async {
       await ref
@@ -2198,9 +2128,6 @@ class _QuickFixRecommendationPreview extends ConsumerWidget {
       }
     }
 
-    final equipmentLabel = _equipmentSummaryLabel(session);
-    final intensityLabel = _intensityDisplayLabel(session.intensity.name);
-    final heroSpec = _resolveSessionHeroSpec(session.coverVariant, colors);
 
     return _SimpleRecommendationShell(
       child: Column(
@@ -2209,47 +2136,54 @@ class _QuickFixRecommendationPreview extends ConsumerWidget {
         children: [
           _RecommendationHeroCard(
             sessionId: session.id,
-            badgeLabel: t.get('quick_fix_recommended_badge', fallback: 'Best match'),
             title: title,
-            subtitle: subtitle,
             minutes: session.durationMinutes,
-            equipmentLabel: equipmentLabel,
-            intensityLabel: intensityLabel,
-            heroSpec: heroSpec,
-            signals: signals,
             compact: compact,
           ),
           const SizedBox(height: 14),
           Row(
             children: [
               Expanded(
-                child: FilledButton.icon(
-                  onPressed: () async {
-                    await ref
-                        .read(quickFixControllerProvider.notifier)
-                        .trackAction(QuickFixActionType.startSession);
-
-                    if (context.mounted) {
-                      context.push('/app/sessions/player/${session.id}?source=$quickFixSource');
-                    }
-                  },
-                  icon: const Icon(Icons.play_arrow_rounded, size: 20),
-                  label: Text(t.get('quick_fix_start_now_cta', fallback: 'Start now')),
-                  style: FilledButton.styleFrom(
-                    minimumSize: Size.fromHeight(compact ? 44 : 50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                child: OutlinedButton.icon(
+                  onPressed: openMainDetails,
+                  icon: const Icon(Icons.info_outline_rounded, size: 18),
+                  label: Text(
+                    t.get('quick_fix_view_details_cta', fallback: 'View details'),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: Size.fromHeight(compact ? 46 : 50),
+                    foregroundColor: colors.tertiary,
+                    side: BorderSide(
+                      color: colors.tertiary.withValues(alpha: 0.45),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(17),
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: openMainDetails,
-                  icon: const Icon(Icons.info_outline_rounded, size: 19),
-                  label: Text(t.get('quick_fix_view_details_cta', fallback: 'View detail')),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: Size.fromHeight(compact ? 44 : 50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                child: FilledButton.icon(
+                  onPressed: () async {
+                    await ref
+                        .read(quickFixControllerProvider.notifier)
+                        .trackAction(QuickFixActionType.startSession);
+                    if (context.mounted) {
+                      context.push(
+                        '/app/sessions/player/${session.id}?source=$quickFixSource',
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.play_arrow_rounded, size: 20),
+                  label: Text(
+                    t.get('quick_fix_start_session', fallback: 'Start session'),
+                  ),
+                  style: FilledButton.styleFrom(
+                    minimumSize: Size.fromHeight(compact ? 46 : 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(17),
+                    ),
                   ),
                 ),
               ),
@@ -2258,12 +2192,12 @@ class _QuickFixRecommendationPreview extends ConsumerWidget {
           if (alternatives.isNotEmpty) ...[
             const SizedBox(height: 18),
             _AlternativeHeader(
-              title: t.get('quick_fix_alternatives_title', fallback: 'More good matches'),
+              title: t.get('quick_fix_alternatives_title', fallback: 'Other good options'),
               subtitle: '',
             ),
             const SizedBox(height: 10),
             SizedBox(
-              height: 148,
+              height: 128,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: alternatives.take(3).length,
@@ -2399,17 +2333,6 @@ class _AlternativeRecommendationTile extends StatelessWidget {
                             height: 1.06,
                           ),
                         ),
-                        const SizedBox(height: 5),
-                        Text(
-                          '${session.durationMinutes} min',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: colors.onSurfaceVariant,
-                            fontWeight: FontWeight.w800,
-                            height: 1.0,
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -2440,26 +2363,14 @@ class _SimpleRecommendationShell extends StatelessWidget {
 class _RecommendationHeroCard extends StatelessWidget {
   const _RecommendationHeroCard({
     required this.sessionId,
-    required this.badgeLabel,
     required this.title,
-    required this.subtitle,
     required this.minutes,
-    required this.equipmentLabel,
-    required this.intensityLabel,
-    required this.heroSpec,
-    required this.signals,
     this.compact = false,
   });
 
   final String sessionId;
-  final String badgeLabel;
   final String title;
-  final String subtitle;
   final int minutes;
-  final String equipmentLabel;
-  final String intensityLabel;
-  final _SessionHeroSpec heroSpec;
-  final List<QuickFixSignal> signals;
   final bool compact;
 
   @override
@@ -2478,17 +2389,7 @@ class _RecommendationHeroCard extends StatelessWidget {
           showDuration: true,
         ),
         SizedBox(height: compact ? 10 : 14),
-        Row(
-          children: [
-            _SoftBadge(label: badgeLabel),
-            const SizedBox(width: 8),
-            _SessionMetaChip(
-              icon: Icons.schedule_rounded,
-              label: '$minutes min',
-            ),
-          ],
-        ),
-        SizedBox(height: compact ? 8 : 11),
+        SizedBox(height: compact ? 8 : 10),
         Text(
           title,
           maxLines: compact ? 2 : 3,
@@ -2522,8 +2423,6 @@ class _QuickFixSessionImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return SizedBox(
       height: height,
       width: double.infinity,
@@ -2532,28 +2431,13 @@ class _QuickFixSessionImage extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(
-              'assets/images/sessions/$sessionId.png',
-              fit: BoxFit.cover,
-              alignment: Alignment.topCenter,
-              errorBuilder: (_, __, ___) => DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      colors.primary.withValues(alpha: 0.18),
-                      colors.tertiary.withValues(alpha: 0.10),
-                      colors.surfaceContainerLow.withValues(alpha: 0.92),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Icon(
-                  Icons.self_improvement_rounded,
-                  color: colors.primary,
-                  size: height > 100 ? 42 : 26,
-                ),
-              ),
+            SessionVisualStage(
+              sessionId: sessionId,
+              height: height,
+              borderRadius: borderRadius,
+              compact: height < 110,
+              imageAlignment: Alignment.center,
+              imageScale: height >= 150 ? 1.02 : 1.0,
             ),
             DecoratedBox(
               decoration: BoxDecoration(

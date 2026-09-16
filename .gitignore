@@ -91,3 +91,10 @@ posture-reset-*.json
 *service-account*.json
 *firebase-adminsdk*.json
 *credentials*.json
+# Crash dumps and local JVM diagnostics
+hs_err_pid*.log
+/android/hs_err_pid*.log
+
+# Explicit local release credentials
+/android/app/posture-reset-release.jks
+/posture-reset-aab67c909e50.json

@@ -42,14 +42,19 @@ class DashboardSnapshot {
   final List<DashboardBodyZoneStat> bodyZones;
   final List<DashboardRecentRun> recentRuns;
 
+  /// True only when the current user has meaningful recovery activity.
+  ///
+  /// Time-series collections are prefilled with zero-value points, so their
+  /// non-emptiness must not classify a brand-new account as an active user.
   bool get hasContent {
     return weeklyMinutes > 0 ||
         completedSessionsThisWeek > 0 ||
         quickFixStartsThisWeek > 0 ||
-        bodyZones.isNotEmpty ||
         recentRuns.isNotEmpty ||
-        recoveryMinutesSeries.isNotEmpty ||
-        heatmapCells.isNotEmpty;
+        bodyZones.any((zone) => zone.hits > 0) ||
+        recoveryMinutesSeries.any((point) => point.value > 0) ||
+        reliefSeries.any((point) => point.value > 0) ||
+        heatmapCells.any((cell) => cell.intensity > 0);
   }
 }
 

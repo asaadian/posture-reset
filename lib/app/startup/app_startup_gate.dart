@@ -38,6 +38,11 @@ class _AppStartupGateState extends ConsumerState<AppStartupGate> {
         },
       ),
       data: (_) {
+        final authState = ref.watch(authStateChangesProvider);
+        if (authState.isLoading) {
+          return const AppFullscreenLoading();
+        }
+
         final userId = ref.watch(currentUserProvider)?.id;
         if (_warmupFuture == null || _warmupUserId != userId) {
           _warmupUserId = userId;
@@ -64,6 +69,9 @@ class _AppStartupGateState extends ConsumerState<AppStartupGate> {
   }
 
   Future<void> _warmup(BuildContext context) async {
+    final minimumVisibleTime = Future<void>.delayed(
+      const Duration(milliseconds: 550),
+    );
     final user = ref.read(currentUserProvider);
 
     final programsFuture = ref.read(recoveryProgramSummariesProvider.future);
@@ -110,5 +118,6 @@ class _AppStartupGateState extends ConsumerState<AppStartupGate> {
         }
       }),
     );
+    await minimumVisibleTime;
   }
 }

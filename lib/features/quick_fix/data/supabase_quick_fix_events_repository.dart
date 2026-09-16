@@ -29,12 +29,9 @@ class SupabaseQuickFixEventsRepository implements QuickFixEventsRepository {
     final user = _client.auth.currentUser;
     if (user == null) return;
 
-    final timeMinutes = int.tryParse(state.selectedTimeId) ?? 4;
-
     await _client.from('quick_fix_events').insert({
       'user_id': user.id,
       'selected_problem_code': state.selectedProblemId,
-      'selected_time_minutes': timeMinutes,
       'selected_energy_code': state.selectedEnergyId,
       'selected_mode_codes': _normalizedCodes(state.selectedModeIds),
       'silent_mode_enabled': state.silentModeEnabled,

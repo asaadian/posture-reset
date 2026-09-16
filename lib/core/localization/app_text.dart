@@ -847,10 +847,1098 @@ class _GeneratedAppTextReader extends AppTextReader {
       case 'settings_language_german':
         return _t.settings_language_german;
 
+      case 'update_later_cta':
+        return _t.update_later_cta;
+      case 'update_now_cta':
+        return _t.update_now_cta;
+      case 'notification_permission_prompt_title':
+        return _t.notification_permission_prompt_title;
+      case 'notification_permission_prompt_body':
+        return _t.notification_permission_prompt_body;
+      case 'common_not_now':
+        return _t.common_not_now;
+      case 'notification_enable_cta':
+        return _t.notification_enable_cta;
+      case 'guide_skip_cta':
+        return _t.guide_skip_cta;
+      case 'guide_got_it_cta':
+        return _t.guide_got_it_cta;
+      case 'guide_next_cta':
+        return _t.guide_next_cta;
+      case 'startup_error_body':
+        return _t.startup_error_body;
+      case 'startup_error_retry_cta':
+        return _t.startup_error_retry_cta;
+      case 'nav_training':
+        return _t.nav_training;
+      case 'nav_programs':
+        return _t.nav_programs;
+      case 'notification_center_title':
+        return _t.notification_center_title;
+      case 'notification_center_refresh':
+        return _t.notification_center_refresh;
+      case 'notification_center_mark_all_read':
+        return _t.notification_center_mark_all_read;
+      case 'notification_center_error_title':
+        return _t.notification_center_error_title;
+      case 'notification_center_empty_title':
+        return _t.notification_center_empty_title;
+      case 'notification_center_empty_body':
+        return _t.notification_center_empty_body;
+      case 'notification_center_header_title':
+        return _t.notification_center_header_title;
+      case 'notification_center_status_upcoming':
+        return _t.notification_center_status_upcoming;
+      case 'notification_center_status_opened':
+        return _t.notification_center_status_opened;
+      case 'notification_center_status_new':
+        return _t.notification_center_status_new;
+      case 'notification_center_status_scheduled':
+        return _t.notification_center_status_scheduled;
+      case 'quick_fix_page_step_hint':
+        return _t.quick_fix_page_step_hint;
+      case 'guide_quick_fix_body_title':
+        return _t.guide_quick_fix_body_title;
+      case 'guide_quick_fix_body_body':
+        return _t.guide_quick_fix_body_body;
+      case 'guide_quick_fix_filters_title':
+        return _t.guide_quick_fix_filters_title;
+      case 'guide_quick_fix_filters_body':
+        return _t.guide_quick_fix_filters_body;
+      case 'guide_quick_fix_match_title':
+        return _t.guide_quick_fix_match_title;
+      case 'guide_quick_fix_match_body':
+        return _t.guide_quick_fix_match_body;
+      case 'quick_fix_match_session_cta':
+        return _t.quick_fix_match_session_cta;
+      case 'quick_fix_selected_target_empty':
+        return _t.quick_fix_selected_target_empty;
+      case 'quick_fix_matched_title':
+        return _t.quick_fix_matched_title;
+      case 'quick_fix_matching_title':
+        return _t.quick_fix_matching_title;
+      case 'quick_fix_selected_count_suffix':
+        return _t.quick_fix_selected_count_suffix;
+      case 'quick_fix_equipment_title':
+        return _t.quick_fix_equipment_title;
+      case 'common_apply':
+        return _t.common_apply;
+      case 'quick_fix_body_map_hint_step':
+        return _t.quick_fix_body_map_hint_step;
+      case 'body_map_front':
+        return _t.body_map_front;
+      case 'body_map_back':
+        return _t.body_map_back;
+      case 'quick_fix_recommended_badge':
+        return _t.quick_fix_recommended_badge;
+      case 'quick_fix_start_session':
+        return _t.quick_fix_start_session;
+      case 'quick_fix_alternatives_title':
+        return _t.quick_fix_alternatives_title;
+      case 'quick_fix_none_selected':
+        return _t.quick_fix_none_selected;
+      case 'common_close':
+        return _t.common_close;
+      case 'common_cancel':
+        return _t.common_cancel;
+      case 'profile_title':
+        return _t.profile_title;
+      case 'profile_settings_tooltip':
+        return _t.profile_settings_tooltip;
+      case 'profile_primary_continue':
+        return _t.profile_primary_continue;
+      case 'profile_primary_open_sessions':
+        return _t.profile_primary_open_sessions;
+      case 'profile_sign_in_cta':
+        return _t.profile_sign_in_cta;
+      case 'profile_sync_connected':
+        return _t.profile_sync_connected;
+      case 'profile_sync_local':
+        return _t.profile_sync_local;
+      case 'profile_guest_subtitle':
+        return _t.profile_guest_subtitle;
+      case 'profile_metric_saved':
+        return _t.profile_metric_saved;
+      case 'profile_metric_runs':
+        return _t.profile_metric_runs;
+      case 'profile_metric_status':
+        return _t.profile_metric_status;
+      case 'profile_action_premium':
+        return _t.profile_action_premium;
+      case 'profile_action_premium_subtitle_large':
+        return _t.profile_action_premium_subtitle_large;
+      case 'profile_action_saved_short':
+        return _t.profile_action_saved_short;
+      case 'profile_action_saved_subtitle_short':
+        return _t.profile_action_saved_subtitle_short;
+      case 'session_history_title_compact':
+        return _t.session_history_title_compact;
+      case 'profile_action_history_subtitle_short':
+        return _t.profile_action_history_subtitle_short;
+      case 'profile_action_programs':
+        return _t.profile_action_programs;
+      case 'profile_action_programs_subtitle_short':
+        return _t.profile_action_programs_subtitle_short;
+      case 'profile_account_section_title':
+        return _t.profile_account_section_title;
+      case 'profile_account_section_subtitle':
+        return _t.profile_account_section_subtitle;
+      case 'profile_edit_title':
+        return _t.profile_edit_title;
+      case 'profile_edit_subtitle':
+        return _t.profile_edit_subtitle;
+      case 'profile_action_settings':
+        return _t.profile_action_settings;
+      case 'profile_action_settings_subtitle_compact':
+        return _t.profile_action_settings_subtitle_compact;
+      case 'profile_sign_out_cta':
+        return _t.profile_sign_out_cta;
+      case 'profile_create_account_cta':
+        return _t.profile_create_account_cta;
+      case 'profile_sign_out_subtitle':
+        return _t.profile_sign_out_subtitle;
+      case 'profile_create_account_subtitle':
+        return _t.profile_create_account_subtitle;
+      case 'profile_danger_zone_title':
+        return _t.profile_danger_zone_title;
+      case 'profile_danger_zone_subtitle':
+        return _t.profile_danger_zone_subtitle;
+      case 'settings_reset_app_data_title':
+        return _t.settings_reset_app_data_title;
+      case 'settings_reset_app_data_loading':
+        return _t.settings_reset_app_data_loading;
+      case 'settings_reset_app_data_subtitle_short':
+        return _t.settings_reset_app_data_subtitle_short;
+      case 'settings_delete_account_section_title':
+        return _t.settings_delete_account_section_title;
+      case 'settings_delete_account_loading':
+        return _t.settings_delete_account_loading;
+      case 'settings_delete_account_section_subtitle':
+        return _t.settings_delete_account_section_subtitle;
+      case 'settings_reset_app_data_dialog_title':
+        return _t.settings_reset_app_data_dialog_title;
+      case 'settings_reset_app_data_dialog_body':
+        return _t.settings_reset_app_data_dialog_body;
+      case 'settings_reset_app_data_confirm':
+        return _t.settings_reset_app_data_confirm;
+      case 'settings_reset_app_data_sign_in_required':
+        return _t.settings_reset_app_data_sign_in_required;
+      case 'settings_reset_app_data_success':
+        return _t.settings_reset_app_data_success;
+      case 'settings_reset_app_data_failed':
+        return _t.settings_reset_app_data_failed;
+      case 'settings_delete_account_dialog_title':
+        return _t.settings_delete_account_dialog_title;
+      case 'settings_delete_account_dialog_body':
+        return _t.settings_delete_account_dialog_body;
+      case 'settings_delete_account_confirm':
+        return _t.settings_delete_account_confirm;
+      case 'settings_delete_account_sign_in_required':
+        return _t.settings_delete_account_sign_in_required;
+      case 'settings_delete_account_success':
+        return _t.settings_delete_account_success;
+      case 'settings_delete_account_failed':
+        return _t.settings_delete_account_failed;
+      case 'profile_core_access_badge':
+        return _t.profile_core_access_badge;
+      case 'profile_core_access_cta_short':
+        return _t.profile_core_access_cta_short;
+      case 'profile_edit_saved':
+        return _t.profile_edit_saved;
+      case 'profile_avatar_updated':
+        return _t.profile_avatar_updated;
+      case 'profile_edit_error':
+        return _t.profile_edit_error;
+      case 'profile_change_photo_cta':
+        return _t.profile_change_photo_cta;
+      case 'profile_remove_photo_cta':
+        return _t.profile_remove_photo_cta;
+      case 'profile_display_name_label':
+        return _t.profile_display_name_label;
+      case 'profile_save_cta':
+        return _t.profile_save_cta;
+      case 'settings_title':
+        return _t.settings_title;
+      case 'settings_hero_title':
+        return _t.settings_hero_title;
+      case 'settings_hero_subtitle':
+        return _t.settings_hero_subtitle;
+      case 'settings_preferences_compact_title':
+        return _t.settings_preferences_compact_title;
+      case 'settings_preferences_compact_subtitle':
+        return _t.settings_preferences_compact_subtitle;
+      case 'settings_language_section_title':
+        return _t.settings_language_section_title;
+      case 'settings_appearance_section_title':
+        return _t.settings_appearance_section_title;
+      case 'notification_settings_title_compact':
+        return _t.notification_settings_title_compact;
+      case 'notification_settings_inline_subtitle':
+        return _t.notification_settings_inline_subtitle;
+      case 'notification_settings_error':
+        return _t.notification_settings_error;
+      case 'notification_settings_guest_hint':
+        return _t.notification_settings_guest_hint;
+      case 'notification_settings_enable_title':
+        return _t.notification_settings_enable_title;
+      case 'notification_settings_enabled_short':
+        return _t.notification_settings_enabled_short;
+      case 'notification_settings_disabled_short':
+        return _t.notification_settings_disabled_short;
+      case 'notification_permission_denied':
+        return _t.notification_permission_denied;
+      case 'notification_settings_time_title':
+        return _t.notification_settings_time_title;
+      case 'notification_settings_time_error':
+        return _t.notification_settings_time_error;
+      case 'notification_settings_haptics_title':
+        return _t.notification_settings_haptics_title;
+      case 'notification_settings_haptics_short':
+        return _t.notification_settings_haptics_short;
+      case 'notification_time_morning':
+        return _t.notification_time_morning;
+      case 'notification_time_afternoon':
+        return _t.notification_time_afternoon;
+      case 'notification_time_evening':
+        return _t.notification_time_evening;
+      case 'settings_support_legal_title':
+        return _t.settings_support_legal_title;
+      case 'settings_support_legal_subtitle':
+        return _t.settings_support_legal_subtitle;
+      case 'settings_contact_email_label':
+        return _t.settings_contact_email_label;
+      case 'settings_privacy_policy_title':
+        return _t.settings_privacy_policy_title;
+      case 'settings_external_link_subtitle':
+        return _t.settings_external_link_subtitle;
+      case 'settings_terms_title':
+        return _t.settings_terms_title;
+      case 'settings_account_data_deletion_info_title':
+        return _t.settings_account_data_deletion_info_title;
+      case 'settings_app_version_loading':
+        return _t.settings_app_version_loading;
+      case 'settings_app_version_title':
+        return _t.settings_app_version_title;
+      case 'settings_theme_system_title':
+        return _t.settings_theme_system_title;
+      case 'settings_theme_system_short':
+        return _t.settings_theme_system_short;
+      case 'settings_theme_light_title':
+        return _t.settings_theme_light_title;
+      case 'settings_theme_light_short':
+        return _t.settings_theme_light_short;
+      case 'settings_theme_dark_title':
+        return _t.settings_theme_dark_title;
+      case 'settings_theme_dark_short':
+        return _t.settings_theme_dark_short;
+      case 'settings_preferences_error_short':
+        return _t.settings_preferences_error_short;
+      case 'settings_preferences_guest_hint':
+        return _t.settings_preferences_guest_hint;
+      case 'settings_preferences_synced_short':
+        return _t.settings_preferences_synced_short;
+      case 'settings_link_open_failed':
+        return _t.settings_link_open_failed;
+      case 'settings_email_open_failed':
+        return _t.settings_email_open_failed;
+      case 'premium_purchase_cancelled':
+        return _t.premium_purchase_cancelled;
+      case 'premium_restore_no_purchase_found':
+        return _t.premium_restore_no_purchase_found;
+      case 'premium_purchase_failed':
+        return _t.premium_purchase_failed;
+      case 'premium_page_title':
+        return _t.premium_page_title;
+      case 'premium_status_core_active':
+        return _t.premium_status_core_active;
+      case 'premium_visual_pill':
+        return _t.premium_visual_pill;
+      case 'premium_hero_unlocked_title':
+        return _t.premium_hero_unlocked_title;
+      case 'premium_visual_title_v2':
+        return _t.premium_visual_title_v2;
+      case 'premium_hero_unlocked_body_v2':
+        return _t.premium_hero_unlocked_body_v2;
+      case 'premium_visual_body_v2':
+        return _t.premium_visual_body_v2;
+      case 'premium_programs_badge':
+        return _t.premium_programs_badge;
+      case 'premium_value_programs_title':
+        return _t.premium_value_programs_title;
+      case 'premium_value_sessions_title':
+        return _t.premium_value_sessions_title;
+      case 'premium_value_quick_fix_title':
+        return _t.premium_value_quick_fix_title;
+      case 'premium_value_insights_title':
+        return _t.premium_value_insights_title;
+      case 'premium_value_active_title':
+        return _t.premium_value_active_title;
+      case 'premium_value_title':
+        return _t.premium_value_title;
+      case 'premium_value_subtitle_v2':
+        return _t.premium_value_subtitle_v2;
+      case 'premium_product_price_unavailable':
+        return _t.premium_product_price_unavailable;
+      case 'premium_plan_unlocked_subtitle':
+        return _t.premium_plan_unlocked_subtitle;
+      case 'premium_plan_subtitle_v2':
+        return _t.premium_plan_subtitle_v2;
+      case 'premium_sign_in_hint':
+        return _t.premium_sign_in_hint;
+      case 'premium_plan_title':
+        return _t.premium_plan_title;
+      case 'premium_plan_lifetime_badge':
+        return _t.premium_plan_lifetime_badge;
+      case 'premium_signal_lifetime':
+        return _t.premium_signal_lifetime;
+      case 'premium_signal_restore':
+        return _t.premium_signal_restore;
+      case 'premium_signal_no_subscription':
+        return _t.premium_signal_no_subscription;
+      case 'premium_already_unlocked_cta':
+        return _t.premium_already_unlocked_cta;
+      case 'premium_restore_cta':
+        return _t.premium_restore_cta;
+      case 'premium_loading_products_cta':
+        return _t.premium_loading_products_cta;
+      case 'premium_purchasing_cta':
+        return _t.premium_purchasing_cta;
+      case 'premium_verifying_cta':
+        return _t.premium_verifying_cta;
+      case 'premium_product_unavailable_cta':
+        return _t.premium_product_unavailable_cta;
+      case 'access_unlock_core_cta':
+        return _t.access_unlock_core_cta;
+      case 'premium_error_purchase_linked_to_another_account':
+        return _t.premium_error_purchase_linked_to_another_account;
+      case 'premium_error_not_authenticated':
+        return _t.premium_error_not_authenticated;
+      case 'premium_error_missing_purchase_payload':
+        return _t.premium_error_missing_purchase_payload;
+      case 'premium_error_product_mismatch':
+        return _t.premium_error_product_mismatch;
+      case 'premium_error_purchase_not_completed':
+        return _t.premium_error_purchase_not_completed;
+      case 'premium_error_unsupported_platform':
+        return _t.premium_error_unsupported_platform;
+      case 'premium_error_store_unavailable':
+        return _t.premium_error_store_unavailable;
+      case 'premium_error_product_unavailable':
+        return _t.premium_error_product_unavailable;
+      case 'premium_error_purchase_failed':
+        return _t.premium_error_purchase_failed;
+      case 'premium_error_verification_failed':
+        return _t.premium_error_verification_failed;
+      case 'premium_billing_error_body':
+        return _t.premium_billing_error_body;
+      case 'logs_page_title':
+        return _t.logs_page_title;
+      case 'logs_locked_title':
+        return _t.logs_locked_title;
+      case 'logs_locked_message':
+        return _t.logs_locked_message;
+      case 'logs_hero_title':
+        return _t.logs_hero_title;
+      case 'logs_hero_body_short':
+        return _t.logs_hero_body_short;
+      case 'logs_positive_label':
+        return _t.logs_positive_label;
+      case 'logs_warning_label':
+        return _t.logs_warning_label;
+      case 'logs_neutral_label':
+        return _t.logs_neutral_label;
+      case 'logs_recent_title':
+        return _t.logs_recent_title;
+      case 'insights_logs_empty':
+        return _t.insights_logs_empty;
+      case 'logs_error_title':
+        return _t.logs_error_title;
+      case 'insights_title':
+        return _t.insights_title;
+      case 'guide_insights_signal_title':
+        return _t.guide_insights_signal_title;
+      case 'guide_insights_signal_body':
+        return _t.guide_insights_signal_body;
+      case 'guide_insights_metrics_title':
+        return _t.guide_insights_metrics_title;
+      case 'guide_insights_metrics_body':
+        return _t.guide_insights_metrics_body;
+      case 'guide_insights_patterns_title':
+        return _t.guide_insights_patterns_title;
+      case 'guide_insights_patterns_body':
+        return _t.guide_insights_patterns_body;
+      case 'insights_journey_intelligence_title':
+        return _t.insights_journey_intelligence_title;
+      case 'insights_journey_intelligence_empty_title':
+        return _t.insights_journey_intelligence_empty_title;
+      case 'insights_journey_intelligence_body':
+        return _t.insights_journey_intelligence_body;
+      case 'insights_journey_intelligence_empty_body':
+        return _t.insights_journey_intelligence_empty_body;
+      case 'insights_focus_completion_title':
+        return _t.insights_focus_completion_title;
+      case 'insights_focus_helpful_title':
+        return _t.insights_focus_helpful_title;
+      case 'insights_summary_consistency_title':
+        return _t.insights_summary_consistency_title;
+      case 'insights_locked_preview_title':
+        return _t.insights_locked_preview_title;
+      case 'insights_locked_preview_body':
+        return _t.insights_locked_preview_body;
+      case 'insights_range_7_short':
+        return _t.insights_range_7_short;
+      case 'insights_range_14_short':
+        return _t.insights_range_14_short;
+      case 'insights_range_28_short':
+        return _t.insights_range_28_short;
+      case 'insights_intro_title':
+        return _t.insights_intro_title;
+      case 'insights_intro_body_short':
+        return _t.insights_intro_body_short;
+      case 'insights_focus_zone_title':
+        return _t.insights_focus_zone_title;
+      case 'insights_range_compact':
+        return _t.insights_range_compact;
+      case 'insights_streak_compact':
+        return _t.insights_streak_compact;
+      case 'insights_summary_minutes_title':
+        return _t.insights_summary_minutes_title;
+      case 'insights_summary_minutes_subtitle':
+        return _t.insights_summary_minutes_subtitle;
+      case 'insights_active_days_title':
+        return _t.insights_active_days_title;
+      case 'insights_helpful_title':
+        return _t.insights_helpful_title;
+      case 'insights_helpful_subtitle':
+        return _t.insights_helpful_subtitle;
+      case 'insights_relief_title':
+        return _t.insights_relief_title;
+      case 'insights_relief_subtitle':
+        return _t.insights_relief_subtitle;
+      case 'insights_recovery_minutes_title':
+        return _t.insights_recovery_minutes_title;
+      case 'insights_recovery_minutes_subtitle_short':
+        return _t.insights_recovery_minutes_subtitle_short;
+      case 'insights_chart_peak':
+        return _t.insights_chart_peak;
+      case 'insights_chart_average':
+        return _t.insights_chart_average;
+      case 'insights_rhythm_title':
+        return _t.insights_rhythm_title;
+      case 'insights_rhythm_subtitle_short':
+        return _t.insights_rhythm_subtitle_short;
+      case 'insights_rhythm_active_days':
+        return _t.insights_rhythm_active_days;
+      case 'insights_rhythm_minutes':
+        return _t.insights_rhythm_minutes;
+      case 'insights_patterns_title':
+        return _t.insights_patterns_title;
+      case 'insights_patterns_subtitle_short':
+        return _t.insights_patterns_subtitle_short;
+      case 'insights_logs_action':
+        return _t.insights_logs_action;
+      case 'insights_error_title':
+        return _t.insights_error_title;
+      case 'pain_forearms':
+        return _t.pain_forearms;
+      case 'pain_hands':
+        return _t.pain_hands;
+      case 'pain_hips_glutes':
+        return _t.pain_hips_glutes;
+      case 'pain_eyes':
+        return _t.pain_eyes;
+      case 'session_history_locked_title':
+        return _t.session_history_locked_title;
+      case 'session_history_locked_message':
+        return _t.session_history_locked_message;
+      case 'player_access_locked_title':
+        return _t.player_access_locked_title;
+      case 'player_access_locked_message':
+        return _t.player_access_locked_message;
+      case 'guide_player_header_title':
+        return _t.guide_player_header_title;
+      case 'guide_player_header_body':
+        return _t.guide_player_header_body;
+      case 'guide_player_video_title':
+        return _t.guide_player_video_title;
+      case 'guide_player_video_body':
+        return _t.guide_player_video_body;
+      case 'guide_player_timer_title':
+        return _t.guide_player_timer_title;
+      case 'guide_player_timer_body':
+        return _t.guide_player_timer_body;
+      case 'guide_player_instruction_title':
+        return _t.guide_player_instruction_title;
+      case 'guide_player_instruction_body':
+        return _t.guide_player_instruction_body;
+      case 'guide_player_controls_title':
+        return _t.guide_player_controls_title;
+      case 'guide_player_controls_body':
+        return _t.guide_player_controls_body;
+      case 'guide_done_cta':
+        return _t.guide_done_cta;
+      case 'movement_pattern_setup':
+        return _t.movement_pattern_setup;
+      case 'movement_pattern_assessment':
+        return _t.movement_pattern_assessment;
+      case 'movement_pattern_mobility':
+        return _t.movement_pattern_mobility;
+      case 'movement_pattern_stretch':
+        return _t.movement_pattern_stretch;
+      case 'movement_pattern_release':
+        return _t.movement_pattern_release;
+      case 'movement_pattern_activation':
+        return _t.movement_pattern_activation;
+      case 'movement_pattern_strength':
+        return _t.movement_pattern_strength;
+      case 'movement_pattern_endurance':
+        return _t.movement_pattern_endurance;
+      case 'movement_pattern_posture':
+        return _t.movement_pattern_posture;
+      case 'movement_pattern_breathing':
+        return _t.movement_pattern_breathing;
+      case 'movement_pattern_cooldown':
+        return _t.movement_pattern_cooldown;
+      case 'movement_pattern_habit':
+        return _t.movement_pattern_habit;
+      case 'continuity_preview_cta':
+        return _t.continuity_preview_cta;
+      case 'player_pre_state_subtitle_compact':
+        return _t.player_pre_state_subtitle_compact;
+      case 'player_feedback_subtitle_compact':
+        return _t.player_feedback_subtitle_compact;
+      case 'player_media_expand_tooltip':
+        return _t.player_media_expand_tooltip;
+      case 'player_media_unmute_tooltip':
+        return _t.player_media_unmute_tooltip;
+      case 'player_media_mute_tooltip':
+        return _t.player_media_mute_tooltip;
+      case 'guide_dashboard_topbar_title':
+        return _t.guide_dashboard_topbar_title;
+      case 'guide_dashboard_topbar_body':
+        return _t.guide_dashboard_topbar_body;
+      case 'guide_dashboard_home_title':
+        return _t.guide_dashboard_home_title;
+      case 'guide_dashboard_home_body':
+        return _t.guide_dashboard_home_body;
+      case 'guide_dashboard_bottom_nav_title':
+        return _t.guide_dashboard_bottom_nav_title;
+      case 'guide_dashboard_bottom_nav_body':
+        return _t.guide_dashboard_bottom_nav_body;
+      case 'dashboard_greeting':
+        return _t.dashboard_greeting;
+      case 'dashboard_new_quick_fix_title':
+        return _t.dashboard_new_quick_fix_title;
+      case 'dashboard_new_quick_fix_body':
+        return _t.dashboard_new_quick_fix_body;
+      case 'dashboard_quick_fix_title':
+        return _t.dashboard_quick_fix_title;
+      case 'dashboard_for_you_now':
+        return _t.dashboard_for_you_now;
+      case 'session_duration_unit_min':
+        return _t.session_duration_unit_min;
+      case 'dashboard_continue_session':
+        return _t.dashboard_continue_session;
+      case 'dashboard_start_session':
+        return _t.dashboard_start_session;
+      case 'dashboard_active_program_title':
+        return _t.dashboard_active_program_title;
+      case 'dashboard_continue_program':
+        return _t.dashboard_continue_program;
+      case 'dashboard_day_label':
+        return _t.dashboard_day_label;
+      case 'profile_action_notifications':
+        return _t.profile_action_notifications;
+      case 'dashboard_command_title':
+        return _t.dashboard_command_title;
+      case 'dashboard_command_active_body':
+        return _t.dashboard_command_active_body;
+      case 'dashboard_command_empty_body':
+        return _t.dashboard_command_empty_body;
+      case 'dashboard_readiness_label':
+        return _t.dashboard_readiness_label;
+      case 'dashboard_helpful_label':
+        return _t.dashboard_helpful_label;
+      case 'dashboard_rhythm_label':
+        return _t.dashboard_rhythm_label;
+      case 'dashboard_snapshot_error_title':
+        return _t.dashboard_snapshot_error_title;
+      case 'dashboard_weekly_minutes_label':
+        return _t.dashboard_weekly_minutes_label;
+      case 'dashboard_completed_week_label':
+        return _t.dashboard_completed_week_label;
+      case 'dashboard_run_completed':
+        return _t.dashboard_run_completed;
+      case 'dashboard_run_abandoned':
+        return _t.dashboard_run_abandoned;
+      case 'dashboard_run_started':
+        return _t.dashboard_run_started;
+      case 'dashboard_programs_active_title':
+        return _t.dashboard_programs_active_title;
+      case 'dashboard_programs_title':
+        return _t.dashboard_programs_title;
+      case 'common_view_all':
+        return _t.common_view_all;
+      case 'dashboard_program_discovery_pill_guided':
+        return _t.dashboard_program_discovery_pill_guided;
+      case 'dashboard_program_discovery_title':
+        return _t.dashboard_program_discovery_title;
+      case 'dashboard_program_discovery_cta':
+        return _t.dashboard_program_discovery_cta;
+      case 'program_active_badge':
+        return _t.program_active_badge;
+      case 'dashboard_programs_continue_cta':
+        return _t.dashboard_programs_continue_cta;
+      case 'program_day_unit':
+        return _t.program_day_unit;
+      case 'program_start_cta':
+        return _t.program_start_cta;
+      case 'dashboard_saved_title':
+        return _t.dashboard_saved_title;
+      case 'dashboard_recommended_title':
+        return _t.dashboard_recommended_title;
+      case 'dashboard_see_all':
+        return _t.dashboard_see_all;
+      case 'sessions_title':
+        return _t.sessions_title;
+      case 'dashboard_momentum_title':
+        return _t.dashboard_momentum_title;
+      case 'dashboard_program_days_label':
+        return _t.dashboard_program_days_label;
+      case 'dashboard_streak_label':
+        return _t.dashboard_streak_label;
+      case 'dashboard_saved_count_label':
+        return _t.dashboard_saved_count_label;
+      case 'dashboard_body_focus_title':
+        return _t.dashboard_body_focus_title;
+      case 'dashboard_body_focus_body':
+        return _t.dashboard_body_focus_body;
+      case 'dashboard_premium_title':
+        return _t.dashboard_premium_title;
+      case 'dashboard_premium_body':
+        return _t.dashboard_premium_body;
+      case 'dashboard_premium_cta_short':
+        return _t.dashboard_premium_cta_short;
+      case 'programs_title':
+        return _t.programs_title;
+      case 'programs_browse_all_title':
+        return _t.programs_browse_all_title;
+      case 'programs_more_journeys_title':
+        return _t.programs_more_journeys_title;
+      case 'programs_section_subtitle':
+        return _t.programs_section_subtitle;
+      case 'programs_header_active':
+        return _t.programs_header_active;
+      case 'programs_header_new':
+        return _t.programs_header_new;
+      case 'programs_header_body':
+        return _t.programs_header_body;
+      case 'program_premium_badge':
+        return _t.program_premium_badge;
+      case 'programs_error_title':
+        return _t.programs_error_title;
+      case 'programs_error_body':
+        return _t.programs_error_body;
+      case 'programs_empty_title':
+        return _t.programs_empty_title;
+      case 'programs_empty_body':
+        return _t.programs_empty_body;
+      case 'common_refresh':
+        return _t.common_refresh;
+      case 'program_detail_title':
+        return _t.program_detail_title;
+      case 'program_switch_title':
+        return _t.program_switch_title;
+      case 'program_start_title':
+        return _t.program_start_title;
+      case 'program_switch_body':
+        return _t.program_switch_body;
+      case 'program_start_body':
+        return _t.program_start_body;
+      case 'program_switch_cta':
+        return _t.program_switch_cta;
+      case 'program_begin_cta':
+        return _t.program_begin_cta;
+      case 'program_phase_recovery':
+        return _t.program_phase_recovery;
+      case 'program_completed_label':
+        return _t.program_completed_label;
+      case 'program_continue_recovery_cta':
+        return _t.program_continue_recovery_cta;
+      case 'program_about_journey_label':
+        return _t.program_about_journey_label;
+      case 'program_path_label':
+        return _t.program_path_label;
+      case 'program_unlocked_label':
+        return _t.program_unlocked_label;
+      case 'program_no_days_title':
+        return _t.program_no_days_title;
+      case 'program_view_full_plan_title':
+        return _t.program_view_full_plan_title;
+      case 'program_sequential_hint':
+        return _t.program_sequential_hint;
+      case 'program_day_missing_session':
+        return _t.program_day_missing_session;
+      case 'program_phase_start_label':
+        return _t.program_phase_start_label;
+      case 'program_phase_end_label':
+        return _t.program_phase_end_label;
+      case 'program_assessment_label':
+        return _t.program_assessment_label;
+      case 'program_repeat_label':
+        return _t.program_repeat_label;
+      case 'program_today_badge':
+        return _t.program_today_badge;
+      case 'program_expected_label':
+        return _t.program_expected_label;
+      case 'program_detail_error_title':
+        return _t.program_detail_error_title;
+      case 'program_detail_error_body':
+        return _t.program_detail_error_body;
+      case 'program_progress_sync_warning':
+        return _t.program_progress_sync_warning;
+      case 'program_not_found_title':
+        return _t.program_not_found_title;
+      case 'program_not_found_body':
+        return _t.program_not_found_body;
+      case 'access_core_badge':
+        return _t.access_core_badge;
+      case 'sessions_load_error_title':
+        return _t.sessions_load_error_title;
+      case 'guide_training_sessions_title':
+        return _t.guide_training_sessions_title;
+      case 'guide_training_sessions_body':
+        return _t.guide_training_sessions_body;
+      case 'guide_training_filter_title':
+        return _t.guide_training_filter_title;
+      case 'guide_training_filter_body':
+        return _t.guide_training_filter_body;
+      case 'common_clear':
+        return _t.common_clear;
+      case 'training_programs_title':
+        return _t.training_programs_title;
+      case 'training_programs_subtitle':
+        return _t.training_programs_subtitle;
+      case 'training_sessions_section_title':
+        return _t.training_sessions_section_title;
+      case 'training_sessions_section_subtitle':
+        return _t.training_sessions_section_subtitle;
+      case 'sessions_search_hint_compact':
+        return _t.sessions_search_hint_compact;
+      case 'sessions_category_lower_back_hips':
+        return _t.sessions_category_lower_back_hips;
+      case 'sessions_category_wrists_hands':
+        return _t.sessions_category_wrists_hands;
+      case 'sessions_sort_shortest':
+        return _t.sessions_sort_shortest;
+      case 'sessions_sort_alpha':
+        return _t.sessions_sort_alpha;
+      case 'sessions_sort_short_recommended':
+        return _t.sessions_sort_short_recommended;
+      case 'sessions_sort_short_shortest':
+        return _t.sessions_sort_short_shortest;
+      case 'sessions_sort_short_az':
+        return _t.sessions_sort_short_az;
+      case 'session_detail_nav_title':
+        return _t.session_detail_nav_title;
+      case 'premium_title':
+        return _t.premium_title;
+      case 'session_detail_label':
+        return _t.session_detail_label;
+      case 'session_detail_body_target_general':
+        return _t.session_detail_body_target_general;
+      case 'session_detail_body_targets_title':
+        return _t.session_detail_body_targets_title;
+      case 'session_detail_equipment_none':
+        return _t.session_detail_equipment_none;
+      case 'session_detail_steps_title_compact':
+        return _t.session_detail_steps_title_compact;
+      case 'session_detail_safety_title':
+        return _t.session_detail_safety_title;
+      case 'session_detail_safety_compact_subtitle':
+        return _t.session_detail_safety_compact_subtitle;
+      case 'session_detail_warning_title':
+        return _t.session_detail_warning_title;
+      case 'session_detail_avoid_title':
+        return _t.session_detail_avoid_title;
+      case 'session_detail_error_title':
+        return _t.session_detail_error_title;
+      case 'session_detail_error_subtitle':
+        return _t.session_detail_error_subtitle;
+      case 'equipment_chair':
+        return _t.equipment_chair;
+      case 'equipment_desk':
+        return _t.equipment_desk;
+      case 'equipment_wall':
+        return _t.equipment_wall;
+      case 'equipment_towel':
+        return _t.equipment_towel;
+      case 'equipment_small_cushion':
+        return _t.equipment_small_cushion;
+      case 'equipment_lumbar_roll':
+        return _t.equipment_lumbar_roll;
+      case 'equipment_mini_band':
+        return _t.equipment_mini_band;
+      case 'equipment_long_band':
+        return _t.equipment_long_band;
+      case 'equipment_massage_ball':
+        return _t.equipment_massage_ball;
+      case 'equipment_soft_ball':
+        return _t.equipment_soft_ball;
+      case 'equipment_water_bottle':
+        return _t.equipment_water_bottle;
+      case 'equipment_dowel':
+        return _t.equipment_dowel;
+      case 'equipment_yoga_mat':
+        return _t.equipment_yoga_mat;
+      case 'equipment_foam_roller':
+        return _t.equipment_foam_roller;
+      case 'session_level_free_starter':
+        return _t.session_level_free_starter;
+      case 'session_level_therapy':
+        return _t.session_level_therapy;
+      case 'session_level_advanced_therapy':
+        return _t.session_level_advanced_therapy;
+      case 'session_level_flagship':
+        return _t.session_level_flagship;
+      case 'saved_sessions_locked_title':
+        return _t.saved_sessions_locked_title;
+      case 'saved_sessions_locked_message':
+        return _t.saved_sessions_locked_message;
+      case 'auth_callback_title':
+        return _t.auth_callback_title;
+      case 'auth_callback_subtitle':
+        return _t.auth_callback_subtitle;
+      case 'auth_terms_required':
+        return _t.auth_terms_required;
+      case 'auth_google_not_started':
+        return _t.auth_google_not_started;
+      case 'auth_google_unknown_error':
+        return _t.auth_google_unknown_error;
+      case 'auth_apple_coming_soon':
+        return _t.auth_apple_coming_soon;
+      case 'auth_reset_email_required':
+        return _t.auth_reset_email_required;
+      case 'auth_reset_email_sent':
+        return _t.auth_reset_email_sent;
+      case 'auth_link_open_failed':
+        return _t.auth_link_open_failed;
+      case 'auth_invalid_credentials':
+        return _t.auth_invalid_credentials;
+      case 'auth_email_not_confirmed':
+        return _t.auth_email_not_confirmed;
+      case 'auth_user_already_registered':
+        return _t.auth_user_already_registered;
+      case 'auth_or_email_short':
+        return _t.auth_or_email_short;
+      case 'auth_app_badge':
+        return _t.auth_app_badge;
+      case 'auth_sign_up_tab_short':
+        return _t.auth_sign_up_tab_short;
+      case 'auth_google_short':
+        return _t.auth_google_short;
+      case 'auth_apple_short':
+        return _t.auth_apple_short;
+      case 'auth_toggle_password_visibility':
+        return _t.auth_toggle_password_visibility;
+      case 'auth_forgot_password':
+        return _t.auth_forgot_password;
+      case 'auth_accept_terms_text':
+        return _t.auth_accept_terms_text;
+      case 'auth_legal_note_sign_in_compact':
+        return _t.auth_legal_note_sign_in_compact;
+      case 'auth_legal_note_sign_up_compact':
+        return _t.auth_legal_note_sign_up_compact;
+      case 'auth_privacy_policy_link':
+        return _t.auth_privacy_policy_link;
+      case 'auth_terms_of_use_link':
+        return _t.auth_terms_of_use_link;
+
+      case 'update_available_body':
+        return _t.update_available_body;
+      case 'quick_fix_equipment_none':
+        return _t.quick_fix_equipment_none;
+      case 'quick_fix_equipment_towel':
+        return _t.quick_fix_equipment_towel;
+      case 'quick_fix_equipment_long_band':
+        return _t.quick_fix_equipment_long_band;
+      case 'quick_fix_equipment_mini_band':
+        return _t.quick_fix_equipment_mini_band;
+      case 'quick_fix_equipment_foam_roller':
+        return _t.quick_fix_equipment_foam_roller;
+      case 'quick_fix_equipment_massage_ball':
+        return _t.quick_fix_equipment_massage_ball;
+      case 'quick_fix_equipment_soft_ball':
+        return _t.quick_fix_equipment_soft_ball;
+      case 'quick_fix_equipment_water_bottle':
+        return _t.quick_fix_equipment_water_bottle;
+      case 'quick_fix_equipment_dowel':
+        return _t.quick_fix_equipment_dowel;
+      case 'quick_fix_problem_forearms':
+        return _t.quick_fix_problem_forearms;
+      case 'quick_fix_problem_hands':
+        return _t.quick_fix_problem_hands;
+      case 'quick_fix_problem_hips_glutes':
+        return _t.quick_fix_problem_hips_glutes;
+      case 'quick_fix_problem_upper_back':
+        return _t.quick_fix_problem_upper_back;
+      case 'quick_fix_signal_equipment_based':
+        return _t.quick_fix_signal_equipment_based;
+      case 'player_left':
+        return _t.player_left;
+      case 'player_more_guidance':
+        return _t.player_more_guidance;
+      case 'player_voice_on':
+        return _t.player_voice_on;
+      case 'player_voice_off':
+        return _t.player_voice_off;
+
+      case 'program_days_suffix':
+        return _t.program_days_suffix;
+      case 'program_difficulty_beginner':
+        return _t.program_difficulty_beginner;
+      case 'program_difficulty_intermediate':
+        return _t.program_difficulty_intermediate;
+      case 'program_difficulty_advanced':
+        return _t.program_difficulty_advanced;
+      case 'program_recovery_route':
+        return _t.program_recovery_route;
+      case 'insights_active_suffix':
+        return _t.insights_active_suffix;
+      case 'player_reps_suffix':
+        return _t.player_reps_suffix;
+
       default:
-        return fallback;
+        return _translateDynamicFallback(fallback);
     }
   }
+
+  String _translateDynamicFallback(String fallback) {
+    if (!_t.localeName.toLowerCase().startsWith('de')) return fallback;
+
+    const exact = <String, String>{
+      'Recovery': 'Erholung',
+      'Recovery signal needs consistency': 'Das Erholungssignal braucht mehr Regelmäßigkeit',
+      'Strong recovery rhythm': 'Starker Erholungsrhythmus',
+      'Recovery rhythm is building': 'Der Erholungsrhythmus entwickelt sich',
+      'Early recovery signal': 'Frühes Erholungssignal',
+      'No recovery score yet': 'Noch kein Erholungswert',
+      'Most attention is landing on Neck': 'Der Schwerpunkt liegt derzeit auf dem Nacken',
+      'A notable share of runs end early': 'Ein auffälliger Anteil der Sessions endet vorzeitig',
+      'Recent feedback trend is positive': 'Der aktuelle Feedback-Trend ist positiv',
+      'Recovery route': 'Erholungsweg',
+      'Map the Workday': 'Arbeitsalltag erfassen',
+      'Build the Support System': 'Stützsystem aufbauen',
+      'Control Motion': 'Bewegung kontrollieren',
+      'Full Desk Worker Therapy Journey': 'Ganzheitliches Therapieprogramm für Schreibtischarbeit',
+      'Neck & Shoulder Therapy Journey': 'Therapieprogramm für Nacken & Schultern',
+      '13 missions to calm tension, rebuild support, and transfer control to your workday.': '13 Missionen, um Spannung zu reduzieren, Stabilität aufzubauen und die Kontrolle in den Arbeitsalltag zu übertragen.',
+      'A progressive full-body journey for neck, shoulders, hands, spine, and hips — built around real desk demands.': 'Ein schrittweises Ganzkörperprogramm für Nacken, Schultern, Hände, Wirbelsäule und Hüfte – abgestimmt auf den echten Büroalltag.',
+      'Create a coordinated, resilient desk-worker system with better movement control, load tolerance, recovery, and self-management.': 'Baue ein koordiniertes und belastbares System für den Büroalltag auf – mit besserer Bewegungskontrolle, Belastbarkeit, Erholung und Selbstmanagement.',
+      'Mission 1 — Map Head and Neck Control': 'Mission 1 — Kopf- und Nackenkontrolle erfassen',
+      'Mission 2 — Map Hand and Nerve Motion': 'Mission 2 — Hand- und Nervenbewegung erfassen',
+      'Mission 3 — Find Your Trunk Support': 'Mission 3 — Rumpfunterstützung finden',
+      'Assess hand, finger, and median-nerve motion without provoking symptoms.': 'Beurteile die Bewegung von Hand, Fingern und Medianusnerv, ohne Beschwerden auszulösen.',
+      'Assessment': 'Beurteilung',
+      'Beginner': 'Einsteiger',
+      'No extra equipment': 'Keine zusätzliche Ausrüstung',
+      'Towel': 'Handtuch',
+      'Resistance band': 'Widerstandsband',
+      'Mini band': 'Mini-Band',
+      'Foam roller': 'Faszienrolle',
+      'Massage ball': 'Massageball',
+      'Soft ball': 'Weicher Ball',
+      'Water bottle': 'Wasserflasche',
+      'Dowel / broomstick': 'Stab / Besenstiel',
+      'More guidance': 'Mehr Anleitung',
+      'Voice on': 'Stimme an',
+      'Voice off': 'Stimme aus',
+      'LEFT': 'VERBLEIBEND',
+      'How did it feel?': 'Wie hat es sich angefühlt?',
+      'Journey complete': 'Programm abgeschlossen',
+      'Phase complete': 'Phase abgeschlossen',
+      'Mission complete': 'Mission abgeschlossen',
+      'You completed the full therapy journey.': 'Du hast das gesamte Therapieprogramm abgeschlossen.',
+      'This phase is complete. Your next phase is now ready.': 'Diese Phase ist abgeschlossen. Die nächste Phase ist jetzt bereit.',
+      'This mission is now part of your completed path.': 'Diese Mission ist jetzt Teil deines abgeschlossenen Fortschritts.',
+      'Journey progress': 'Programmfortschritt',
+      'Milestone reached': 'Meilenstein erreicht',
+      'The next phase is unlocked': 'Die nächste Phase ist freigeschaltet',
+      'Next mission unlocked': 'Nächste Mission freigeschaltet',
+      'View completed journey': 'Abgeschlossenes Programm ansehen',
+      'Back to journey': 'Zurück zum Programm',
+      'How to do it': 'So führst du es aus',
+      'Goal': 'Ziel',
+      'What to notice': 'Worauf du achten solltest',
+      'Coach cue': 'Trainerhinweis',
+      'Breathing': 'Atmung',
+      'Coach tip': 'Trainer-Tipp',
+      'Safety': 'Sicherheit',
+      'Avoid these mistakes': 'Diese Fehler vermeiden',
+      'Mission': 'Mission',
+      'Short session': 'Kurze Session',
+      'Load': 'Belastung',
+      'Today’s target': 'Heutiges Ziel',
+      'Why this mission': 'Warum diese Mission',
+      'What to notice after': 'Worauf du danach achten solltest',
+      'Start mission': 'Mission starten',
+      'Done': 'Fertig',
+      'Back to current mission': 'Zurück zur aktuellen Mission',
+      '{unread} unread, {upcoming} upcoming, {total} total reminders.': '{unread} ungelesen, {upcoming} bevorstehend, {total} Erinnerungen insgesamt.',
+      'Today {time}': 'Heute {time}',
+      'Tomorrow {time}': 'Morgen {time}',
+      'Continue tomorrow': 'Morgen weitermachen',
+      'Next program step tomorrow': 'Nächste Programm-Mission morgen',
+      'Recovery reminder set for tomorrow': 'Recovery-Erinnerung für morgen geplant',
+      'You already completed recovery work today. Your session reminder will wait until tomorrow.': 'Du hast deine Recovery für heute bereits abgeschlossen. Deine Session-Erinnerung wartet bis morgen.',
+      'You already completed recovery work today. Your next program reminder will wait until tomorrow.': 'Du hast deine Recovery für heute bereits abgeschlossen. Die nächste Programm-Erinnerung wartet bis morgen.',
+      'You already completed recovery work today. The next reminder will wait until tomorrow.': 'Du hast deine Recovery für heute bereits abgeschlossen. Die nächste Erinnerung kommt morgen.',
+      'Finish your recovery session': 'Recovery-Session abschließen',
+      'You started a session. Finish it with one clean reset.': 'Du hast eine Session begonnen. Schließe sie mit einem kurzen Reset ab.',
+      'Continue your recovery program': 'Recovery-Programm fortsetzen',
+      'Restart with a short reset': 'Mit einem kurzen Reset wieder einsteigen',
+      'Unlock deeper recovery tools': 'Mehr Recovery-Funktionen freischalten',
+      'Time for a quick reset': 'Zeit für einen kurzen Reset',
+      'Take two focused minutes for your neck, back, or wrists.': 'Nimm dir zwei konzentrierte Minuten für Nacken, Rücken oder Handgelenke.',
+    };
+    final direct = exact[fallback];
+    if (direct != null) return direct;
+
+    var match = RegExp(r'^(\d+) days$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} Tage';
+    match = RegExp(r'^(\d+) min/day$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} Min./Tag';
+    match = RegExp(r'^(\d+) missions$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} Missionen';
+    match = RegExp(r'^Mission (\d+) of (\d+)$').firstMatch(fallback);
+    if (match != null) return 'Mission ${match.group(1)} von ${match.group(2)}';
+    match = RegExp(r'^(\d+)% of recent recovery work was concentrated in this zone\. Action: rotate one supporting session for a secondary zone\.$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} % der jüngsten Erholungsarbeit entfielen auf diesen Bereich. Ergänze eine unterstützende Session für einen zweiten Bereich.';
+    match = RegExp(r'^(\d+) runs were abandoned in this window\. This may indicate session length mismatch or friction inside the player flow\.$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} Sessions wurden in diesem Zeitraum vorzeitig beendet. Das kann auf eine unpassende Dauer oder Reibung im Ablauf hinweisen.';
+    match = RegExp(r'^(\d+)% of recent feedback marked sessions as helpful, with an average relief score of (\d+)\.$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} % des aktuellen Feedbacks bewerteten Sessions als hilfreich; der durchschnittliche Entlastungswert lag bei ${match.group(2)}.';
+    match = RegExp(r'^(\d+) minutes logged with strong helpful feedback\.$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} Minuten wurden mit deutlich positivem Feedback erfasst.';
+
+    match = RegExp(r'^(\d+) mission streak$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} Missionen in Folge';
+    match = RegExp(r'^(.+) is complete\. Your next phase is now ready\.$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} ist abgeschlossen. Die nächste Phase ist jetzt bereit.';
+    match = RegExp(r'^(.+) unlocked$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} freigeschaltet';
+    match = RegExp(r'^Day (\d+) is ready\. Keep the recovery chain moving\.$').firstMatch(fallback);
+    if (match != null) return 'Mission ${match.group(1)} ist bereit. Bleib in deinem Rhythmus.';
+    match = RegExp(r'^(.+) — Day (\d+) is ready\.$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} — Mission ${match.group(2)} ist bereit.';
+    match = RegExp(r'^It has been (\d+) days\. Start with one low-friction desk recovery session\.$').firstMatch(fallback);
+    if (match != null) return 'Seit deiner letzten Session sind ${match.group(1)} Tage vergangen. Starte mit einer kurzen Recovery-Session am Schreibtisch.';
+    match = RegExp(r'^Continue (.+) and complete today’s reset\.$').firstMatch(fallback);
+    if (match != null) return '${match.group(1)} fortsetzen und den heutigen Reset abschließen.';
+
+    return fallback;
+  }
+
 }
 
 class AppText {

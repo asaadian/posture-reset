@@ -46,7 +46,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
     final accessAsync = ref.watch(accessSnapshotProvider);
 
     return ResponsivePageScaffold(
-      title: Text(t.get('sessions_title', fallback: 'Training')),
+      title: const Text('Explore'),
       bodyBuilder: (context, pageInfo) {
         final accessSnapshot = accessAsync.maybeWhen(
           data: (value) => value,
@@ -97,12 +97,6 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                   title: t.get('guide_training_sessions_title', fallback: 'Sessions are single resets'),
                   body: t.get('guide_training_sessions_body', fallback: 'Use sessions when you want one quick recovery exercise right now.'),
                 ),
-                OnboardingTip(
-                  targetKey: _trainingFiltersGuideKey,
-                  icon: Icons.search_rounded,
-                  title: t.get('guide_training_filter_title', fallback: 'Search and filter'),
-                  body: t.get('guide_training_filter_body', fallback: 'Filter by body zone, duration, intensity, or desk-friendly sessions.'),
-                ),
               ],
               child: RefreshIndicator(
               onRefresh: () async {
@@ -116,28 +110,6 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                   ResponsiveContentSection(
                     spacing: 14,
                     children: [
-                      KeyedSubtree(
-                        key: _trainingFiltersGuideKey,
-                        child: _SearchSortBar(
-                          searchQuery: _searchQuery,
-                          selectedSort: _selectedSort,
-                          onSearchChanged: (value) {
-                            setState(() => _searchQuery = value);
-                          },
-                          onSearchClear: () {
-                            setState(() => _searchQuery = '');
-                          },
-                          onSortChanged: (value) {
-                            setState(() => _selectedSort = value);
-                          },
-                        ),
-                      ),
-                      _CategoryRail(
-                        selectedCategory: _selectedCategory,
-                        onChanged: (value) {
-                          setState(() => _selectedCategory = value);
-                        },
-                      ),
                       if (visibleSessions.isEmpty)
                         _MessageCard(
                           title: t.get(
@@ -154,16 +126,10 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                       else
                         KeyedSubtree(
                           key: _trainingSessionsGuideKey,
-                          child: _selectedCategory == SessionLibraryCategory.all &&
-                                  _searchQuery.trim().isEmpty
-                              ? _TrainingDiscoverySections(
-                                  sessions: visibleSessions,
-                                  accessSnapshot: accessSnapshot,
-                                )
-                              : _SessionCardGrid(
-                                  sessions: visibleSessions,
-                                  accessSnapshot: accessSnapshot,
-                                ),
+                          child: _TrainingDiscoverySections(
+                            sessions: visibleSessions,
+                            accessSnapshot: accessSnapshot,
+                          ),
                         ),
                     ],
                   ),
@@ -902,13 +868,7 @@ class _TrainingDiscoverySections extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Text(
-            t.get('training_discover_intro', fallback: 'Find what your body needs'),
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-        ),
+
         for (final id in _groupIds)
           if (grouped[id]!.isNotEmpty)
             Padding(
@@ -998,6 +958,23 @@ class _TrainingDiscoveryRow extends StatelessWidget {
   }
 }
 
+String _sessionLevelLabel(SessionSummary session) {
+  switch (session.sessionLevelTag) {
+    case SessionLevelTag.flagship:
+      return 'Signature';
+    case SessionLevelTag.advancedTherapy:
+      return 'Advanced therapy';
+    case SessionLevelTag.therapy:
+      return 'Therapy';
+    case SessionLevelTag.freeStarter:
+      return session.isBeginnerFriendly ? 'Beginner' : 'All levels';
+  }
+}
+
+bool _isAdvancedSession(SessionSummary session) =>
+    session.sessionLevelTag == SessionLevelTag.advancedTherapy ||
+    session.sessionLevelTag == SessionLevelTag.flagship;
+
 class _TrainingHorizontalTile extends StatelessWidget {
   const _TrainingHorizontalTile({
     required this.session,
@@ -1014,7 +991,9 @@ class _TrainingHorizontalTile extends StatelessWidget {
     final locked = session.accessTier == AccessTier.coreAccess &&
         !accessSnapshot.hasCoreAccess;
     return Material(
-      color: colors.surfaceContainerLow,
+      color: _isAdvancedSession(session)
+          ? colors.tertiaryContainer
+          : colors.surfaceContainerLow,
       borderRadius: BorderRadius.circular(22),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -1063,9 +1042,13 @@ class _TrainingHorizontalTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${session.durationMinutes} ${t.get('session_duration_unit_min', fallback: 'min')}',
+                      '${session.durationMinutes} ${t.get('session_duration_unit_min', fallback: 'min')} · ${_sessionLevelLabel(session)}',
+                      maxLines: 2,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
+                        color: _isAdvancedSession(session)
+                            ? colors.onTertiaryContainer
+                            : colors.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 7),
@@ -1165,11 +1148,13 @@ class _SessionTile extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(26),
-            color: isDark ? const Color(0xFF0F172A) : Colors.white,
+            color: _isAdvancedSession(session)
+                ? colors.tertiaryContainer
+                : colors.surface,
             border: Border.all(
-              color: isDark
-                  ? const Color(0xFF26324A)
-                  : const Color(0xFFDCE5F0),
+              color: _isAdvancedSession(session)
+                  ? colors.tertiary
+                  : colors.outlineVariant,
             ),
             boxShadow: [
               BoxShadow(
@@ -1215,7 +1200,18 @@ class _SessionTile extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            Text(
+                              _sessionLevelLabel(session),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: _isAdvancedSession(session)
+                                    ? colors.onTertiaryContainer
+                                    : colors.onSurfaceVariant,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 5),
                             Row(
                               children: [
                                 _SessionMetaPill(

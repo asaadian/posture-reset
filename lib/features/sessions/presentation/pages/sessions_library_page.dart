@@ -136,7 +136,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                                   sessions: visibleSessions,
                                   accessSnapshot: accessSnapshot,
                                 )
-                              : _SessionCardGrid(
+                              : _BodySessionList(
                                   sessions: visibleSessions,
                                   accessSnapshot: accessSnapshot,
                                 ),
@@ -1122,7 +1122,7 @@ class _BodyFocusNavigation extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: options.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            separatorBuilder: (_, __) => const SizedBox(width: 2),
             itemBuilder: (context, index) {
               final option = options[index];
               return InkWell(
@@ -1130,11 +1130,11 @@ class _BodyFocusNavigation extends StatelessWidget {
                   pathParameters: {'category': option.id}),
                 borderRadius: BorderRadius.circular(18),
                 child: SizedBox(
-                  width: 90,
+                  width: 75,
                   child: Column(
                     children: [
                       Container(
-                        height: 62, width: 62,
+                        height: 56, width: 56,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: colors.primaryContainer,
@@ -1330,6 +1330,35 @@ class _TrainingHorizontalTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _BodySessionList extends StatelessWidget {
+  const _BodySessionList({
+    required this.sessions,
+    required this.accessSnapshot,
+  });
+  final List<SessionSummary> sessions;
+  final AccessSnapshot accessSnapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final session in sessions)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: SizedBox(
+              height: 172,
+              width: double.infinity,
+              child: _TrainingHorizontalTile(
+                session: session,
+                accessSnapshot: accessSnapshot,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

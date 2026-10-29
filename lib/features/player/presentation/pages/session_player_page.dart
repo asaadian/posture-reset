@@ -1541,7 +1541,7 @@ class _FocusModeBackdrop extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    final accent = colors.primary;
+    final accent = colors.tertiary;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 420),
@@ -1552,12 +1552,12 @@ class _FocusModeBackdrop extends StatelessWidget {
           radius: 1.20,
           colors: isDark
               ? [
-                  accent.withValues(alpha: isPaused ? 0.035 : 0.055),
+                  accent.withValues(alpha: isPaused ? 0.08 : 0.13),
                   colors.surfaceContainerLow,
                   colors.surface,
                 ]
               : [
-                  accent.withValues(alpha: isPaused ? 0.025 : 0.045),
+                  accent.withValues(alpha: isPaused ? 0.035 : 0.065),
                   colors.surfaceContainerLow,
                   colors.surfaceContainerLowest,
                 ],

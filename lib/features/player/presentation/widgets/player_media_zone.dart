@@ -354,7 +354,7 @@ class _LoopingStepVideoState extends State<_LoopingStepVideo> {
     _controller = controller;
 
     try {
-      await controller.initialize();
+      await controller.initialize().timeout(const Duration(seconds: 18));
       await controller.setLooping(true);
       await controller.setVolume(widget.muted ? 0 : 1);
 
@@ -435,6 +435,28 @@ class _LoopingStepVideoState extends State<_LoopingStepVideo> {
       );
     }
 
+    if (_hasError) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          if (widget.posterUrl != null && widget.posterUrl!.trim().isNotEmpty)
+            _PosterImage(posterUrl: widget.posterUrl!.trim())
+          else
+            const _VideoLoadingFallback(),
+          Center(
+            child: FilledButton.icon(
+              onPressed: () {
+                _disposeController();
+                setState(() => _hasError = false);
+                _initializeController();
+              },
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('Retry video'),
+            ),
+          ),
+        ],
+      );
+    }
     if (widget.posterUrl != null && widget.posterUrl!.trim().isNotEmpty) {
       return _PosterImage(posterUrl: widget.posterUrl!.trim());
     }

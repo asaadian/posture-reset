@@ -906,16 +906,18 @@ class _TrainingDiscoverySections extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (final id in _groupIds)
-          if (id == 'upper_back' && topSessions.isNotEmpty)
+        for (final id in _groupIds) ...[
+          if (id == 'upper_back' && topSessions.isNotEmpty) ...[
             Padding(
-              padding: const EdgeInsets.only(bottom: 32),
-              child: _PopularSessionsShowcase(
-                sessions: topSessions,
-                accessSnapshot: accessSnapshot,
-              ),
-            )
-          else if (grouped[id]!.isNotEmpty)
+              padding: const EdgeInsets.only(bottom: 22),
+              child: _PopularSessionsShowcase(sessions: topSessions),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 30),
+              child: _BodyFocusNavigation(),
+            ),
+          ],
+          if (grouped[id]!.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(bottom: 28),
               child: _TrainingDiscoveryRow(
@@ -927,8 +929,8 @@ class _TrainingDiscoverySections extends StatelessWidget {
                 layoutIndex: _groupIds.indexOf(id),
               ),
             ),
-        const SizedBox(height: 6),
-        const _BodyFocusNavigation(),
+        ],
+        if (topSessions.isEmpty) const _BodyFocusNavigation(),
       ],
     );
   }

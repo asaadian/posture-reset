@@ -288,7 +288,7 @@ class _ProfileHeroCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(34),
         gradient: const LinearGradient(
-          colors: [Color(0xFF07101F), Color(0xFF101B32), Color(0xFF182642)],
+          colors: [Color(0xFF102338), Color(0xFF172B45), Color(0xFF234D57)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -302,8 +302,8 @@ class _ProfileHeroCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          const Positioned(right: -96, top: -96, child: _ProfileGlow(size: 260, color: Color(0xFF5B6CFF), alpha: 0.32)),
-          const Positioned(left: -110, bottom: -130, child: _ProfileGlow(size: 280, color: Color(0xFF13C6C1), alpha: 0.22)),
+          const Positioned(right: -96, top: -96, child: _ProfileGlow(size: 260, color: Color(0xFF91B9FF), alpha: 0.32)),
+          const Positioned(left: -110, bottom: -130, child: _ProfileGlow(size: 280, color: Color(0xFF78E1C6), alpha: 0.22)),
           Column(
             children: [
               const SizedBox(height: 2),
@@ -415,7 +415,7 @@ class _ProfileActionGrid extends StatelessWidget {
         'profile_action_premium_subtitle_large',
         fallback: 'Unlock all sessions, programs, Quick Fix, and insights.',
       ),
-      accent: const Color(0xFF8B5CF6),
+      accent: const Color(0xFF79B7DA),
       onTap: onPremium,
     );
 
@@ -926,7 +926,7 @@ class _ProfilePremiumActionTile extends StatelessWidget {
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
-    final foreground = isDark ? Colors.white : const Color(0xFF101827);
+    final foreground = isDark ? Colors.white : const Color(0xFF172B45);
     final mutedForeground = isDark
         ? Colors.white.withValues(alpha: 0.72)
         : colors.onSurfaceVariant;
@@ -944,14 +944,14 @@ class _ProfilePremiumActionTile extends StatelessWidget {
             gradient: LinearGradient(
               colors: isDark
                   ? const [
-                      Color(0xFF321B5F),
-                      Color(0xFF193A63),
-                      Color(0xFF073B3F),
+                      Color(0xFF183B52),
+                      Color(0xFF234D57),
+                      Color(0xFF12494B),
                     ]
                   : const [
-                      Color(0xFFF1E9FF),
-                      Color(0xFFE6F1FF),
-                      Color(0xFFE0FBF5),
+                      Color(0xFFE5F3F3),
+                      Color(0xFFE4F0F9),
+                      Color(0xFFD9F5EC),
                     ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -990,7 +990,7 @@ class _ProfilePremiumActionTile extends StatelessWidget {
                   height: 142,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF12B8C7)
+                    color: const Color(0xFF168C91)
                         .withValues(alpha: isDark ? 0.12 : 0.10),
                   ),
                 ),
@@ -1005,7 +1005,7 @@ class _ProfilePremiumActionTile extends StatelessWidget {
                       gradient: LinearGradient(
                         colors: [
                           data.accent,
-                          const Color(0xFF12B8C7),
+                          const Color(0xFF168C91),
                         ],
                       ),
                       boxShadow: [
@@ -1242,10 +1242,10 @@ class _PrimaryProfileButton extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
-          gradient: const LinearGradient(colors: [Color(0xFF5B6CFF), Color(0xFF12B8C7)]),
+          gradient: const LinearGradient(colors: [Color(0xFF91B9FF), Color(0xFF168C91)]),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF5B6CFF).withValues(alpha: 0.30),
+              color: const Color(0xFF91B9FF).withValues(alpha: 0.30),
               blurRadius: 24,
               offset: const Offset(0, 12),
             ),
@@ -1325,11 +1325,11 @@ class _PremiumAvatar extends StatelessWidget {
           height: 92,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: hasAvatar ? null : const LinearGradient(colors: [Color(0xFF5B6CFF), Color(0xFF12B8C7)]),
+            gradient: hasAvatar ? null : const LinearGradient(colors: [Color(0xFF91B9FF), Color(0xFF168C91)]),
             border: Border.all(color: Colors.white.withValues(alpha: 0.18), width: 2),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF5B6CFF).withValues(alpha: 0.28),
+                color: const Color(0xFF91B9FF).withValues(alpha: 0.28),
                 blurRadius: 24,
                 offset: const Offset(0, 10),
               ),
@@ -1345,7 +1345,7 @@ class _PremiumAvatar extends StatelessWidget {
             right: -4,
             bottom: 4,
             child: Material(
-              color: const Color(0xFF5B6CFF),
+              color: const Color(0xFF91B9FF),
               shape: const CircleBorder(),
               elevation: 6,
               child: InkWell(

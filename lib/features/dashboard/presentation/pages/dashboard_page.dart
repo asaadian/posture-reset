@@ -2419,28 +2419,31 @@ class _MomentumTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
+    final featured = icon == Icons.speed_rounded;
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        color: isDark ? const Color(0xFF101827) : Colors.white,
-        border: Border.all(
-          color: isDark ? const Color(0xFF26324A) : const Color(0xFFE2E8F0),
-        ),
+        gradient: featured ? const LinearGradient(
+          colors: [Color(0xFF153C65), Color(0xFF14666B)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ) : null,
+        color: featured ? null : colors.surfaceContainerLow,
+        border: featured ? null : Border.all(color: colors.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: colors.primary, size: 19),
+          Icon(icon, color: featured ? const Color(0xFF83F1D8) : colors.primary, size: 21),
           const SizedBox(height: 8),
           Text(
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.titleLarge?.copyWith(
-              color: colors.onSurface,
+              color: featured ? Colors.white : colors.onSurface,
               fontWeight: FontWeight.w900,
               height: 1.0,
             ),
@@ -2451,7 +2454,7 @@ class _MomentumTile extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.labelSmall?.copyWith(
-              color: colors.onSurfaceVariant,
+              color: featured ? const Color(0xFFDAF4F1) : colors.onSurfaceVariant,
               fontWeight: FontWeight.w700,
             ),
           ),

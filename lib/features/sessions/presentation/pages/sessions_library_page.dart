@@ -871,7 +871,7 @@ class _TrainingDiscoverySections extends StatelessWidget {
       ),
       (
         title: t.get('training_discover_unwind', fallback: 'I need to unwind'),
-        subtitle: t.get('training_discover_unwind_sub', fallback: 'Slow down and release the day's tension'),
+        subtitle: t.get('training_discover_unwind_sub', fallback: "Slow down and release the day\'s tension"),
         icon: Icons.spa_outlined,
         matches: (s) => s.goals.contains(SessionGoal.decompression) ||
             s.goals.contains(SessionGoal.recovery),

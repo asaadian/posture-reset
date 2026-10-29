@@ -8,15 +8,15 @@ class AppTheme {
   // =========================================================
   // Dark palette — premium health-tech / deep navy / violet / teal
   // =========================================================
-  static const Color _darkBg = Color(0xFF050A14);
-  static const Color _darkSurface = Color(0xFF0E1728);
-  static const Color _darkSurfaceAlt = Color(0xFF17233A);
-  static const Color _darkSurfaceElevated = Color(0xFF1C2944);
+  static const Color _darkBg = Color(0xFF090D1A);
+  static const Color _darkSurface = Color(0xFF141B2B);
+  static const Color _darkSurfaceAlt = Color(0xFF1D2940);
+  static const Color _darkSurfaceElevated = Color(0xFF24334C);
 
-  static const Color _darkPrimary = Color(0xFF8EA2FF);
+  static const Color _darkPrimary = Color(0xFFB4A4FF);
   static const Color _darkPrimarySoft = Color(0xFF252F5C);
 
-  static const Color _darkSecondary = Color(0xFF2DD4BF);
+  static const Color _darkSecondary = Color(0xFF55DDC5);
   static const Color _darkSecondarySoft = Color(0xFF11383D);
 
   static const Color _darkTertiary = Color(0xFFA78BFA);
@@ -36,13 +36,13 @@ class AppTheme {
   // =========================================================
   // Light palette — clean modern cool-light / airy / premium
   // =========================================================
-  static const Color _lightBg = Color(0xFFEAF1F8);
-  static const Color _lightSurface = Color(0xFFF6FAFE);
-  static const Color _lightSurfaceAlt = Color(0xFFE4EDF7);
-  static const Color _lightSurfaceElevated = Color(0xFFF9FCFF);
+  static const Color _lightBg = Color(0xFFF6F7FB);
+  static const Color _lightSurface = Color(0xFFFFFFFF);
+  static const Color _lightSurfaceAlt = Color(0xFFEDEFFA);
+  static const Color _lightSurfaceElevated = Color(0xFFFFFFFF);
 
-  static const Color _lightPrimary = Color(0xFF5364F6);
-  static const Color _lightPrimarySoft = Color(0xFFDCE4FF);
+  static const Color _lightPrimary = Color(0xFF5B47C7);
+  static const Color _lightPrimarySoft = Color(0xFFEAE6FC);
 
   static const Color _lightSecondary = Color(0xFF0D9488);
   static const Color _lightSecondarySoft = Color(0xFFD4F1ED);
@@ -54,8 +54,8 @@ class AppTheme {
   static const Color _lightTextSecondary = Color(0xFF4B5A70);
   static const Color _lightTextMuted = Color(0xFF718197);
 
-  static const Color _lightBorder = Color(0xFFCBD8E8);
-  static const Color _lightBorderSoft = Color(0xFFDCE6F2);
+  static const Color _lightBorder = Color(0xFFD5DAE8);
+  static const Color _lightBorderSoft = Color(0xFFE5E8F0);
 
   static const Color _lightError = Color(0xFFE25555);
 

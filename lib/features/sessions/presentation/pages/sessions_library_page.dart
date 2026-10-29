@@ -114,14 +114,14 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                         _MessageCard(
                           title: t.get(
                             'sessions_no_results_title',
-                            fallback: 'No sessions match your filters.',
+                            fallback: 'No sessions available yet.',
                           ),
                           body: t.get(
                             'sessions_no_results_body',
-                            fallback: 'Try another body zone or clear your search.',
+                            fallback: 'Pull down to refresh the session library.',
                           ),
-                          actionLabel: t.get('common_clear', fallback: 'Clear'),
-                          onAction: _resetFilters,
+                          actionLabel: t.get('common_retry', fallback: 'Retry'),
+                          onAction: () => ref.invalidate(sessionSummariesProvider),
                         )
                       else
                         KeyedSubtree(
@@ -834,7 +834,6 @@ class _TrainingDiscoverySections extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = AppText.of(context);
     final grouped = <String, List<SessionSummary>>{
       for (final id in _groupIds) id: <SessionSummary>[],
     };

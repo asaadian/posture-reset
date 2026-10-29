@@ -837,7 +837,9 @@ class _TrainingDiscoverySections extends StatelessWidget {
     final grouped = <String, List<SessionSummary>>{
       for (final id in _groupIds) id: <SessionSummary>[],
     };
+    final advanced = sessions.where(_isAdvancedSession).toList();
     for (final session in sessions) {
+      if (_isAdvancedSession(session)) continue;
       grouped[_primaryGroup(session)]!.add(session);
     }
     const titles = <String, String>{
@@ -867,7 +869,14 @@ class _TrainingDiscoverySections extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
+        if (advanced.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 32),
+            child: _AdvancedTherapyShowcase(
+              sessions: advanced,
+              accessSnapshot: accessSnapshot,
+            ),
+          ),
         for (final id in _groupIds)
           if (grouped[id]!.isNotEmpty)
             Padding(
@@ -882,6 +891,167 @@ class _TrainingDiscoverySections extends StatelessWidget {
               ),
             ),
       ],
+    );
+  }
+}
+
+/// A dedicated editorial showcase, not a recolored ordinary session card.
+class _AdvancedTherapyShowcase extends StatelessWidget {
+  const _AdvancedTherapyShowcase({
+    required this.sessions,
+    required this.accessSnapshot,
+  });
+
+  final List<SessionSummary> sessions;
+  final AccessSnapshot accessSnapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppText.of(context);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 22, 0, 22),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(36),
+          topRight: Radius.circular(14),
+          bottomLeft: Radius.circular(14),
+          bottomRight: Radius.circular(36),
+        ),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF142943), Color(0xFF153F54), Color(0xFF102337)],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.auto_awesome_rounded, color: Color(0xFF85DFC8), size: 18),
+              SizedBox(width: 8),
+              Text(
+                'DEEPER RECOVERY',
+                style: TextStyle(
+                  color: Color(0xFF85DFC8),
+                  letterSpacing: 1.8,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          const Padding(
+            padding: EdgeInsets.only(right: 18),
+            child: Text(
+              'Ready for more focused care?',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                height: 1.15,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Padding(
+            padding: EdgeInsets.only(right: 18),
+            child: Text(
+              'Advanced sessions for a more targeted reset.',
+              style: TextStyle(color: Color(0xFFCAD8E3), fontSize: 13),
+            ),
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            height: 253,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(right: 18),
+              itemCount: sessions.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                final session = sessions[index];
+                final locked = session.accessTier == AccessTier.coreAccess &&
+                    !accessSnapshot.hasCoreAccess;
+                return SizedBox(
+                  width: 228,
+                  child: Material(
+                    color: const Color(0xFFF7F9FA),
+                    borderRadius: BorderRadius.circular(20),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () => context.pushNamed(
+                        'session-detail',
+                        pathParameters: {'id': session.id},
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 144,
+                            width: double.infinity,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                _RemoteSessionCoverImage(
+                                  sessionId: session.id,
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.topCenter,
+                                  fallbackBuilder: (_) =>
+                                      const _SessionCoverFallback(iconSize: 32),
+                                ),
+                                if (locked)
+                                  const Positioned(
+                                    top: 10,
+                                    right: 10,
+                                    child: _ImageGlassBadge(icon: Icons.lock_rounded),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(12, 11, 12, 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    t.get(session.titleKey, fallback: session.titleFallback),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Color(0xFF142438),
+                                      fontWeight: FontWeight.w800,
+                                      height: 1.2,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    '${session.durationMinutes} min  ·  ${_sessionLevelLabel(session)}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Color(0xFF3F6074),
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -990,9 +1160,7 @@ class _TrainingHorizontalTile extends StatelessWidget {
     final locked = session.accessTier == AccessTier.coreAccess &&
         !accessSnapshot.hasCoreAccess;
     return Material(
-      color: _isAdvancedSession(session)
-          ? colors.tertiaryContainer
-          : colors.surfaceContainerLow,
+      color: colors.surfaceContainerLow,
       borderRadius: BorderRadius.circular(22),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -1147,13 +1315,9 @@ class _SessionTile extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(26),
-            color: _isAdvancedSession(session)
-                ? colors.tertiaryContainer
-                : colors.surface,
+            color: colors.surface,
             border: Border.all(
-              color: _isAdvancedSession(session)
-                  ? colors.tertiary
-                  : colors.outlineVariant,
+              color: colors.outlineVariant,
             ),
             boxShadow: [
               BoxShadow(

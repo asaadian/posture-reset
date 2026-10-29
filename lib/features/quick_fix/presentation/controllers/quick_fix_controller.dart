@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -70,7 +71,14 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
   QuickFixState? _current() => state.value;
 
   Future<List<SessionSummary>> _sessions() async {
-    return ref.read(sessionSummariesProvider.future);
+    try {
+      return await ref.read(sessionSummariesProvider.future)
+          .timeout(const Duration(seconds: 12));
+    } catch (error) {
+      // Keep the body-zone controls available when the catalog is offline.
+      debugPrint('[QuickFix] Session catalog unavailable: $error');
+      return const <SessionSummary>[];
+    }
   }
 
   QuickFixState _applyPreferenceBaseline(

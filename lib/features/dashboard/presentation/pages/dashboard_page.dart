@@ -210,6 +210,17 @@ class DashboardPage extends ConsumerWidget {
               ResponsiveContentSection(
                 spacing: 16,
                 children: [
+                  if (activeProgram != null && !activeProgram.isCompleted) ...[
+                    _ActiveProgramCompactCard(program: activeProgram),
+                    const SizedBox(height: 16),
+                  ],
+                  if (programs.isNotEmpty) ...[
+                    _DashboardProgramCarousel(
+                      programs: programs,
+                      activeProgram: activeProgram,
+                    ),
+                    const SizedBox(height: 18),
+                  ],
                   dashboardAsync.maybeWhen(
                     data: (snapshot) {
                       final isNewUser = !snapshot.hasContent &&
@@ -234,10 +245,6 @@ class DashboardPage extends ConsumerWidget {
                           ),
                           const SizedBox(height: 16),
                           _RecoveryStatusStrip(snapshot: snapshot),
-                          if (activeProgram != null && !activeProgram.isCompleted) ...[
-                            const SizedBox(height: 16),
-                            _ActiveProgramCompactCard(program: activeProgram),
-                          ],
                           if (recommendedSessions.isNotEmpty) ...[
                             const SizedBox(height: 16),
                             _DashboardVisualSessions(
@@ -361,6 +368,64 @@ String _dashboardGreeting({
 
 
 
+class _DashboardProgramCarousel extends StatelessWidget {
+  const _DashboardProgramCarousel({
+    required this.programs,
+    required this.activeProgram,
+  });
+
+  final List<RecoveryProgramSummary> programs;
+  final RecoveryProgramDashboardProgress? activeProgram;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final ordered = [...programs]..sort((a, b) {
+      if (a.id == activeProgram?.programId) return -1;
+      if (b.id == activeProgram?.programId) return 1;
+      return a.sortOrder.compareTo(b.sortOrder);
+    });
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: [
+          Expanded(child: Text(
+            'Your programs',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          )),
+          TextButton.icon(
+            onPressed: () => context.pushNamed('recovery-programs'),
+            label: const Text('View all'),
+            icon: const Icon(Icons.arrow_forward_rounded, size: 17),
+          ),
+        ]),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 212,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: ordered.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final program = ordered[index];
+              return SizedBox(
+                width: 290,
+                child: _ProgramPosterCard(
+                  program: program,
+                  activeProgram: activeProgram,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _DashboardNewUserHome extends StatelessWidget {
   const _DashboardNewUserHome({
     required this.programs,
@@ -390,11 +455,6 @@ class _DashboardNewUserHome extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 18),
-        _ProgramDiscoveryCard(
-          featuredProgram: programs.isEmpty ? null : programs.first,
-          programCount: programs.length,
-          onTap: () => context.pushNamed('recovery-programs'),
-        ),
         if (sessions.isNotEmpty) ...[
           const SizedBox(height: 18),
           _DashboardVisualSessions(sessions: sessions),

@@ -545,8 +545,14 @@ class _SettingsSection extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
-        gradient: context.accentCardGradient,
-        border: Border.all(color: context.subtleBorderColor),
+        gradient: LinearGradient(
+          colors: isDark
+              ? [colors.surfaceContainerHigh, colors.surfaceContainerLow]
+              : [colors.surface, colors.surfaceContainerLow],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(color: colors.outlineVariant),
         boxShadow: [
           BoxShadow(
             color: isDark
@@ -567,9 +573,9 @@ class _SettingsSection extends StatelessWidget {
                 height: 42,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  color: accent.withValues(alpha: isDark ? 0.16 : 0.11),
+                  color: colors.primaryContainer,
                 ),
-                child: Icon(icon, color: accent, size: 22),
+                child: Icon(icon, color: colors.onPrimaryContainer, size: 22),
               ),
               const SizedBox(width: 11),
               Expanded(

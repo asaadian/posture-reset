@@ -1541,7 +1541,7 @@ class _FocusModeBackdrop extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    final accent = _zoneAccentColor(colors, bodyTargetCodes);
+    final accent = colors.primary;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 420),
@@ -1552,14 +1552,14 @@ class _FocusModeBackdrop extends StatelessWidget {
           radius: 1.20,
           colors: isDark
               ? [
-                  accent.withValues(alpha: isPaused ? 0.13 : 0.20),
-                  colors.tertiary.withValues(alpha: 0.08),
-                  colors.surface.withValues(alpha: 0.98),
+                  accent.withValues(alpha: isPaused ? 0.035 : 0.055),
+                  colors.surfaceContainerLow,
+                  colors.surface,
                 ]
               : [
-                  accent.withValues(alpha: isPaused ? 0.08 : 0.14),
-                  colors.tertiaryContainer.withValues(alpha: 0.12),
-                  colors.surfaceContainerLowest.withValues(alpha: 0.98),
+                  accent.withValues(alpha: isPaused ? 0.025 : 0.045),
+                  colors.surfaceContainerLow,
+                  colors.surfaceContainerLowest,
                 ],
         ),
       ),
@@ -1619,7 +1619,7 @@ class _GlassHudPlayerContent extends StatelessWidget {
         ? 0.0
         : (state.currentStepElapsedSeconds / step.durationSeconds).clamp(0.0, 1.0).toDouble();
     final media = MediaQuery.of(context);
-    final accent = _zoneAccentColor(Theme.of(context).colorScheme, step.bodyTargetCodes);
+    final accent = Theme.of(context).colorScheme.primary;
 
     final mediaWidget = KeyedSubtree(
       key: mediaGuideKey,
@@ -1974,7 +1974,7 @@ class _MinimalTimerBlock extends StatelessWidget {
         Text(
           AppText.get(context, key: 'player_left', fallback: 'LEFT'),
           style: theme.textTheme.labelLarge?.copyWith(
-            color: accent,
+            color: colors.onSurfaceVariant,
             fontWeight: FontWeight.w900,
             letterSpacing: 2.2,
           ),
@@ -2011,7 +2011,7 @@ class _MinimalTimerBlock extends StatelessWidget {
                               Container(
                                 height: 5,
                                 decoration: BoxDecoration(
-                                  color: colors.outlineVariant.withValues(alpha: 0.26),
+                                  color: colors.outlineVariant.withValues(alpha: 0.90),
                                   borderRadius: BorderRadius.circular(99),
                                 ),
                               ),
@@ -2061,7 +2061,7 @@ class _MinimalTimerBlock extends StatelessWidget {
                     width: 7,
                     height: 7,
                     decoration: BoxDecoration(
-                      color: colors.outlineVariant.withValues(alpha: 0.55),
+                      color: colors.outlineVariant,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -2118,8 +2118,8 @@ class _MinimalInstructionBlock extends StatelessWidget {
               icon: const Icon(Icons.notes_rounded, size: 19),
               label: Text(AppText.get(context, key: 'player_more_guidance', fallback: 'More guidance')),
               style: FilledButton.styleFrom(
-                foregroundColor: accent,
-                backgroundColor: accent.withValues(alpha: 0.10),
+                foregroundColor: colors.onPrimaryContainer,
+                backgroundColor: colors.primaryContainer,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 18,
                   vertical: 12,
@@ -2141,10 +2141,12 @@ class _MinimalInstructionBlock extends StatelessWidget {
                     : AppText.get(context, key: 'player_voice_off', fallback: 'Voice off'),
               ),
               style: FilledButton.styleFrom(
-                foregroundColor: voiceEnabled ? accent : colors.onSurfaceVariant,
+                foregroundColor: voiceEnabled
+                    ? colors.onPrimaryContainer
+                    : colors.onSurface,
                 backgroundColor: voiceEnabled
-                    ? accent.withValues(alpha: 0.10)
-                    : colors.surfaceContainerHighest.withValues(alpha: 0.55),
+                    ? colors.primaryContainer
+                    : colors.surfaceContainerHighest,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 18,
                   vertical: 12,
@@ -2193,9 +2195,9 @@ class _MinimalControlDock extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 520),
       height: 88,
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLowest,
+        color: colors.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(44),
-        border: Border.all(color: colors.outlineVariant.withValues(alpha: 0.35)),
+        border: Border.all(color: colors.outlineVariant),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.07),
@@ -2210,14 +2212,16 @@ class _MinimalControlDock extends StatelessWidget {
             child: IconButton(
               tooltip: 'Previous step',
               onPressed: canPrevious ? onPrevious : null,
-              icon: const Icon(Icons.skip_previous_rounded, size: 32),
+              icon: Icon(Icons.skip_previous_rounded, size: 32,
+                color: canPrevious ? colors.onSurface : colors.onSurface.withValues(alpha: 0.35)),
             ),
           ),
           Expanded(
             child: IconButton(
               tooltip: 'Replay step',
               onPressed: (!isCompleted && canReplay) ? onReplay : null,
-              icon: const Icon(Icons.replay_rounded, size: 30),
+              icon: Icon(Icons.replay_rounded, size: 30,
+                color: (!isCompleted && canReplay) ? colors.onSurface : colors.onSurface.withValues(alpha: 0.35)),
             ),
           ),
           Container(
@@ -2225,11 +2229,11 @@ class _MinimalControlDock extends StatelessWidget {
             height: 76,
             margin: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
-              color: accent,
+              color: colors.primary,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: accent.withValues(alpha: 0.30),
+                  color: colors.primary.withValues(alpha: 0.22),
                   blurRadius: 22,
                   offset: const Offset(0, 9),
                 ),
@@ -2239,7 +2243,7 @@ class _MinimalControlDock extends StatelessWidget {
               onPressed: isCompleted ? null : onPauseResume,
               icon: Icon(
                 isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
-                color: colors.onPrimary,
+                color: isCompleted ? colors.onSurfaceVariant : colors.onPrimary,
                 size: 40,
               ),
             ),
@@ -2252,6 +2256,8 @@ class _MinimalControlDock extends StatelessWidget {
               icon: Icon(
                 isLastStep ? Icons.check_rounded : Icons.skip_next_rounded,
                 size: 34,
+                color: (!isCompleted && (isLastStep || canNext))
+                    ? colors.onSurface : colors.onSurface.withValues(alpha: 0.35),
               ),
             ),
           ),

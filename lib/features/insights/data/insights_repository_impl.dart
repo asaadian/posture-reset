@@ -22,7 +22,12 @@ class InsightsRepositoryImpl implements InsightsRepository {
     Future<dynamic> Function() query,
   ) async {
     try {
-      final response = await query();
+      dynamic response;
+      try {
+        response = await query().timeout(const Duration(seconds: 10));
+      } catch (_) {
+        response = await query().timeout(const Duration(seconds: 10));
+      }
       return (response as List<dynamic>)
           .map((row) => Map<String, dynamic>.from(row as Map))
           .toList(growable: false);

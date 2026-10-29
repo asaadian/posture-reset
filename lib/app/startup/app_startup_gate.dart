@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -92,32 +95,16 @@ class _AppStartupGateState extends ConsumerState<AppStartupGate> {
       ]);
     }
 
-    await Future.wait(futures);
+    // Each screen owns its data loading and retry state. Do not make global
+    // navigation depend on a network request or on downloading cover images.
+    unawaited(Future.wait(futures.map((future) async {
+      try {
+        await future.timeout(const Duration(seconds: 10));
+      } catch (error) {
+        debugPrint('[Startup] Optional warmup failed: $error');
+      }
+    })));
 
-    if (!mounted) return;
-
-    final programs = await programsFuture;
-    final sessions = await sessionsFuture;
-    final images = <ImageProvider>[
-      for (final program in programs.take(8))
-        NetworkImage(
-          'https://weglabs.com/data/desk-workout/covers/programs/${program.id}.webp',
-        ),
-      for (final session in sessions.take(16))
-        NetworkImage(
-          'https://weglabs.com/data/desk-workout/covers/sessions/${session.id}.webp',
-        ),
-    ];
-
-    await Future.wait(
-      images.map((image) async {
-        try {
-          await precacheImage(image, context);
-        } catch (_) {
-          // A missing remote image must not block the app indefinitely.
-        }
-      }),
-    );
     await minimumVisibleTime;
   }
 }

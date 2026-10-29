@@ -154,10 +154,16 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                       else
                         KeyedSubtree(
                           key: _trainingSessionsGuideKey,
-                          child: _SessionCardGrid(
-                            sessions: visibleSessions,
-                            accessSnapshot: accessSnapshot,
-                          ),
+                          child: _selectedCategory == SessionLibraryCategory.all &&
+                                  _searchQuery.trim().isEmpty
+                              ? _TrainingDiscoverySections(
+                                  sessions: visibleSessions,
+                                  accessSnapshot: accessSnapshot,
+                                )
+                              : _SessionCardGrid(
+                                  sessions: visibleSessions,
+                                  accessSnapshot: accessSnapshot,
+                                ),
                         ),
                     ],
                   ),
@@ -819,6 +825,173 @@ IconData _categoryFallbackIcon(SessionLibraryCategory category) {
       return Icons.self_improvement_rounded;
     case SessionLibraryCategory.wristsHands:
       return Icons.pan_tool_alt_rounded;
+  }
+}
+
+/// Goal-first browsing: show meaningful situations rather than a long grid.
+/// Each row is derived from current Supabase session metadata; empty groups
+/// are hidden, and the complete library remains available at the bottom.
+class _TrainingDiscoverySections extends StatelessWidget {
+  const _TrainingDiscoverySections({
+    required this.sessions,
+    required this.accessSnapshot,
+  });
+
+  final List<SessionSummary> sessions;
+  final AccessSnapshot accessSnapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppText.of(context);
+    final groups = <({String title, String subtitle, IconData icon, bool Function(SessionSummary) matches})>[
+      (
+        title: t.get('training_discover_neck', fallback: 'My neck feels stiff'),
+        subtitle: t.get('training_discover_neck_sub', fallback: 'Ease tension around your neck and shoulders'),
+        icon: Icons.self_improvement_rounded,
+        matches: (s) => _hasTarget(s, const ['neck', 'shoulder', 'shoulders']),
+      ),
+      (
+        title: t.get('training_discover_back', fallback: 'My back needs a break'),
+        subtitle: t.get('training_discover_back_sub', fallback: 'A little relief after sitting for hours'),
+        icon: Icons.airline_seat_recline_normal_rounded,
+        matches: (s) => _hasTarget(s, const ['lower_back', 'low_back', 'lumbar', 'upper_back', 'thoracic', 'back']),
+      ),
+      (
+        title: t.get('training_discover_quick', fallback: 'I only have 5 minutes'),
+        subtitle: t.get('training_discover_quick_sub', fallback: 'Small resets for a busy day'),
+        icon: Icons.timer_outlined,
+        matches: (s) => s.durationMinutes <= 5,
+      ),
+      (
+        title: t.get('training_discover_desk', fallback: 'I have been at my desk all day'),
+        subtitle: t.get('training_discover_desk_sub', fallback: 'Move without leaving your workspace'),
+        icon: Icons.chair_outlined,
+        matches: (s) => s.environmentCompatibility.deskFriendly ||
+            s.environmentCompatibility.officeFriendly,
+      ),
+      (
+        title: t.get('training_discover_unwind', fallback: 'I need to unwind'),
+        subtitle: t.get('training_discover_unwind_sub', fallback: 'Slow down and release the day's tension'),
+        icon: Icons.spa_outlined,
+        matches: (s) => s.goals.contains(SessionGoal.decompression) ||
+            s.goals.contains(SessionGoal.recovery),
+      ),
+      (
+        title: t.get('training_discover_easy', fallback: 'I want to start easy'),
+        subtitle: t.get('training_discover_easy_sub', fallback: 'Gentle sessions to build confidence'),
+        icon: Icons.waving_hand_outlined,
+        matches: (s) => s.isBeginnerFriendly,
+      ),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 18),
+          child: Text(
+            t.get('training_discover_intro', fallback: 'What do you need today?'),
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+        ),
+        for (final group in groups)
+          if (sessions.any(group.matches))
+            Padding(
+              padding: const EdgeInsets.only(bottom: 26),
+              child: _TrainingDiscoveryRow(
+                title: group.title,
+                subtitle: group.subtitle,
+                icon: group.icon,
+                sessions: sessions.where(group.matches).toList(),
+                accessSnapshot: accessSnapshot,
+              ),
+            ),
+        const SizedBox(height: 4),
+        Text(
+          t.get('training_discover_all', fallback: 'Explore every session'),
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 12),
+        _SessionCardGrid(sessions: sessions, accessSnapshot: accessSnapshot),
+      ],
+    );
+  }
+
+  static bool _hasTarget(SessionSummary session, List<String> targets) {
+    final values = {
+      ...session.painTargets.map((value) => value.code.toLowerCase()),
+      ...session.tags.map((value) => value.code.toLowerCase()),
+    };
+    return targets.any(values.contains);
+  }
+}
+
+class _TrainingDiscoveryRow extends StatelessWidget {
+  const _TrainingDiscoveryRow({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.sessions,
+    required this.accessSnapshot,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final List<SessionSummary> sessions;
+  final AccessSnapshot accessSnapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: colors.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, size: 20, color: colors.onPrimaryContainer),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 2),
+                  Text(subtitle, style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  )),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 280,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: sessions.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) => SizedBox(
+              width: 244,
+              child: _SessionTile(
+                session: sessions[index],
+                accessSnapshot: accessSnapshot,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

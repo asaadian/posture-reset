@@ -37,7 +37,7 @@ class MainShell extends ConsumerWidget {
           currentIndex: navigationShell.currentIndex,
           onTap: _onTap,
           dashboardLabel: t.navDashboard,
-          trainingLabel: t.get('nav_training', fallback: 'Training'),
+          trainingLabel: 'Explore',
           quickFixLabel: t.navQuickFix,
           insightsLabel: t.navInsights,
           programsLabel: t.get('nav_programs', fallback: 'Programs'),

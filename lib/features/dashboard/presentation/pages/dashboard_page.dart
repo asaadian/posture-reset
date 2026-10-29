@@ -150,7 +150,7 @@ class DashboardPage extends ConsumerWidget {
       savedSessions: savedSessions,
     );
     return ResponsivePageScaffold(
-      title: const Text('Desk Workout'),
+      title: Text(_dashboardGreeting(t: t, profile: profile, email: user?.email)),
       actions: [
         _DashboardNotificationAction(userId: user?.id),
         _DashboardAccountAction(
@@ -2890,7 +2890,7 @@ class _DashboardAccountAction extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           child: InkWell(
             borderRadius: BorderRadius.circular(15),
-            onTap: hasCoreAccess ? onProfileTap : onPremiumTap,
+            onTap: onPremiumTap,
             child: SizedBox(
               width: 44,
               height: 44,

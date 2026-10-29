@@ -392,7 +392,7 @@ class _QuickFixRecommendationOverlay extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.black.withValues(alpha: 0.42)
-                      : const Color(0xFFEAF1F8).withValues(alpha: 0.72),
+                      : const Color(0xFFEDF5F6).withValues(alpha: 0.72),
                 ),
               ),
             ),
@@ -495,7 +495,7 @@ class _MatchedSessionSheetFrameState extends State<_MatchedSessionSheetFrame>
           BoxShadow(
             color: isDark
                 ? Colors.black.withValues(alpha: 0.34)
-                : const Color(0xFF263B57).withValues(alpha: 0.18),
+                : const Color(0xFF234D57).withValues(alpha: 0.18),
             blurRadius: 34,
             offset: const Offset(0, 18),
           ),
@@ -719,7 +719,7 @@ class _RecommendationRevealFrameState extends State<_RecommendationRevealFrame>
               BoxShadow(
                 color: isDark
                     ? Colors.black.withValues(alpha: 0.42)
-                    : const Color(0xFF24364C).withValues(alpha: 0.16),
+                    : const Color(0xFF234D57).withValues(alpha: 0.16),
                 blurRadius: 34,
                 offset: const Offset(0, 18),
               ),
@@ -990,7 +990,7 @@ class _QuickFixCompactPickerSheetState
                   BoxShadow(
                     color: isDark
                         ? Colors.black.withValues(alpha: 0.32)
-                        : const Color(0xFF263B57).withValues(alpha: 0.16),
+                        : const Color(0xFF234D57).withValues(alpha: 0.16),
                     blurRadius: 30,
                     offset: const Offset(0, -8),
                   ),
@@ -1936,8 +1936,8 @@ class _LightNodeState extends State<_LightNode>
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
-    final activeColor = isDark ? const Color(0xFF69F5E5) : colors.primary;
-    final idleColor = isDark ? const Color(0xFF47DCEB) : const Color(0xFF008A96);
+    final activeColor = isDark ? const Color(0xFF78E1C6) : colors.primary;
+    final idleColor = isDark ? const Color(0xFF5ED5D0) : const Color(0xFF178F90);
     final color = widget.selected ? activeColor : idleColor;
 
     return GestureDetector(
@@ -2063,7 +2063,7 @@ class _LightNodeState extends State<_LightNode>
                       ? Icon(
                           Icons.check_rounded,
                           size: 12,
-                          color: isDark ? const Color(0xFF041316) : Colors.white,
+                          color: isDark ? const Color(0xFF102338) : Colors.white,
                         )
                       : null,
                 ),
@@ -2485,13 +2485,13 @@ class _ImageDurationBadge extends StatelessWidget {
           const Icon(
             Icons.timer_outlined,
             size: 14,
-            color: Color(0xFF5364F6),
+            color: Color(0xFF2559D5),
           ),
           const SizedBox(width: 4),
           Text(
             '${minutes}m',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: const Color(0xFF5364F6),
+              color: const Color(0xFF2559D5),
               fontWeight: FontWeight.w900,
               height: 1,
             ),

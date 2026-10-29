@@ -18,7 +18,9 @@ import '../../domain/session_models.dart';
 import '../session_library_models.dart';
 
 class SessionsLibraryPage extends ConsumerStatefulWidget {
-  const SessionsLibraryPage({super.key});
+  const SessionsLibraryPage({super.key, this.bodyCategory});
+
+  final String? bodyCategory;
 
   @override
   ConsumerState<SessionsLibraryPage> createState() =>
@@ -46,7 +48,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
     final accessAsync = ref.watch(accessSnapshotProvider);
 
     return ResponsivePageScaffold(
-      title: const Text('Explore'),
+      title: Text(widget.bodyCategory == null ? 'Explore' : _bodyPageTitle(widget.bodyCategory!)),
       bodyBuilder: (context, pageInfo) {
         final accessSnapshot = accessAsync.maybeWhen(
           data: (value) => value,
@@ -87,7 +89,10 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
             ],
           ),
           data: (allSessions) {
-            final visibleSessions = _visibleSessions(allSessions);
+            final visibleSessions = widget.bodyCategory == null
+                ? _visibleSessions(allSessions)
+                : allSessions.where((session) =>
+                    _matchesBodyPage(session, widget.bodyCategory!)).toList();
             return PageOnboarding(
               pageId: 'training_guide_v1',
               tips: [
@@ -126,10 +131,15 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                       else
                         KeyedSubtree(
                           key: _trainingSessionsGuideKey,
-                          child: _TrainingDiscoverySections(
-                            sessions: visibleSessions,
-                            accessSnapshot: accessSnapshot,
-                          ),
+                          child: widget.bodyCategory == null
+                              ? _TrainingDiscoverySections(
+                                  sessions: visibleSessions,
+                                  accessSnapshot: accessSnapshot,
+                                )
+                              : _SessionCardGrid(
+                                  sessions: visibleSessions,
+                                  accessSnapshot: accessSnapshot,
+                                ),
                         ),
                     ],
                   ),
@@ -797,6 +807,33 @@ IconData _categoryFallbackIcon(SessionLibraryCategory category) {
 /// Goal-first browsing: show meaningful situations rather than a long grid.
 /// Each row is derived from current Supabase session metadata; empty groups
 /// are hidden, and the complete library remains available at the bottom.
+String _bodyPageTitle(String id) {
+  const titles = <String, String>{
+    'neck': 'Neck & shoulders',
+    'back': 'Upper back',
+    'lower_back': 'Lower back',
+    'hips': 'Hips & legs',
+    'hands': 'Hands & wrists',
+  };
+  return titles[id] ?? 'Body focus';
+}
+
+bool _matchesBodyPage(SessionSummary session, String id) {
+  const mapping = <String, List<String>>{
+    'neck': ['neck', 'shoulder', 'shoulders'],
+    'back': ['upper_back', 'thoracic', 'chest'],
+    'lower_back': ['lower_back', 'low_back', 'lumbar', 'back'],
+    'hips': ['hip', 'hips', 'glute', 'glutes', 'hips_glutes', 'hamstrings'],
+    'hands': ['wrist', 'wrists', 'hand', 'hands', 'forearm', 'forearms'],
+  };
+  final options = mapping[id] ?? const <String>[];
+  final values = {
+    ...session.painTargets.map((e) => e.code.toLowerCase()),
+    ...session.tags.map((e) => e.code.toLowerCase()),
+  };
+  return options.any(values.contains);
+}
+
 class _TrainingDiscoverySections extends StatelessWidget {
   const _TrainingDiscoverySections({
     required this.sessions,
@@ -837,9 +874,9 @@ class _TrainingDiscoverySections extends StatelessWidget {
     final grouped = <String, List<SessionSummary>>{
       for (final id in _groupIds) id: <SessionSummary>[],
     };
-    final advanced = sessions.where(_isAdvancedSession).toList();
+    final topSessions = _rankedPopularSessions(sessions);
     for (final session in sessions) {
-      if (_isAdvancedSession(session)) continue;
+      // Popular highlights remain discoverable in their primary body category.
       grouped[_primaryGroup(session)]!.add(session);
     }
     const titles = <String, String>{
@@ -870,11 +907,11 @@ class _TrainingDiscoverySections extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final id in _groupIds)
-          if (id == 'hips' && advanced.isNotEmpty)
+          if (id == 'upper_back' && topSessions.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(bottom: 32),
-              child: _AdvancedTherapyShowcase(
-                sessions: advanced,
+              child: _PopularSessionsShowcase(
+                sessions: topSessions,
                 accessSnapshot: accessSnapshot,
               ),
             )
@@ -890,168 +927,228 @@ class _TrainingDiscoverySections extends StatelessWidget {
                 layoutIndex: _groupIds.indexOf(id),
               ),
             ),
+        const SizedBox(height: 6),
+        const _BodyFocusNavigation(),
       ],
     );
   }
 }
 
-/// A dedicated editorial showcase, not a recolored ordinary session card.
-class _AdvancedTherapyShowcase extends StatelessWidget {
-  const _AdvancedTherapyShowcase({
-    required this.sessions,
-    required this.accessSnapshot,
-  });
+// Snapshot based on actual session_run starts observed on 29 October 2026.
+// Never manufacture rankings from session sort order. Refresh via a future
+// aggregate endpoint when approved.
+const _popularSessionIds = <String>[
+  'sess_cervical_isometric_stability_07',
+  'sess_towel_deep_neck_flexor_control_07',
+  'sess_serratus_wall_slide_miniband_07',
+  'sess_shoulder_release_04',
+  'sess_hip_flexor_release_glute_rebalance_07',
+  'sess_band_rotator_cuff_scapular_control_08',
+  'sess_pec_minor_ball_release_band_row_07',
+  'sess_ball_upper_trap_levator_reset_07',
+  'sess_chair_core_bracing_low_back_support_07',
+  'sess_desk_thoracic_rotation_scapular_integration_07',
+];
 
+List<SessionSummary> _rankedPopularSessions(List<SessionSummary> sessions) {
+  final byId = {for (final session in sessions) session.id: session};
+  return [
+    for (final id in _popularSessionIds)
+      if (byId.containsKey(id)) byId[id]!,
+  ];
+}
+
+class _PopularSessionsShowcase extends StatefulWidget {
+  const _PopularSessionsShowcase({required this.sessions});
   final List<SessionSummary> sessions;
-  final AccessSnapshot accessSnapshot;
+
+  @override
+  State<_PopularSessionsShowcase> createState() => _PopularSessionsShowcaseState();
+}
+
+class _PopularSessionsShowcaseState extends State<_PopularSessionsShowcase> {
+  bool expanded = false;
 
   @override
   Widget build(BuildContext context) {
-    final t = AppText.of(context);
+    final colors = Theme.of(context).colorScheme;
+    final displayed = expanded ? widget.sessions : widget.sessions.take(3).toList();
     return Container(
-      padding: const EdgeInsets.fromLTRB(18, 22, 0, 22),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(36),
-          topRight: Radius.circular(14),
-          bottomLeft: Radius.circular(14),
-          bottomRight: Radius.circular(36),
+          topLeft: Radius.circular(34), topRight: Radius.circular(16),
+          bottomLeft: Radius.circular(16), bottomRight: Radius.circular(34),
         ),
         gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF142943), Color(0xFF153F54), Color(0xFF102337)],
+          colors: [Color(0xFF172B45), Color(0xFF234D57)],
+          begin: Alignment.topLeft, end: Alignment.bottomRight,
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
-            children: [
-              Icon(Icons.auto_awesome_rounded, color: Color(0xFF85DFC8), size: 18),
-              SizedBox(width: 8),
-              Text(
-                'DEEPER RECOVERY',
-                style: TextStyle(
-                  color: Color(0xFF85DFC8),
-                  letterSpacing: 1.8,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          const Padding(
-            padding: EdgeInsets.only(right: 18),
-            child: Text(
-              'Ready for more focused care?',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                height: 1.15,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.only(right: 18),
-            child: Text(
-              'Advanced sessions for a more targeted reset.',
-              style: TextStyle(color: Color(0xFFCAD8E3), fontSize: 13),
-            ),
-          ),
-          const SizedBox(height: 18),
-          SizedBox(
-            height: 253,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(right: 18),
-              itemCount: sessions.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final session = sessions[index];
-                final locked = session.accessTier == AccessTier.coreAccess &&
-                    !accessSnapshot.hasCoreAccess;
-                return SizedBox(
-                  width: 228,
-                  child: Material(
-                    color: const Color(0xFFF7F9FA),
-                    borderRadius: BorderRadius.circular(20),
-                    clipBehavior: Clip.antiAlias,
-                    child: InkWell(
-                      onTap: () => context.pushNamed(
-                        'session-detail',
-                        pathParameters: {'id': session.id},
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 144,
-                            width: double.infinity,
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                _RemoteSessionCoverImage(
-                                  sessionId: session.id,
-                                  fit: BoxFit.cover,
-                                  alignment: Alignment.topCenter,
-                                  fallbackBuilder: (_) =>
-                                      const _SessionCoverFallback(iconSize: 32),
-                                ),
-                                if (locked)
-                                  const Positioned(
-                                    top: 10,
-                                    right: 10,
-                                    child: _ImageGlassBadge(icon: Icons.lock_rounded),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(12, 11, 12, 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    t.get(session.titleKey, fallback: session.titleFallback),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: Color(0xFF142438),
-                                      fontWeight: FontWeight.w800,
-                                      height: 1.2,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Text(
-                                    '${session.durationMinutes} min  ·  ${_sessionLevelLabel(session)}',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: Color(0xFF3F6074),
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+          const Text('MOST CHOSEN', style: TextStyle(
+            color: Color(0xFF78E1C6), fontSize: 11,
+            letterSpacing: 1.8, fontWeight: FontWeight.w800,
+          )),
+          const SizedBox(height: 7),
+          const Text('Top 10 sessions', style: TextStyle(
+            color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800,
+          )),
+          const SizedBox(height: 5),
+          const Text('Popular picks from real session starts',
+            style: TextStyle(color: Color(0xFFD5E2E7), fontSize: 12)),
+          const SizedBox(height: 16),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeInOutCubic,
+            alignment: Alignment.topCenter,
+            child: Column(
+              children: [
+                for (var i = 0; i < displayed.length; i++) ...[
+                  _PopularSessionRow(
+                    session: displayed[i],
+                    rank: _popularSessionIds.indexOf(displayed[i].id) + 1,
                   ),
-                );
-              },
+                  if (i < displayed.length - 1) const SizedBox(height: 10),
+                ],
+              ],
             ),
           ),
+          if (widget.sessions.length > 3) ...[
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () => setState(() => expanded = !expanded),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFFEBF5F3),
+                  foregroundColor: const Color(0xFF183C47),
+                ),
+                icon: Icon(expanded ? Icons.expand_less : Icons.expand_more),
+                label: Text(expanded ? 'Show less' : 'View more'),
+              ),
+            ),
+          ],
         ],
       ),
+    );
+  }
+}
+
+class _PopularSessionRow extends StatelessWidget {
+  const _PopularSessionRow({required this.session, required this.rank});
+  final SessionSummary session;
+  final int rank;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppText.of(context);
+    return Material(
+      color: Colors.white.withValues(alpha: 0.10),
+      borderRadius: BorderRadius.circular(17),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => context.pushNamed(
+          'session-detail', pathParameters: {'id': session.id},
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(9),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 25,
+                child: Text('$rank', style: const TextStyle(
+                  color: Color(0xFF7AE4C9), fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                )),
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: SizedBox(
+                  width: 68, height: 68,
+                  child: _RemoteSessionCoverImage(
+                    sessionId: session.id, fit: BoxFit.cover,
+                    fallbackBuilder: (_) => const _SessionCoverFallback(iconSize: 20),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 11),
+              Expanded(child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(t.get(session.titleKey, fallback: session.titleFallback),
+                    maxLines: 2, overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white,
+                      fontWeight: FontWeight.w700, fontSize: 13)),
+                  const SizedBox(height: 5),
+                  Text('${session.durationMinutes} min · ${_sessionLevelLabel(session)}',
+                    style: const TextStyle(color: Color(0xFFCFDCE2), fontSize: 11)),
+                ],
+              )),
+              const Icon(Icons.chevron_right_rounded, color: Colors.white70),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BodyFocusNavigation extends StatelessWidget {
+  const _BodyFocusNavigation();
+
+  @override
+  Widget build(BuildContext context) {
+    const options = <({String id, String label, IconData icon})>[
+      (id: 'neck', label: 'Neck & shoulders', icon: Icons.self_improvement_rounded),
+      (id: 'back', label: 'Upper back', icon: Icons.accessibility_new_rounded),
+      (id: 'lower_back', label: 'Lower back', icon: Icons.airline_seat_recline_normal_rounded),
+      (id: 'hips', label: 'Hips & legs', icon: Icons.directions_walk_rounded),
+      (id: 'hands', label: 'Hands & wrists', icon: Icons.back_hand_outlined),
+    ];
+    final colors = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Focus on an area', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 102,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: options.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            itemBuilder: (context, index) {
+              final option = options[index];
+              return InkWell(
+                onTap: () => context.pushNamed('body-sessions',
+                  pathParameters: {'category': option.id}),
+                borderRadius: BorderRadius.circular(18),
+                child: SizedBox(
+                  width: 90,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 62, width: 62,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colors.primaryContainer,
+                        ),
+                        child: Icon(option.icon, color: colors.onPrimaryContainer, size: 26),
+                      ),
+                      const SizedBox(height: 7),
+                      Text(option.label, maxLines: 2, textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelSmall),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

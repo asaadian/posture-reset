@@ -840,98 +840,90 @@ class _TrainingDiscoverySections extends StatelessWidget {
   final List<SessionSummary> sessions;
   final AccessSnapshot accessSnapshot;
 
+  static const _groupIds = <String>[
+    'neck', 'upper_back', 'lower_back', 'hips', 'hands', 'other',
+  ];
+
+  String _primaryGroup(SessionSummary session) {
+    // Priority is authoritative primary pain target; fallback to the
+    // first declared goal/tag only if no target was supplied.
+    final targets = [...session.painTargets]
+      ..sort((a, b) => a.priority.compareTo(b.priority));
+    final codes = targets.isNotEmpty
+        ? targets.map((e) => e.code).toList()
+        : session.tags.map((e) => e.code).toList();
+    if (codes.isEmpty) return 'other';
+    final code = codes.first.toLowerCase().replaceAll('-', '_');
+    if (code.contains('neck') || code.contains('shoulder')) return 'neck';
+    if (code.contains('upper_back') || code.contains('thoracic') ||
+        code.contains('chest')) return 'upper_back';
+    if (code.contains('lower_back') || code.contains('low_back') ||
+        code.contains('lumbar') || code == 'back') return 'lower_back';
+    if (code.contains('hip') || code.contains('glute') ||
+        code.contains('hamstring')) return 'hips';
+    if (code.contains('wrist') || code.contains('hand') ||
+        code.contains('finger') || code.contains('forearm')) return 'hands';
+    return 'other';
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppText.of(context);
-    final groups = <({String title, String subtitle, IconData icon, bool Function(SessionSummary) matches})>[
-      (
-        title: t.get('training_discover_neck', fallback: 'My neck feels stiff'),
-        subtitle: t.get('training_discover_neck_sub', fallback: 'Ease tension around your neck and shoulders'),
-        icon: Icons.self_improvement_rounded,
-        matches: (s) => _hasTarget(s, const ['neck', 'shoulder', 'shoulders']),
-      ),
-      (
-        title: t.get('training_discover_back', fallback: 'My back needs a break'),
-        subtitle: t.get('training_discover_back_sub', fallback: 'A little relief after sitting for hours'),
-        icon: Icons.airline_seat_recline_normal_rounded,
-        matches: (s) => _hasTarget(s, const ['lower_back', 'low_back', 'lumbar', 'upper_back', 'thoracic', 'back']),
-      ),
-      (
-        title: t.get('training_discover_quick', fallback: 'I only have 5 minutes'),
-        subtitle: t.get('training_discover_quick_sub', fallback: 'Small resets for a busy day'),
-        icon: Icons.timer_outlined,
-        matches: (s) => s.durationMinutes <= 5,
-      ),
-      (
-        title: t.get('training_discover_desk', fallback: 'I have been at my desk all day'),
-        subtitle: t.get('training_discover_desk_sub', fallback: 'Move without leaving your workspace'),
-        icon: Icons.chair_outlined,
-        matches: (s) => s.environmentCompatibility.deskFriendly ||
-            s.environmentCompatibility.officeFriendly,
-      ),
-      (
-        title: t.get('training_discover_unwind', fallback: 'I need to unwind'),
-        subtitle: t.get('training_discover_unwind_sub', fallback: "Slow down and release the day\'s tension"),
-        icon: Icons.spa_outlined,
-        matches: (s) => s.goals.contains(SessionGoal.decompression) ||
-            s.goals.contains(SessionGoal.recovery),
-      ),
-      (
-        title: t.get('training_discover_easy', fallback: 'I want to start easy'),
-        subtitle: t.get('training_discover_easy_sub', fallback: 'Gentle sessions to build confidence'),
-        icon: Icons.waving_hand_outlined,
-        matches: (s) => s.isBeginnerFriendly,
-      ),
-    ];
-
+    final grouped = <String, List<SessionSummary>>{
+      for (final id in _groupIds) id: <SessionSummary>[],
+    };
+    for (final session in sessions) {
+      grouped[_primaryGroup(session)]!.add(session);
+    }
+    const titles = <String, String>{
+      'neck': 'Neck & shoulders feel tight?',
+      'upper_back': 'Tension between your shoulders?',
+      'lower_back': 'Give your lower back a break',
+      'hips': 'Hips stiff after sitting?',
+      'hands': 'Hands & wrists need relief?',
+      'other': 'Move and feel better',
+    };
+    const subtitles = <String, String>{
+      'neck': 'A reset for the neck and shoulders',
+      'upper_back': 'Open up after a long day at your desk',
+      'lower_back': 'Comfortable movement for your back',
+      'hips': 'Loosen up your hips and legs',
+      'hands': 'Small movements with a big difference',
+      'other': 'Discover more ways to move',
+    };
+    const icons = <String, IconData>{
+      'neck': Icons.self_improvement_rounded,
+      'upper_back': Icons.accessibility_new_rounded,
+      'lower_back': Icons.airline_seat_recline_normal_rounded,
+      'hips': Icons.directions_walk_rounded,
+      'hands': Icons.back_hand_outlined,
+      'other': Icons.spa_outlined,
+    };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 18),
+          padding: const EdgeInsets.only(bottom: 20),
           child: Text(
-            t.get('training_discover_intro', fallback: 'What do you need today?'),
+            t.get('training_discover_intro', fallback: 'Find what your body needs'),
             style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
-        for (final group in groups)
-          if (sessions.any(group.matches))
+        for (final id in _groupIds)
+          if (grouped[id]!.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(bottom: 26),
+              padding: const EdgeInsets.only(bottom: 28),
               child: _TrainingDiscoveryRow(
-                title: group.title,
-                subtitle: group.subtitle,
-                icon: group.icon,
-                sessions: sessions.where(group.matches).toList(),
+                title: titles[id]!,
+                subtitle: subtitles[id]!,
+                icon: icons[id]!,
+                sessions: grouped[id]!,
                 accessSnapshot: accessSnapshot,
+                layoutIndex: _groupIds.indexOf(id),
               ),
             ),
-        const SizedBox(height: 4),
-        Card(
-          clipBehavior: Clip.antiAlias,
-          child: ExpansionTile(
-            leading: const Icon(Icons.apps_rounded),
-            title: Text(t.get('training_discover_all', fallback: 'Browse all sessions')),
-            subtitle: Text(
-              '${sessions.length} sessions',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
-            ),
-            childrenPadding: const EdgeInsets.all(12),
-            children: [
-              _SessionCardGrid(sessions: sessions, accessSnapshot: accessSnapshot),
-            ],
-          ),
-        ),
       ],
     );
-  }
-
-  static bool _hasTarget(SessionSummary session, List<String> targets) {
-    final values = {
-      ...session.painTargets.map((value) => value.code.toLowerCase()),
-      ...session.tags.map((value) => value.code.toLowerCase()),
-    };
-    return targets.any(values.contains);
   }
 }
 
@@ -942,56 +934,53 @@ class _TrainingDiscoveryRow extends StatelessWidget {
     required this.icon,
     required this.sessions,
     required this.accessSnapshot,
+    required this.layoutIndex,
   });
-
   final String title;
   final String subtitle;
   final IconData icon;
   final List<SessionSummary> sessions;
   final AccessSnapshot accessSnapshot;
+  final int layoutIndex;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final compact = layoutIndex.isOdd;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: colors.primaryContainer,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, size: 20, color: colors.onPrimaryContainer),
+        Row(children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: colors.primaryContainer,
+              borderRadius: BorderRadius.circular(14),
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 2),
-                  Text(subtitle, style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                  )),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
+            child: Icon(icon, color: colors.onPrimaryContainer, size: 23),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 3),
+              Text(subtitle, style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: colors.onSurfaceVariant,
+              )),
+            ],
+          )),
+        ]),
+        const SizedBox(height: 14),
         SizedBox(
-          height: 280,
+          height: compact ? 254 : 292,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: sessions.length,
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) => SizedBox(
-              width: 244,
+              width: compact ? 210 : 266,
               child: _SessionTile(
                 session: sessions[index],
                 accessSnapshot: accessSnapshot,

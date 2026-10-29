@@ -103,7 +103,7 @@ class _AppStartupGateState extends ConsumerState<AppStartupGate> {
       } catch (error) {
         debugPrint('[Startup] Optional warmup failed: $error');
       }
-    })));
+    })).then((_) {}));
 
     await minimumVisibleTime;
   }

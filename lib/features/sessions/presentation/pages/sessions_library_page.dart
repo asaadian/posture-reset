@@ -869,16 +869,16 @@ class _TrainingDiscoverySections extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (advanced.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 32),
-            child: _AdvancedTherapyShowcase(
-              sessions: advanced,
-              accessSnapshot: accessSnapshot,
-            ),
-          ),
         for (final id in _groupIds)
-          if (grouped[id]!.isNotEmpty)
+          if (id == 'hips' && advanced.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 32),
+              child: _AdvancedTherapyShowcase(
+                sessions: advanced,
+                accessSnapshot: accessSnapshot,
+              ),
+            )
+          else if (grouped[id]!.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(bottom: 28),
               child: _TrainingDiscoveryRow(

@@ -466,7 +466,7 @@ class _SessionDetailHeroPanel extends StatelessWidget {
             gradient: LinearGradient(
               colors: [
                 colors.primary.withValues(alpha: isDark ? 0.52 : 0.46),
-                const Color(0xFF0F172A),
+                const Color(0xFF142943),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -563,9 +563,9 @@ class _SessionDetailHeroPanel extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(22),
-            color: isDark ? const Color(0xFF101827) : Colors.white,
+            color: isDark ? const Color(0xFF172B45) : Colors.white,
             border: Border.all(
-              color: isDark ? const Color(0xFF26324A) : const Color(0xFFE2E8F0),
+              color: isDark ? const Color(0xFF2B455A) : const Color(0xFFE2EBF0),
             ),
           ),
           child: Column(
@@ -1599,12 +1599,12 @@ class _SessionCoverFallback extends StatelessWidget {
               ? [
                   colors.primary.withValues(alpha: 0.30),
                   colors.tertiary.withValues(alpha: 0.16),
-                  const Color(0xFF0F172A),
+                  const Color(0xFF142943),
                 ]
               : [
                   colors.primary.withValues(alpha: 0.16),
                   colors.tertiary.withValues(alpha: 0.10),
-                  const Color(0xFFF7FAFF),
+                  const Color(0xFFF4F9FA),
                 ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

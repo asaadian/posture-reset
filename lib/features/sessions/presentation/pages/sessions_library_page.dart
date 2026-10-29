@@ -974,21 +974,112 @@ class _TrainingDiscoveryRow extends StatelessWidget {
         ]),
         const SizedBox(height: 14),
         SizedBox(
-          height: compact ? 254 : 292,
+          height: compact ? 172 : 292,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: sessions.length,
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) => SizedBox(
-              width: compact ? 210 : 266,
-              child: _SessionTile(
-                session: sessions[index],
-                accessSnapshot: accessSnapshot,
-              ),
+              width: compact ? 330 : 266,
+              child: compact
+                  ? _TrainingHorizontalTile(
+                      session: sessions[index],
+                      accessSnapshot: accessSnapshot,
+                    )
+                  : _SessionTile(
+                      session: sessions[index],
+                      accessSnapshot: accessSnapshot,
+                    ),
             ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _TrainingHorizontalTile extends StatelessWidget {
+  const _TrainingHorizontalTile({
+    required this.session,
+    required this.accessSnapshot,
+  });
+
+  final SessionSummary session;
+  final AccessSnapshot accessSnapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final t = AppText.of(context);
+    final locked = session.accessTier == AccessTier.coreAccess &&
+        !accessSnapshot.hasCoreAccess;
+    return Material(
+      color: colors.surfaceContainerLow,
+      borderRadius: BorderRadius.circular(22),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => context.pushNamed(
+          'session-detail',
+          pathParameters: {'id': session.id},
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 142,
+              height: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  _RemoteSessionCoverImage(
+                    sessionId: session.id,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                    fallbackBuilder: (_) => const _SessionCoverFallback(iconSize: 32),
+                  ),
+                  if (locked)
+                    Positioned(
+                      top: 10,
+                      left: 10,
+                      child: const _ImageGlassBadge(icon: Icons.lock_rounded),
+                    ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(13, 12, 12, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        t.get(session.titleKey, fallback: session.titleFallback),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: colors.onSurface,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '${session.durationMinutes} ${t.get('session_duration_unit_min', fallback: 'min')}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 7),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(Icons.arrow_forward_rounded, color: colors.primary),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

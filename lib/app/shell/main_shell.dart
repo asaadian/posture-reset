@@ -40,7 +40,7 @@ class MainShell extends ConsumerWidget {
           trainingLabel: 'Explore',
           quickFixLabel: t.navQuickFix,
           insightsLabel: t.navInsights,
-          programsLabel: t.get('nav_programs', fallback: 'Programs'),
+          programsLabel: t.get('nav_profile', fallback: 'Profile'),
         ),
       ),
     );
@@ -121,18 +121,18 @@ class _GlassConcaveBottomBar extends StatelessWidget {
                           const SizedBox(width: 82),
                           Expanded(
                             child: _MinimalNavItem(
-                              icon: Icons.route_outlined,
-                              selectedIcon: Icons.route_rounded,
-                              label: programsLabel,
+                              icon: Icons.insights_outlined,
+                              selectedIcon: Icons.insights_rounded,
+                              label: insightsLabel,
                               selected: currentIndex == 3,
                               onTap: () => onTap(3),
                             ),
                           ),
                           Expanded(
                             child: _MinimalNavItem(
-                              icon: Icons.insights_outlined,
-                              selectedIcon: Icons.insights_rounded,
-                              label: insightsLabel,
+                              icon: Icons.person_outline_rounded,
+                              selectedIcon: Icons.person_rounded,
+                              label: programsLabel,
                               selected: currentIndex == 4,
                               onTap: () => onTap(4),
                             ),

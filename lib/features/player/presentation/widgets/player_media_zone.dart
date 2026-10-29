@@ -521,7 +521,7 @@ class _ExpandMediaButton extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: Colors.black.withValues(alpha: 0.40),
+        color: Colors.black.withValues(alpha: 0.78),
         shape: const CircleBorder(),
         child: InkWell(
           customBorder: const CircleBorder(),
@@ -534,8 +534,8 @@ class _ExpandMediaButton extends StatelessWidget {
             }
           },
           child: const SizedBox(
-            width: 38,
-            height: 38,
+            width: 44,
+            height: 44,
             child: Icon(
               Icons.open_in_full_rounded,
               size: 17,
@@ -651,14 +651,14 @@ class _SoundToggleButton extends StatelessWidget {
               fallback: 'Turn sound off',
             ),
       child: Material(
-        color: Colors.black.withValues(alpha: 0.40),
+        color: Colors.black.withValues(alpha: 0.78),
         shape: const CircleBorder(),
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onPressed,
           child: SizedBox(
-            width: 38,
-            height: 38,
+            width: 44,
+            height: 44,
             child: Icon(
               muted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
               size: 18,
@@ -838,7 +838,7 @@ class _SubtleMediaScrim extends StatelessWidget {
             colors: [
               Colors.black.withValues(alpha: hasRealMedia ? 0.05 : 0.00),
               Colors.transparent,
-              Colors.black.withValues(alpha: hasRealMedia ? 0.08 : 0.04),
+              Colors.black.withValues(alpha: hasRealMedia ? 0.32 : 0.15),
             ],
           ),
         ),

@@ -140,6 +140,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(
+        path: '/app/body-sessions/:category',
+        name: 'body-sessions',
+        builder: (context, state) {
+          final category = state.pathParameters['category'] ?? '';
+          return SessionsLibraryPage(bodyCategory: category);
+        },
+      ),
+      GoRoute(
         path: '/app/saved',
         name: 'saved-sessions',
         builder: (context, state) => const SavedSessionsPage(),

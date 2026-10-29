@@ -76,33 +76,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/app/programs',
-                name: 'recovery-programs',
-                builder: (context, state) => const RecoveryProgramsPage(),
-                routes: [
-                  GoRoute(
-                    path: ':id',
-                    name: 'recovery-program-detail',
-                    builder: (context, state) {
-                      final programId = state.pathParameters['id'];
-                      if (programId == null || programId.isEmpty) {
-                        return const RouteNotFoundPage(
-                          attemptedLocation: '/app/programs/:id',
-                        );
-                      }
-                      return RecoveryProgramDetailPage(programId: programId);
-                    },
-                  ),
-                ],
+                path: '/app/insights',
+                name: 'insights',
+                builder: (context, state) => const InsightsPage(),
               ),
             ],
           ),
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/app/insights',
-                name: 'insights',
-                builder: (context, state) => const InsightsPage(),
+                path: '/app/profile',
+                name: 'profile',
+                builder: (context, state) => const ProfilePage(),
               ),
             ],
           ),
@@ -135,6 +120,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/callback',
         name: 'auth-callback-short',
         builder: (context, state) => const AuthCallbackPage(),
+      ),
+      GoRoute(
+        path: '/app/programs',
+        name: 'recovery-programs',
+        builder: (context, state) => const RecoveryProgramsPage(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            name: 'recovery-program-detail',
+            builder: (context, state) {
+              final id = state.pathParameters['id'];
+              if (id == null || id.isEmpty) {
+                return const RouteNotFoundPage(attemptedLocation: '/app/programs/:id');
+              }
+              return RecoveryProgramDetailPage(programId: id);
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: '/app/saved',
@@ -191,12 +194,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: 'notification-center',
         builder: (context, state) => const NotificationCenterPage(),
       ),
-      GoRoute(
-        path: '/app/profile',
-        name: 'profile',
-        builder: (context, state) => const ProfilePage(),
-      ),
-
       GoRoute(
         path: '/app/profile/settings',
         name: 'settings',

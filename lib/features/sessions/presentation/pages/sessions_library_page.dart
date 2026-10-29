@@ -907,12 +907,21 @@ class _TrainingDiscoverySections extends StatelessWidget {
               ),
             ),
         const SizedBox(height: 4),
-        Text(
-          t.get('training_discover_all', fallback: 'Explore every session'),
-          style: Theme.of(context).textTheme.titleLarge,
+        Card(
+          clipBehavior: Clip.antiAlias,
+          child: ExpansionTile(
+            leading: const Icon(Icons.apps_rounded),
+            title: Text(t.get('training_discover_all', fallback: 'Browse all sessions')),
+            subtitle: Text(
+              '${sessions.length} sessions',
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            ),
+            childrenPadding: const EdgeInsets.all(12),
+            children: [
+              _SessionCardGrid(sessions: sessions, accessSnapshot: accessSnapshot),
+            ],
+          ),
         ),
-        const SizedBox(height: 12),
-        _SessionCardGrid(sessions: sessions, accessSnapshot: accessSnapshot),
       ],
     );
   }

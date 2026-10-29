@@ -14,13 +14,13 @@ class AppTheme {
   static const Color _darkSurfaceElevated = Color(0xFF263955);
 
   static const Color _darkPrimary = Color(0xFF91B9FF);
-  static const Color _darkPrimarySoft = Color(0xFF252F5C);
+  static const Color _darkPrimarySoft = Color(0xFF214D61);
 
   static const Color _darkSecondary = Color(0xFF53DDCD);
-  static const Color _darkSecondarySoft = Color(0xFF11383D);
+  static const Color _darkSecondarySoft = Color(0xFF123F42);
 
-  static const Color _darkTertiary = Color(0xFFA78BFA);
-  static const Color _darkTertiarySoft = Color(0xFF34285F);
+  static const Color _darkTertiary = Color(0xFF78E1C6);
+  static const Color _darkTertiarySoft = Color(0xFF174449);
 
   static const Color _darkTextPrimary = Color(0xFFF5F7FF);
   static const Color _darkTextSecondary = Color(0xFFB8C2D9);
@@ -47,8 +47,8 @@ class AppTheme {
   static const Color _lightSecondary = Color(0xFF0D8079);
   static const Color _lightSecondarySoft = Color(0xFFD4F1ED);
 
-  static const Color _lightTertiary = Color(0xFF6E4BCD);
-  static const Color _lightTertiarySoft = Color(0xFFE4DFFF);
+  static const Color _lightTertiary = Color(0xFF167C86);
+  static const Color _lightTertiarySoft = Color(0xFFD9F4EE);
 
   static const Color _lightTextPrimary = Color(0xFF111827);
   static const Color _lightTextSecondary = Color(0xFF4B5A70);

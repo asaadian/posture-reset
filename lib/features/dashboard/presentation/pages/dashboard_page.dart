@@ -150,7 +150,7 @@ class DashboardPage extends ConsumerWidget {
       savedSessions: savedSessions,
     );
     return ResponsivePageScaffold(
-      title: Text(_dashboardGreeting(t: t, profile: profile, email: user?.email)),
+      title: const Text('Desk Workout'),
       actions: [
         _DashboardNotificationAction(userId: user?.id),
         _DashboardAccountAction(
@@ -210,10 +210,6 @@ class DashboardPage extends ConsumerWidget {
               ResponsiveContentSection(
                 spacing: 16,
                 children: [
-                  if (activeProgram != null && !activeProgram.isCompleted) ...[
-                    _ActiveProgramCompactCard(program: activeProgram),
-                    const SizedBox(height: 16),
-                  ],
                   if (programs.isNotEmpty) ...[
                     _DashboardProgramCarousel(
                       programs: programs,
@@ -2881,119 +2877,25 @@ class _DashboardAccountAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final avatarUrl = profile?.avatarUrl?.trim() ?? '';
-    final displayName =
-        _displayName(profile: profile, email: userEmail, context: context);
-    final initial = displayName.trim().isNotEmpty
-        ? displayName.characters.first.toUpperCase()
-        : 'P';
-
+    final colors = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsetsDirectional.only(end: 6),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onProfileTap,
-          borderRadius: BorderRadius.circular(18),
-          child: Ink(
-            height: 42,
-            padding: const EdgeInsetsDirectional.fromSTEB(5, 4, 7, 4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              color: colors.surfaceContainerHighest.withValues(alpha: 0.58),
-              border: Border.all(
-                color: colors.outlineVariant.withValues(alpha: 0.62),
+      child: Tooltip(
+        message: hasCoreAccess ? 'Premium active' : 'Explore Premium',
+        child: Material(
+          color: colors.primaryContainer,
+          borderRadius: BorderRadius.circular(15),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(15),
+            onTap: hasCoreAccess ? onProfileTap : onPremiumTap,
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: Icon(
+                Icons.workspace_premium_rounded,
+                color: colors.onPrimaryContainer,
+                size: 27,
               ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: avatarUrl.isEmpty
-                        ? LinearGradient(
-                            colors: [colors.primary, colors.tertiary],
-                          )
-                        : null,
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: avatarUrl.isNotEmpty
-                      ? Image.network(
-                          avatarUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
-                              _AvatarInitial(initial: initial),
-                        )
-                      : _AvatarInitial(initial: initial),
-                ),
-                const SizedBox(width: 7),
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: hasCoreAccess ? onProfileTap : onPremiumTap,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(999),
-                      gradient: hasCoreAccess
-                          ? LinearGradient(
-                              colors: [
-                                colors.primary.withValues(alpha: 0.16),
-                                colors.tertiary.withValues(alpha: 0.14),
-                              ],
-                            )
-                          : null,
-                      color: hasCoreAccess
-                          ? null
-                          : colors.surface.withValues(alpha: 0.82),
-                      border: Border.all(
-                        color: hasCoreAccess
-                            ? colors.primary.withValues(alpha: 0.30)
-                            : colors.outlineVariant.withValues(alpha: 0.75),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          hasCoreAccess
-                              ? Icons.workspace_premium_rounded
-                              : Icons.lock_open_rounded,
-                          size: 14,
-                          color: hasCoreAccess
-                              ? colors.primary
-                              : colors.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          hasCoreAccess ? 'Premium' : 'Free',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.w900,
-                            color: hasCoreAccess
-                                ? colors.primary
-                                : colors.onSurfaceVariant,
-                          ),
-                        ),
-                        if (!hasCoreAccess) ...[
-                          const SizedBox(width: 3),
-                          Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            size: 10,
-                            color: colors.primary,
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-              ],
             ),
           ),
         ),

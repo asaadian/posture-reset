@@ -203,7 +203,7 @@ class _JourneyIntelligenceCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         gradient: LinearGradient(
-          colors: isDark ? [const Color(0xFF17213A), const Color(0xFF0F172A)] : [colors.tertiary.withValues(alpha: 0.09), Colors.white],
+          colors: isDark ? [const Color(0xFF172B45), const Color(0xFF142943)] : [colors.tertiary.withValues(alpha: 0.09), Colors.white],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -342,7 +342,7 @@ class _InsightsUnlockMiniCard extends StatelessWidget {
         border: Border.all(color: colors.primary.withValues(alpha: 0.18)),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black.withValues(alpha: 0.26) : const Color(0xFF263B57).withValues(alpha: 0.14),
+            color: isDark ? Colors.black.withValues(alpha: 0.26) : const Color(0xFF234D57).withValues(alpha: 0.14),
             blurRadius: 26,
             offset: const Offset(0, 14),
           ),

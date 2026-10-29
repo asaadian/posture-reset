@@ -1072,6 +1072,7 @@ class _PopularSessionRow extends StatelessWidget {
                   width: 68, height: 68,
                   child: _RemoteSessionCoverImage(
                     sessionId: session.id, fit: BoxFit.cover,
+                    alignment: Alignment.center,
                     fallbackBuilder: (_) => const _SessionCoverFallback(iconSize: 20),
                   ),
                 ),

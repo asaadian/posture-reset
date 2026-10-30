@@ -25,12 +25,11 @@ final completedSessionCountProvider = FutureProvider<int>((ref) async {
   final user = client.auth.currentUser;
   if (user == null) return 0;
 
-  final response = await client
+  return client
       .from('session_runs')
-      .select('id', const FetchOptions(count: CountOption.exact))
+      .count(CountOption.exact)
       .eq('user_id', user.id)
       .eq('status', 'completed');
-  return response.count ?? 0;
 });
 
 final recentSessionRunsProvider = FutureProvider<List<SessionRun>>((ref) async {

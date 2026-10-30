@@ -1068,6 +1068,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
 
     final activeDays = <DateTime>{};
     for (final row in runsRows) {
+      if (_asInt(row['total_elapsed_seconds']) <= 0) continue;
       final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(rangeStart)) continue;
 

@@ -278,12 +278,6 @@ class _ProfileHeroCard extends StatelessWidget {
     final displayName = _profileDisplayName(context, profile, userEmail, isAuthenticated);
     final email = (userEmail ?? '').trim();
     final initials = displayName.trim().isEmpty ? 'P' : displayName.characters.first.toUpperCase();
-    final primaryLabel = isAuthenticated
-        ? continueCandidate != null
-            ? t.get('profile_primary_continue', fallback: 'Continue recovery')
-            : t.get('profile_primary_open_sessions', fallback: 'Start training')
-        : t.get('profile_sign_in_cta', fallback: 'Sign in');
-
     return Container(
       clipBehavior: Clip.antiAlias,
       padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),

@@ -762,17 +762,6 @@ class _RemoteProgramCoverImage extends StatelessWidget {
   }
 }
 
-String _difficultyLabel(BuildContext context, RecoveryProgramDifficulty difficulty) {
-  final t = AppText.of(context);
-  switch (difficulty) {
-    case RecoveryProgramDifficulty.beginner:
-      return t.get('program_difficulty_beginner', fallback: 'Beginner');
-    case RecoveryProgramDifficulty.intermediate:
-      return t.get('program_difficulty_intermediate', fallback: 'Intermediate');
-    case RecoveryProgramDifficulty.advanced:
-      return t.get('program_difficulty_advanced', fallback: 'Advanced');
-  }
-}
 
 List<Color> _programGradient(String programId) {
   switch (programId) {

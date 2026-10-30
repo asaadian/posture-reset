@@ -834,6 +834,7 @@ class SessionPlayerController extends ChangeNotifier {
       _ref.invalidate(insightsSnapshotProvider(range));
     }
     _ref.invalidate(recentSessionRunsProvider);
+    _ref.invalidate(completedSessionCountProvider);
     _ref.invalidate(sessionHistoryItemsProvider);
     _ref.invalidate(sessionContinuitySnapshotProvider);
     _ref.invalidate(continueSessionCandidateProvider);

@@ -211,6 +211,17 @@ class DashboardPage extends ConsumerWidget {
               ResponsiveContentSection(
                 spacing: 16,
                 children: [
+                  _DashboardQuickFixDiscovery(
+                    title: t.get(
+                      'dashboard_new_quick_fix_title',
+                      fallback: 'Where do you feel tension?',
+                    ),
+                    body: t.get(
+                      'dashboard_new_quick_fix_body',
+                      fallback: 'Find a matching desk reset in seconds.',
+                    ),
+                  ),
+                  const SizedBox(height: 18),
                   if (programs.isNotEmpty) ...[
                     _DashboardProgramCarousel(
                       programs: programs,
@@ -472,17 +483,6 @@ class _DashboardNewUserHome extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _DashboardQuickFixDiscovery(
-          title: t.get(
-            'dashboard_new_quick_fix_title',
-            fallback: 'Where do you feel tension?',
-          ),
-          body: t.get(
-            'dashboard_new_quick_fix_body',
-            fallback: 'Tap a body area and get the best matching reset in seconds.',
-          ),
-        ),
-        const SizedBox(height: 18),
         if (sessions.isNotEmpty) ...[
           const SizedBox(height: 18),
           _DashboardVisualSessions(sessions: sessions),

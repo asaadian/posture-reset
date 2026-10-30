@@ -60,22 +60,10 @@ class DashboardRepositoryImpl implements DashboardRepository {
     try {
       final user = _client.auth.currentUser;
       if (user == null) return _emptySnapshot();
-      final now = DateTime.now().toUtc();
-      final start7 = DateTime.utc(
-        now.year,
-        now.month,
-        now.day,
-      ).subtract(const Duration(days: 6));
-      final start21 = DateTime.utc(
-        now.year,
-        now.month,
-        now.day,
-      ).subtract(const Duration(days: 20));
-      final start28 = DateTime.utc(
-        now.year,
-        now.month,
-        now.day,
-      ).subtract(const Duration(days: 27));
+      final now = DateTime.now();
+      final start7 = DateTime(now.year, now.month, now.day - 6);
+      final start21 = DateTime(now.year, now.month, now.day - 20);
+      final start28 = DateTime(now.year, now.month, now.day - 27);
 
       final runsRows = await _safeSelectList(
         'session_runs',
@@ -85,7 +73,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
               'id, session_id, status, total_elapsed_seconds, completed_at, started_at, created_at, entry_source, last_step_id',
             )
             .eq('user_id', user.id)
-            .gte('created_at', start28.toIso8601String())
+            .gte('created_at', start28.toUtc().toIso8601String())
             .order('created_at', ascending: true),
       );
 
@@ -97,7 +85,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
               'run_id, helped, tension_delta, pain_delta, energy_delta, perceived_fit, would_repeat, completion_status, entry_source, created_at',
             )
             .eq('user_id', user.id)
-            .gte('created_at', start28.toIso8601String())
+            .gte('created_at', start28.toUtc().toIso8601String())
             .order('created_at', ascending: true),
       );
 
@@ -109,7 +97,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
               'run_id, snapshot_kind, energy_level, stress_level, focus_level, pain_area_codes, intent_code, entry_source, created_at',
             )
             .eq('user_id', user.id)
-            .gte('created_at', start28.toIso8601String())
+            .gte('created_at', start28.toUtc().toIso8601String())
             .order('created_at', ascending: true),
       );
 
@@ -119,7 +107,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
             .from('quick_fix_events')
             .select('recommended_session_id, action_type, created_at')
             .eq('user_id', user.id)
-            .gte('created_at', start28.toIso8601String())
+            .gte('created_at', start28.toUtc().toIso8601String())
             .order('created_at', ascending: true),
       );
 
@@ -158,12 +146,12 @@ class DashboardRepositoryImpl implements DashboardRepository {
       }
 
       final runsLast7 = runsRows.where((row) {
-        final createdAt = _parseDate(row['created_at']);
+        final createdAt = _parseDate(row['created_at'])?.toLocal();
         return createdAt != null && !createdAt.isBefore(start7);
       }).toList();
 
       final quickFixLast7 = quickFixRows.where((row) {
-        final createdAt = _parseDate(row['created_at']);
+        final createdAt = _parseDate(row['created_at'])?.toLocal();
         return createdAt != null && !createdAt.isBefore(start7);
       }).toList();
 
@@ -443,7 +431,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     }
 
     for (final row in runsRows) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(start7)) continue;
 
       final day = DateTime.utc(createdAt.year, createdAt.month, createdAt.day);
@@ -474,7 +462,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     }
 
     for (final row in feedbackRows) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(start7)) continue;
 
       final day = DateTime.utc(createdAt.year, createdAt.month, createdAt.day);
@@ -506,7 +494,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     }
 
     for (final row in runsRows) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(start21)) continue;
 
       final day = DateTime.utc(createdAt.year, createdAt.month, createdAt.day);

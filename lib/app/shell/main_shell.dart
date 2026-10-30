@@ -29,18 +29,29 @@ class MainShell extends ConsumerWidget {
     return AuthDataRefreshListener(
       child: Scaffold(
         extendBody: true,
-        body: KeyedSubtree(
-          key: ValueKey('app-data-$resetVersion'),
-          child: navigationShell,
-        ),
-        bottomNavigationBar: _GlassConcaveBottomBar(
-          currentIndex: navigationShell.currentIndex,
-          onTap: _onTap,
-          dashboardLabel: t.navDashboard,
-          trainingLabel: 'Explore',
-          quickFixLabel: t.navQuickFix,
-          insightsLabel: t.navInsights,
-          programsLabel: t.get('nav_profile', fallback: 'Profile'),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: KeyedSubtree(
+                key: ValueKey('app-data-$resetVersion'),
+                child: navigationShell,
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: _GlassConcaveBottomBar(
+                currentIndex: navigationShell.currentIndex,
+                onTap: _onTap,
+                dashboardLabel: t.navDashboard,
+                trainingLabel: 'Explore',
+                quickFixLabel: t.navQuickFix,
+                insightsLabel: t.navInsights,
+                programsLabel: t.get('nav_profile', fallback: 'Profile'),
+              ),
+            ),
+          ],
         ),
       ),
     );

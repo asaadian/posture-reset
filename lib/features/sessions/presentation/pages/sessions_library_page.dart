@@ -11,7 +11,6 @@ import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../access/application/access_providers.dart';
 import '../../../access/domain/access_models.dart';
 import '../../../auth/application/auth_providers.dart';
-import '../../../programs/domain/recovery_program_models.dart';
 import '../../application/sessions_providers.dart';
 import '../../domain/session_models.dart';
 import '../session_library_models.dart';
@@ -29,9 +28,9 @@ class SessionsLibraryPage extends ConsumerStatefulWidget {
 class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
   final GlobalKey _trainingSessionsGuideKey = GlobalKey(debugLabel: 'training_sessions_guide');
 
-  String _searchQuery = '';
-  SessionLibraryCategory _selectedCategory = SessionLibraryCategory.all;
-  SessionLibrarySort _selectedSort = SessionLibrarySort.recommended;
+  final String _searchQuery = '';
+  final SessionLibraryCategory _selectedCategory = SessionLibraryCategory.all;
+  final SessionLibrarySort _selectedSort = SessionLibrarySort.recommended;
 
   @override
   Widget build(BuildContext context) {
@@ -413,13 +412,7 @@ class _SearchSortBarState extends State<_SearchSortBar> {
 }
 
 
-const List<SessionLibraryCategory> _visibleSessionCategories = [
-  SessionLibraryCategory.all,
-  SessionLibraryCategory.neckShoulders,
-  SessionLibraryCategory.upperBack,
-  SessionLibraryCategory.lowerBackHips,
-  SessionLibraryCategory.wristsHands,
-];
+
 
 
 
@@ -1424,23 +1417,6 @@ class ProgramPosterAsset {
 
   static String pathForProgramId(String programId) {
     return 'assets/images/programs/$programId.png';
-  }
-}
-
-List<Color> _programGradient(String programId) {
-  switch (programId) {
-    case 'prog_desk_neck_shoulder_reset_14':
-      return const [Color(0xFF0891B2), Color(0xFF1D4ED8)];
-    case 'prog_lower_back_hip_relief_14':
-      return const [Color(0xFF6D28D9), Color(0xFF1E1B4B)];
-    case 'prog_wrist_forearm_mouse_recovery_10':
-      return const [Color(0xFF0F766E), Color(0xFF0F172A)];
-    case 'prog_upper_back_posture_control_14':
-      return const [Color(0xFF2563EB), Color(0xFF312E81)];
-    case 'prog_full_desk_body_reset_21':
-      return const [Color(0xFF0EA5E9), Color(0xFF0F172A)];
-    default:
-      return const [Color(0xFF2563EB), Color(0xFF0F172A)];
   }
 }
 

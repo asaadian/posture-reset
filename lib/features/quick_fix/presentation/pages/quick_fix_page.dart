@@ -2504,15 +2504,6 @@ class _ImageDurationBadge extends StatelessWidget {
 
 
 
-class _SessionHeroSpec {
-  const _SessionHeroSpec({
-    required this.metaIcon,
-  });
-
-  final IconData metaIcon;
-}
-
-
 
 String _equipmentCodeName(Object? equipment) {
   if (equipment == null) return '';

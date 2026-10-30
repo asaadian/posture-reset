@@ -480,6 +480,7 @@ class _PremiumAuthBackdrop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
     return DecoratedBox(
@@ -869,7 +870,6 @@ class _SocialAuthButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
     final isApple = variant == _SocialButtonVariant.apple;

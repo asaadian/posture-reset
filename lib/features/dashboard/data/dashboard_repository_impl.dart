@@ -30,7 +30,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     } catch (error, stackTrace) {
       debugPrint('DashboardRepository.$label failed: $error');
       debugPrintStack(stackTrace: stackTrace);
-      return const <Map<String, dynamic>>[];
+      Error.throwWithStackTrace(error, stackTrace);
     }
   }
 
@@ -58,6 +58,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
   @override
   Future<DashboardSnapshot> getDashboardSnapshot() async {
     try {
+      final user = _client.auth.currentUser;
+      if (user == null) return _emptySnapshot();
       final now = DateTime.now().toUtc();
       final start7 = DateTime.utc(
         now.year,
@@ -82,6 +84,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
             .select(
               'id, session_id, status, total_elapsed_seconds, completed_at, started_at, created_at, entry_source, last_step_id',
             )
+            .eq('user_id', user.id)
             .gte('created_at', start28.toIso8601String())
             .order('created_at', ascending: true),
       );
@@ -93,6 +96,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
             .select(
               'run_id, helped, tension_delta, pain_delta, energy_delta, perceived_fit, would_repeat, completion_status, entry_source, created_at',
             )
+            .eq('user_id', user.id)
             .gte('created_at', start28.toIso8601String())
             .order('created_at', ascending: true),
       );
@@ -104,6 +108,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
             .select(
               'run_id, snapshot_kind, energy_level, stress_level, focus_level, pain_area_codes, intent_code, entry_source, created_at',
             )
+            .eq('user_id', user.id)
             .gte('created_at', start28.toIso8601String())
             .order('created_at', ascending: true),
       );
@@ -113,6 +118,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
         () => _client
             .from('quick_fix_events')
             .select('recommended_session_id, action_type, created_at')
+            .eq('user_id', user.id)
             .gte('created_at', start28.toIso8601String())
             .order('created_at', ascending: true),
       );
@@ -163,8 +169,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
       final weeklyMinutes = runsLast7.fold<int>(
         0,
-        (sum, row) => sum + (_asInt(row['total_elapsed_seconds']) ~/ 60),
-      );
+        (sum, row) => sum + _asInt(row['total_elapsed_seconds']),
+      ) ~/ 60;
 
       final completedSessionsThisWeek = runsLast7.where((row) {
         return (row['status'] as String?) == 'completed';
@@ -250,7 +256,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     } catch (error, stackTrace) {
       debugPrint('DashboardRepository.getDashboardSnapshot failed: $error');
       debugPrintStack(stackTrace: stackTrace);
-      return _emptySnapshot();
+      Error.throwWithStackTrace(error, stackTrace);
     }
   }
 

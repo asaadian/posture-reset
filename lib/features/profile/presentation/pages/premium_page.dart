@@ -1069,12 +1069,10 @@ class _SignalPill extends StatelessWidget {
   const _SignalPill({
     required this.icon,
     required this.label,
-    this.muted = false,
   });
 
   final IconData icon;
   final String label;
-  final bool muted;
 
   @override
   Widget build(BuildContext context) {
@@ -1082,7 +1080,7 @@ class _SignalPill extends StatelessWidget {
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
-    final foreground = muted ? colors.onSurfaceVariant : colors.primary;
+    final foreground = colors.primary;
 
     return Container(
       height: 34,
@@ -1104,7 +1102,7 @@ class _SignalPill extends StatelessWidget {
           Text(
             label,
             style: theme.textTheme.labelMedium?.copyWith(
-              color: muted ? colors.onSurfaceVariant : colors.onSurface,
+              color: colors.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),

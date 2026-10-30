@@ -25,6 +25,7 @@ class PlayerMediaZone extends StatefulWidget {
     this.isCompleted = false,
     this.fillAvailableHeight = false,
     this.mediaFit = BoxFit.contain,
+    this.onMediaReady,
   });
 
   final String stepTitle;
@@ -56,6 +57,7 @@ class PlayerMediaZone extends StatefulWidget {
   /// into a taller viewport.
   final bool fillAvailableHeight;
   final BoxFit mediaFit;
+  final VoidCallback? onMediaReady;
 
   @override
   State<PlayerMediaZone> createState() => _PlayerMediaZoneState();
@@ -126,6 +128,7 @@ class _PlayerMediaZoneState extends State<PlayerMediaZone> {
                       _LoopingStepVideo(
                         key: ValueKey(resolvedUrl),
                         videoUrl: resolvedUrl,
+                        onReady: widget.onMediaReady,
                         posterUrl: resolvedPosterUrl,
                         isPaused: widget.isPaused || widget.isCompleted || _fullscreenOpen,
                         muted: _muted,
@@ -197,6 +200,8 @@ class _PlayerMediaZoneState extends State<PlayerMediaZone> {
                             _LoopingStepVideo(
                               key: ValueKey(resolvedUrl),
                               videoUrl: resolvedUrl,
+                              onReady: widget.onMediaReady,
+                        onReady: widget.onMediaReady,
                               posterUrl: resolvedPosterUrl,
                               isPaused: widget.isPaused ||
                                   widget.isCompleted ||
@@ -305,6 +310,7 @@ class _LoopingStepVideo extends StatefulWidget {
     required this.isPaused,
     required this.muted,
     required this.fit,
+    this.onReady,
   });
 
   final String videoUrl;
@@ -312,6 +318,7 @@ class _LoopingStepVideo extends StatefulWidget {
   final bool isPaused;
   final bool muted;
   final BoxFit fit;
+  final VoidCallback? onReady;
 
   @override
   State<_LoopingStepVideo> createState() => _LoopingStepVideoState();
@@ -361,6 +368,9 @@ class _LoopingStepVideoState extends State<_LoopingStepVideo> {
       if (!mounted || !identical(controller, _controller)) return;
       setState(() {});
       await _syncPlayback();
+      if (mounted && identical(controller, _controller) && !widget.isPaused) {
+        widget.onReady?.call();
+      }
     } catch (_) {
       if (mounted && identical(controller, _controller)) {
         setState(() => _hasError = true);

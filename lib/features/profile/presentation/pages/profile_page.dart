@@ -54,10 +54,10 @@ class ProfilePage extends ConsumerWidget {
       ]);
     }
 
-    return WillPopScope(
-      onWillPop: () async {
-        context.goNamed('dashboard');
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) context.goNamed('dashboard');
       },
       child: ResponsivePageScaffold(
       leading: IconButton(

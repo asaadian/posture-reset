@@ -3,6 +3,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../sessions/application/sessions_providers.dart';
+import '../../../core/supabase/supabase_providers.dart';
 import '../data/session_continuity_repository_impl.dart';
 import '../domain/session_continuity_models.dart';
 import '../domain/session_continuity_repository.dart';
@@ -16,6 +17,20 @@ final sessionContinuityRepositoryProvider =
     savedSessionsRepository: ref.watch(savedSessionsRepositoryProvider),
     sessionsRepository: ref.watch(sessionsRepositoryProvider),
   );
+});
+
+final completedSessionCountProvider = FutureProvider<int>((ref) async {
+  final client = ref.watch(supabaseClientProvider);
+  final user = client.auth.currentUser;
+  if (user == null) return 0;
+
+  final response = await client
+      .from('session_runs')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('status', 'completed')
+      .count(CountOption.exact);
+  return response.count;
 });
 
 final recentSessionRunsProvider = FutureProvider<List<SessionRun>>((ref) async {

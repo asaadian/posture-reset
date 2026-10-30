@@ -1767,21 +1767,6 @@ List<Color> _programGradient(String programId) {
   }
 }
 
-String _intensityLabel(BuildContext context, SessionIntensity intensity) {
-  final t = AppText.of(context);
-
-  switch (intensity) {
-    case SessionIntensity.gentle:
-      return t.get('session_intensity_gentle', fallback: 'Gentle');
-    case SessionIntensity.light:
-      return t.get('session_intensity_light', fallback: 'Light');
-    case SessionIntensity.moderate:
-      return t.get('session_intensity_moderate', fallback: 'Moderate');
-    case SessionIntensity.strong:
-      return t.get('session_intensity_strong', fallback: 'Strong');
-  }
-}
-
 
 const String _remoteProgramCoverBaseUrl =
     'https://weglabs.com/data/desk-workout/covers/programs';

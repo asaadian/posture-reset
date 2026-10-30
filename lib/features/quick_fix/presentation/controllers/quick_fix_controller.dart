@@ -112,7 +112,11 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
     // Free users should receive a usable match first, rather than a paywall.
     // Keep catalog entitlements authoritative; do not pretend locked sessions
     // are free on the client.
-    final access = await ref.read(accessSnapshotProvider.future);
+    final access = await ref.read(accessSnapshotProvider.future)
+        .catchError((Object error) {
+      debugPrint('[QuickFix] Access state unavailable: $error');
+      return AccessSnapshot.guest;
+    });
     final usableSessions = access.hasCoreAccess
         ? sessions
         : sessions.where((session) => session.accessTier == AccessTier.free).toList();

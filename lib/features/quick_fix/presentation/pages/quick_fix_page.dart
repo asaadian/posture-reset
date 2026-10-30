@@ -2123,7 +2123,7 @@ class _QuickFixRecommendationPreview extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             OutlinedButton.icon(
-              onPressed: () => context.goNamed('sessions-library'),
+              onPressed: () => context.goNamed('sessions'),
               icon: const Icon(Icons.explore_outlined),
               label: Text(t.get(
                 'quick_fix_browse_sessions',

@@ -911,11 +911,12 @@ class _TrainingDiscoverySections extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final id in _groupIds) ...[
-          if (id == 'upper_back' && topSessions.isNotEmpty) ...[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 22),
-              child: _PopularSessionsShowcase(sessions: topSessions),
-            ),
+          if (id == 'upper_back') ...[
+            if (topSessions.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 22),
+                child: _PopularSessionsShowcase(sessions: topSessions),
+              ),
             const Padding(
               padding: EdgeInsets.only(bottom: 30),
               child: _BodyFocusNavigation(),

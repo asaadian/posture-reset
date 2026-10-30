@@ -2096,15 +2096,41 @@ class _QuickFixRecommendationPreview extends ConsumerWidget {
 
     if (recommendation == null) {
       return _SimpleRecommendationShell(
-        child: Text(
-          t.get(
-            'quick_fix_recommendation_missing',
-            fallback: 'No recommendation available yet.',
-          ),
-          style: theme.textTheme.titleMedium?.copyWith(
-            color: colors.onSurface,
-            fontWeight: FontWeight.w900,
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.tune_rounded, color: colors.primary, size: 28),
+            const SizedBox(height: 12),
+            Text(
+              t.get(
+                'quick_fix_recommendation_missing',
+                fallback: 'No matching reset for these choices yet.',
+              ),
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: colors.onSurface,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              t.get(
+                'quick_fix_no_match_hint',
+                fallback: 'Try another body area or equipment option, or browse available sessions.',
+              ),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: () => context.goNamed('sessions-library'),
+              icon: const Icon(Icons.explore_outlined),
+              label: Text(t.get(
+                'quick_fix_browse_sessions',
+                fallback: 'Explore sessions',
+              )),
+            ),
+          ],
         ),
       );
     }

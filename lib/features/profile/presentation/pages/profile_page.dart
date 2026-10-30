@@ -37,17 +37,20 @@ class ProfilePage extends ConsumerWidget {
     final profileAsync = ref.watch(currentUserProfileProvider);
     final savedIdsAsync = ref.watch(savedSessionIdsProvider);
     final recentRunsAsync = ref.watch(recentSessionRunsProvider);
+    final completedCountAsync = ref.watch(completedSessionCountProvider);
     final continueCandidateAsync = ref.watch(continueSessionCandidateProvider);
 
     Future<void> refreshProfile() async {
       ref.invalidate(currentUserProfileProvider);
       ref.invalidate(savedSessionIdsProvider);
       ref.invalidate(recentSessionRunsProvider);
+      ref.invalidate(completedSessionCountProvider);
       ref.invalidate(continueSessionCandidateProvider);
       await Future.wait([
         ref.read(currentUserProfileProvider.future),
         ref.read(savedSessionIdsProvider.future),
         ref.read(recentSessionRunsProvider.future),
+        ref.read(completedSessionCountProvider.future),
         ref.read(continueSessionCandidateProvider.future),
       ]);
     }
@@ -74,7 +77,7 @@ class ProfilePage extends ConsumerWidget {
       bodyBuilder: (context, pageInfo) {
         final profile = profileAsync.maybeWhen(data: (v) => v, orElse: () => null);
         final savedCount = savedIdsAsync.maybeWhen(data: (ids) => ids.length, orElse: () => 0);
-        final recentRunsCount = recentRunsAsync.maybeWhen(data: (runs) => runs.length, orElse: () => 0);
+        final recentRunsCount = completedCountAsync.maybeWhen(data: (count) => count, orElse: () => 0);
         final continueCandidate = continueCandidateAsync.maybeWhen(data: (value) => value, orElse: () => null);
         final isWide = pageInfo.isMedium || pageInfo.isExpanded;
 
@@ -380,7 +383,7 @@ class _ProfileHeroCard extends StatelessWidget {
                   value: '$savedCount',
                 )),
                 Expanded(child: _HeroMetric(
-                  label: t.get('profile_metric_runs', fallback: 'Runs'),
+                  label: t.get('profile_metric_completed', fallback: 'Completed'),
                   value: '$recentRunsCount',
                 )),
                 Expanded(child: _HeroMetric(

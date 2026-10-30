@@ -50,6 +50,16 @@ class SettingsPage extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.fromLTRB(0, 2, 0, pageInfo.isCompact ? 128 : 40),
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 8, 14, 18),
+              child: _SettingsHero(
+                title: t.get('settings_preferences_compact_title', fallback: 'Make it yours'),
+                subtitle: t.get(
+                  'settings_preferences_compact_subtitle',
+                  fallback: 'Your space, your pace. Personalize how the app feels.',
+                ),
+              ),
+            ),
             if (isWide)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,8 +142,12 @@ class _SettingsHero extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
-        gradient: context.actionCardGradient,
-        border: Border.all(color: context.subtleBorderColor),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF142943), Color(0xFF17556A), Color(0xFF14665E)],
+        ),
+        border: Border.all(color: const Color(0xFF85DFC8).withValues(alpha: 0.18)),
         boxShadow: [
           BoxShadow(
             color: isDark
@@ -153,12 +167,12 @@ class _SettingsHero extends StatelessWidget {
               borderRadius: BorderRadius.circular(19),
               gradient: LinearGradient(
                 colors: [
-                  colors.primary.withValues(alpha: 0.95),
-                  colors.tertiary.withValues(alpha: 0.82),
+                  const Color(0xFF247F87),
+                  const Color(0xFF18516A),
                 ],
               ),
             ),
-            child: Icon(Icons.tune_rounded, color: colors.onPrimary, size: 27),
+            child: const Icon(Icons.tune_rounded, color: Colors.white, size: 27),
           ),
           const SizedBox(width: 13),
           Expanded(
@@ -170,7 +184,7 @@ class _SettingsHero extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleLarge?.copyWith(
-                    color: colors.onSurface,
+                    color: Colors.white,
                     fontWeight: FontWeight.w900,
                     height: 1,
                   ),
@@ -181,7 +195,7 @@ class _SettingsHero extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
+                    color: const Color(0xFFD7E9EB),
                     fontWeight: FontWeight.w700,
                     height: 1.22,
                   ),
@@ -548,11 +562,11 @@ class _SettingsSection extends StatelessWidget {
         gradient: LinearGradient(
           colors: isDark
               ? [colors.surfaceContainerHigh, colors.surfaceContainerLow]
-              : [colors.surface, colors.surfaceContainerLow],
+              : [const Color(0xFFEDF5F6), const Color(0xFFE5EFF2)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(color: colors.outlineVariant),
+        border: Border.all(color: colors.primary.withValues(alpha: 0.10)),
         boxShadow: [
           BoxShadow(
             color: isDark
@@ -573,9 +587,9 @@ class _SettingsSection extends StatelessWidget {
                 height: 42,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  color: colors.primaryContainer,
+                  color: isDark ? const Color(0xFF234D57) : const Color(0xFFD3EBEA),
                 ),
-                child: Icon(icon, color: colors.onPrimaryContainer, size: 22),
+                child: Icon(icon, color: isDark ? const Color(0xFF85DFC8) : const Color(0xFF126E72), size: 22),
               ),
               const SizedBox(width: 11),
               Expanded(

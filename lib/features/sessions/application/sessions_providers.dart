@@ -1,6 +1,7 @@
 // lib/features/sessions/application/sessions_providers.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/supabase/supabase_providers.dart';
 
 import '../../../core/localization/app_locale_controller.dart';
 import '../../../core/supabase/supabase_providers.dart';
@@ -19,6 +20,35 @@ final sessionsRepositoryProvider = Provider<SessionsRepository>((ref) {
 final savedSessionsRepositoryProvider = Provider<SavedSessionsRepository>((ref) {
   final client = ref.watch(supabaseClientProvider);
   return SupabaseSavedSessionsRepository(client);
+});
+
+/// Ranked by this user's recorded session starts within the last 90 days.
+/// No global popularity is implied; private run rows must not be exposed.
+final personalPopularSessionIdsProvider = FutureProvider<List<String>>((ref) async {
+  final client = ref.watch(supabaseClientProvider);
+  final user = client.auth.currentUser;
+  if (user == null) return const <String>[];
+
+  final since = DateTime.now().toUtc().subtract(const Duration(days: 90));
+  final rows = await client
+      .from('session_runs')
+      .select('session_id')
+      .eq('user_id', user.id)
+      .gte('created_at', since.toIso8601String())
+      .limit(1000);
+
+  final counts = <String, int>{};
+  for (final row in rows) {
+    final sessionId = row['session_id']?.toString() ?? '';
+    if (sessionId.isEmpty) continue;
+    counts.update(sessionId, (value) => value + 1, ifAbsent: () => 1);
+  }
+  final ranked = counts.keys.toList()
+    ..sort((a, b) {
+      final byCount = counts[b]!.compareTo(counts[a]!);
+      return byCount != 0 ? byCount : a.compareTo(b);
+    });
+  return ranked.take(10).toList(growable: false);
 });
 
 final sessionSummariesProvider =

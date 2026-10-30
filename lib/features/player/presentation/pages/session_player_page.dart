@@ -2592,48 +2592,6 @@ class _PlayerErrorView extends StatelessWidget {
 }
 
 
-Color _zoneAccentColor(ColorScheme colors, List<String> codes) {
-  final normalized = codes.map((code) => code.trim().toLowerCase()).toSet();
-
-  if (normalized.any((code) =>
-      code == 'neck' || code == 'cervical' || code == 'cervical_spine')) {
-    return colors.primary;
-  }
-  if (normalized.any((code) =>
-      code == 'shoulder' ||
-      code == 'shoulders' ||
-      code == 'upper_back' ||
-      code == 'thoracic' ||
-      code == 'thoracic_spine')) {
-    return colors.tertiary;
-  }
-  if (normalized.any((code) =>
-      code == 'wrist' ||
-      code == 'wrists' ||
-      code == 'hand' ||
-      code == 'hands' ||
-      code == 'forearm' ||
-      code == 'forearms' ||
-      code == 'mouse_arm')) {
-    return colors.secondary;
-  }
-  if (normalized.any((code) =>
-      code == 'lower_back' ||
-      code == 'lumbar' ||
-      code == 'lumbar_spine' ||
-      code == 'hip' ||
-      code == 'hips' ||
-      code == 'glute' ||
-      code == 'glutes' ||
-      code == 'hips_glutes')) {
-    return colors.primaryContainer;
-  }
-  if (normalized.any((code) => code == 'eye' || code == 'eyes')) {
-    return colors.secondary;
-  }
-
-  return colors.primary;
-}
 
 String _movementPatternLabel(
   BuildContext context,

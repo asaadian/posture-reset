@@ -201,7 +201,6 @@ class _PlayerMediaZoneState extends State<PlayerMediaZone> {
                               key: ValueKey(resolvedUrl),
                               videoUrl: resolvedUrl,
                               onReady: widget.onMediaReady,
-                        onReady: widget.onMediaReady,
                               posterUrl: resolvedPosterUrl,
                               isPaused: widget.isPaused ||
                                   widget.isCompleted ||

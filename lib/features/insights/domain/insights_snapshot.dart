@@ -34,6 +34,7 @@ class InsightsSnapshot {
     required this.heatmapCells,
     required this.bodyZones,
     required this.logs,
+    this.feedbackCount = 0,
     this.recoveryScore = 0,
     this.recoveryScoreTitle = 'Recovery score',
     this.recoveryScoreBody = 'Complete a few sessions to build a reliable recovery signal.',
@@ -68,6 +69,7 @@ class InsightsSnapshot {
   /// Premium intelligence fields derived from runs, feedback, body-zone data,
   /// step events, and Quick Fix behavior. These are intentionally lightweight
   /// rule-based signals, not medical claims.
+  final int feedbackCount;
   final int recoveryScore;
   final String recoveryScoreTitle;
   final String recoveryScoreBody;

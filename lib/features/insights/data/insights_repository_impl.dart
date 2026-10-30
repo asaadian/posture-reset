@@ -326,6 +326,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
       heatmapCells: heatmapCells,
       bodyZones: bodyZones,
       logs: logs,
+      feedbackCount: feedbackInRange.length,
       recoveryScore: recoveryScore,
       recoveryScoreTitle: _scoreTitle(recoveryScore),
       recoveryScoreBody: _scoreBody(

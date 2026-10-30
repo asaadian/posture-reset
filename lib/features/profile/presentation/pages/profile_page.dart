@@ -284,90 +284,111 @@ class _ProfileHeroCard extends StatelessWidget {
 
     return Container(
       clipBehavior: Clip.antiAlias,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(34),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(36),
+          topRight: Radius.circular(16),
+          bottomLeft: Radius.circular(16),
+          bottomRight: Radius.circular(36),
+        ),
         gradient: const LinearGradient(
-          colors: [Color(0xFF102338), Color(0xFF172B45), Color(0xFF234D57)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+          colors: [Color(0xFF142943), Color(0xFF153F54), Color(0xFF102337)],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.24),
-            blurRadius: 30,
-            offset: const Offset(0, 16),
+            color: const Color(0xFF102337).withValues(alpha: 0.18),
+            blurRadius: 26,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Positioned(right: -96, top: -96, child: _ProfileGlow(size: 260, color: Color(0xFF91B9FF), alpha: 0.32)),
-          const Positioned(left: -110, bottom: -130, child: _ProfileGlow(size: 280, color: Color(0xFF78E1C6), alpha: 0.22)),
-          Column(
+          const Row(
             children: [
-              const SizedBox(height: 2),
-              _PremiumAvatar(initials: initials, avatarUrl: profile?.avatarUrl, onEdit: onEditProfile),
-              const SizedBox(height: 14),
-              _StatusBadge(
-                label: isAuthenticated
-                    ? t.get('profile_sync_connected', fallback: 'Synced')
-                    : t.get('profile_sync_local', fallback: 'Local'),
-                icon: isAuthenticated ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                displayName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                  letterSpacing: -0.55,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                email.isNotEmpty
-                    ? email
-                    : t.get('profile_guest_subtitle', fallback: 'Guest profile'),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.66),
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 18),
-              Row(
-                children: [
-                  Expanded(
-                    child: _HeroMetric(
-                      label: t.get('profile_metric_saved', fallback: 'Saved'),
-                      value: '$savedCount',
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _HeroMetric(
-                      label: t.get('profile_metric_runs', fallback: 'Runs'),
-                      value: '$recentRunsCount',
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _HeroMetric(
-                      label: t.get('profile_metric_status', fallback: 'Status'),
-                      value: isAuthenticated ? 'On' : 'Off',
-                    ),
-                  ),
-                ],
-              ),
-
+              Icon(Icons.auto_awesome_rounded, size: 16, color: Color(0xFF85DFC8)),
+              SizedBox(width: 7),
+              Text('YOUR SPACE', style: TextStyle(
+                color: Color(0xFF85DFC8), letterSpacing: 2,
+                fontSize: 11, fontWeight: FontWeight.w800,
+              )),
             ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _PremiumAvatar(
+                initials: initials,
+                avatarUrl: profile?.avatarUrl,
+                onEdit: onEditProfile,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      displayName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        color: Colors.white, fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      email.isNotEmpty ? email
+                          : t.get('profile_guest_subtitle', fallback: 'Guest profile'),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFFC6D7E2), fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _StatusBadge(
+                      label: isAuthenticated
+                          ? t.get('profile_sync_connected', fallback: 'Synced')
+                          : t.get('profile_sync_local', fallback: 'Local'),
+                      icon: isAuthenticated
+                          ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 22),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 6),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.12),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(child: _HeroMetric(
+                  label: t.get('profile_metric_saved', fallback: 'Saved'),
+                  value: '$savedCount',
+                )),
+                Expanded(child: _HeroMetric(
+                  label: t.get('profile_metric_runs', fallback: 'Runs'),
+                  value: '$recentRunsCount',
+                )),
+                Expanded(child: _HeroMetric(
+                  label: t.get('profile_metric_status', fallback: 'Status'),
+                  value: isAuthenticated ? 'On' : 'Off',
+                )),
+              ],
+            ),
           ),
         ],
       ),
@@ -926,42 +947,30 @@ class _ProfilePremiumActionTile extends StatelessWidget {
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
-    final foreground = isDark ? Colors.white : const Color(0xFF172B45);
-    final mutedForeground = isDark
-        ? Colors.white.withValues(alpha: 0.72)
-        : colors.onSurfaceVariant;
+    final foreground = Colors.white;
+    final mutedForeground = const Color(0xFFD1E8E8);
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
         onTap: data.onTap,
         child: Ink(
-          height: 112,
+          height: 126,
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
-              colors: isDark
-                  ? const [
-                      Color(0xFF183B52),
-                      Color(0xFF234D57),
-                      Color(0xFF12494B),
-                    ]
-                  : const [
-                      Color(0xFFE5F3F3),
-                      Color(0xFFE4F0F9),
-                      Color(0xFFD9F5EC),
-                    ],
+              colors: const [Color(0xFF12263D), Color(0xFF175368), Color(0xFF167267)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             border: Border.all(
-              color: data.accent.withValues(alpha: isDark ? 0.52 : 0.30),
+              color: const Color(0xFF85DFC8).withValues(alpha: 0.22),
             ),
             boxShadow: [
               BoxShadow(
-                color: data.accent.withValues(alpha: isDark ? 0.30 : 0.18),
+                color: const Color(0xFF123C4D).withValues(alpha: 0.20),
                 blurRadius: 30,
                 offset: const Offset(0, 14),
               ),
@@ -1048,7 +1057,7 @@ class _ProfilePremiumActionTile extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.labelSmall?.copyWith(
-                              color: isDark ? Colors.white : colors.primary,
+                              color: const Color(0xFF85DFC8),
                               fontWeight: FontWeight.w900,
                               height: 1,
                             ),
@@ -1100,7 +1109,7 @@ class _ProfilePremiumActionTile extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.arrow_forward_rounded,
-                          color: isDark ? Colors.white : colors.primary,
+                          color: const Color(0xFF85DFC8),
                           size: 22,
                         ),
                       ),

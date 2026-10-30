@@ -829,6 +829,7 @@ class SessionPlayerController extends ChangeNotifier {
     // The run has already been persisted; invalidate all dependent views now,
     // rather than waiting for the optional feedback sheet to be dismissed.
     _ref.invalidate(dashboardControllerProvider);
+    _ref.invalidate(personalPopularSessionIdsProvider);
     _ref.read(insightsRefreshSignalProvider.notifier).markDirty();
     for (final range in InsightsRange.values) {
       _ref.invalidate(insightsSnapshotProvider(range));

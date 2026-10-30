@@ -148,6 +148,7 @@ class DashboardPage extends ConsumerWidget {
     final recommendedSessions = _recommendedTodaySessions(
       allSessions: allSessions,
       savedSessions: savedSessions,
+      hasCoreAccess: accessSnapshot.hasCoreAccess,
     );
     return ResponsivePageScaffold(
       title: Text(_dashboardGreeting(t: t, profile: profile, email: user?.email)),
@@ -317,14 +318,22 @@ class DashboardPage extends ConsumerWidget {
   List<SessionSummary> _recommendedTodaySessions({
     required List<SessionSummary> allSessions,
     required List<SessionSummary> savedSessions,
+    required bool hasCoreAccess,
   }) {
     if (allSessions.isEmpty) return const <SessionSummary>[];
 
     final savedIds = savedSessions.map((item) => item.id).toSet();
 
     final candidates = allSessions
+        .where((session) => hasCoreAccess || session.accessTier == AccessTier.free)
         .where((session) => !savedIds.contains(session.id))
         .toList(growable: true);
+
+    if (candidates.isEmpty) {
+      candidates.addAll(allSessions.where(
+        (session) => hasCoreAccess || session.accessTier == AccessTier.free,
+      ));
+    }
 
     candidates.sort((a, b) {
       final aScore = _todayScore(a);

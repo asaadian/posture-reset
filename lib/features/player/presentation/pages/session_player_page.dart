@@ -20,6 +20,7 @@ import '../../../programs/domain/recovery_program_models.dart';
 import '../../../sessions/application/sessions_providers.dart';
 import '../../../sessions/domain/session_models.dart';
 import '../../application/player_providers.dart';
+import '../../application/session_continuity_providers.dart';
 import '../../application/session_player_controller.dart';
 import '../../application/session_player_state.dart';
 import '../../domain/session_feedback_models.dart';
@@ -573,6 +574,11 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
     }
     ref.invalidate(sessionSummariesProvider);
     ref.invalidate(savedSessionIdsProvider);
+    ref.invalidate(recentSessionRunsProvider);
+    ref.invalidate(completedSessionCountProvider);
+    ref.invalidate(sessionHistoryItemsProvider);
+    ref.invalidate(sessionContinuitySnapshotProvider);
+    ref.invalidate(continueSessionCandidateProvider);
 
     await Future.wait<void>([
       _ignoreRefreshError(ref.read(dashboardControllerProvider.future)),

@@ -184,7 +184,7 @@ class DashboardPage extends ConsumerWidget {
               targetBorderRadius: 32,
               icon: Icons.space_dashboard_rounded,
               title: t.get('guide_dashboard_bottom_nav_title', fallback: 'Bottom navigation'),
-              body: t.get('guide_dashboard_bottom_nav_body', fallback: 'Use the bottom tabs to open Training, Quick Fix, Insights, and Programs when you need deeper details.'),
+              body: t.get('guide_dashboard_bottom_nav_body', fallback: 'Use the bottom tabs to open Explore, Quick Fix, Insights, and Profile.'),
             ),
           ],
           child: RefreshIndicator(

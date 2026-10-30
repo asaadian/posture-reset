@@ -1239,56 +1239,6 @@ class _HeroMetric extends StatelessWidget {
   }
 }
 
-class _PrimaryProfileButton extends StatelessWidget {
-  const _PrimaryProfileButton({required this.label, required this.icon, required this.onTap});
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
-          gradient: const LinearGradient(colors: [Color(0xFF91B9FF), Color(0xFF168C91)]),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF91B9FF).withValues(alpha: 0.30),
-              blurRadius: 24,
-              offset: const Offset(0, 12),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(22),
-            onTap: onTap,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, color: Colors.white, size: 23),
-                const SizedBox(width: 10),
-                Flexible(
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w900, height: 1),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.label, required this.icon});
   final String label;
@@ -1383,26 +1333,6 @@ class _AvatarInitials extends StatelessWidget {
       child: Text(
         initials,
         style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w900),
-      ),
-    );
-  }
-}
-
-class _ProfileGlow extends StatelessWidget {
-  const _ProfileGlow({required this.size, required this.color, required this.alpha});
-  final double size;
-  final Color color;
-  final double alpha;
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(colors: [color.withValues(alpha: alpha), color.withValues(alpha: 0)]),
-        ),
       ),
     );
   }

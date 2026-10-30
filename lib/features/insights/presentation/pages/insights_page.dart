@@ -223,7 +223,7 @@ class _JourneyIntelligenceCard extends StatelessWidget {
         Row(children: [
           Expanded(child: _JourneyIntelMetric(label: t.get('insights_focus_completion_title', fallback: 'Completion'), value: '$completion%', icon: Icons.task_alt_rounded)),
           const SizedBox(width: 8),
-          Expanded(child: _JourneyIntelMetric(label: t.get('insights_focus_helpful_title', fallback: 'Helpful'), value: '$helpful%', icon: Icons.favorite_rounded)),
+          Expanded(child: _JourneyIntelMetric(label: t.get('insights_focus_helpful_title', fallback: 'Helpful'), value: snapshot.feedbackCount == 0 ? '—' : '$helpful%', icon: Icons.favorite_rounded)),
           const SizedBox(width: 8),
           Expanded(child: _JourneyIntelMetric(label: t.get('insights_summary_consistency_title', fallback: 'Rhythm'), value: '$consistency%', icon: Icons.auto_graph_rounded)),
         ]),
@@ -1032,7 +1032,7 @@ class _HeroSignalRail extends StatelessWidget {
       _HeroSignalChip(
         icon: Icons.favorite_border_rounded,
         label: t.get('insights_focus_helpful_title', fallback: 'Helpful'),
-        value: '$helpful%',
+        value: snapshot.feedbackCount == 0 ? '—' : '$helpful%',
       ),
       _HeroSignalChip(
         icon: Icons.check_circle_outline_rounded,
@@ -1178,7 +1178,7 @@ class _InsightsMetricWrap extends StatelessWidget {
           'insights_helpful_title',
           fallback: 'Helpful',
         ),
-        value: '$helpful%',
+        value: snapshot.feedbackCount == 0 ? '—' : '$helpful%',
         subtitle: t.get(
           'insights_helpful_subtitle',
           fallback: 'From feedback',
@@ -1191,7 +1191,7 @@ class _InsightsMetricWrap extends StatelessWidget {
           'insights_relief_title',
           fallback: 'Relief',
         ),
-        value: '$relief',
+        value: snapshot.feedbackCount == 0 ? '—' : '$relief',
         subtitle: t.get(
           'insights_relief_subtitle',
           fallback: 'Average score',
@@ -2686,7 +2686,7 @@ String _focusedRecoveryLine(InsightsSnapshot snapshot) {
   }
 
   final helpful = (snapshot.helpRate * 100).round();
-  if (helpful >= 75 && snapshot.recoveryMinutes > 0) {
+  if (snapshot.feedbackCount > 0 && helpful >= 75 && snapshot.recoveryMinutes > 0) {
     return '${snapshot.recoveryMinutes} minutes logged with strong helpful feedback.';
   }
 

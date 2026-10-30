@@ -299,87 +299,6 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
   }
 }
 
-class _ProgramRail extends StatelessWidget {
-  const _ProgramRail({
-    required this.programs,
-    required this.activeProgram,
-  });
-
-  final List<RecoveryProgramSummary> programs;
-  final RecoveryProgramDashboardProgress? activeProgram;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-    final hasActive = activeProgram != null && !activeProgram!.isCompleted;
-    final sorted = _sortedPrograms(programs, activeProgram);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionBlockHeader(
-          icon: Icons.route_rounded,
-          title: t.get('training_programs_title', fallback: 'Programs'),
-          subtitle: hasActive
-              ? t
-                  .get(
-                    'training_programs_active_subtitle',
-                    fallback:
-                        'Continue your active recovery journey — Mission {day} of {total}.',
-                  )
-                  .replaceAll('{day}', activeProgram!.currentDay.toString())
-                  .replaceAll('{total}', activeProgram!.durationDays.toString())
-              : t.get(
-                  'training_programs_subtitle',
-                  fallback: 'Guided therapy journeys for structured recovery.',
-                ),
-          actionLabel: t.get('common_view_all', fallback: 'View all'),
-          onAction: () => context.pushNamed('recovery-programs'),
-        ),
-        const SizedBox(height: 10),
-        if (sorted.isEmpty)
-          const _SkeletonBox(height: 160)
-        else
-          SizedBox(
-            height: hasActive ? 190 : 158,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: sorted.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
-              itemBuilder: (context, index) {
-                final program = sorted[index];
-                final isActive = activeProgram?.programId == program.id;
-                return SizedBox(
-                  width: isActive ? 300 : 238,
-                  child: _MiniProgramPoster(
-                    program: program,
-                    activeProgram: activeProgram,
-                    isActive: isActive,
-                  ),
-                );
-              },
-            ),
-          ),
-      ],
-    );
-  }
-
-  List<RecoveryProgramSummary> _sortedPrograms(
-    List<RecoveryProgramSummary> programs,
-    RecoveryProgramDashboardProgress? active,
-  ) {
-    final list = [...programs];
-    final activeId = active?.programId;
-    if (activeId != null) {
-      list.sort((a, b) {
-        if (a.id == activeId) return -1;
-        if (b.id == activeId) return 1;
-        return a.sortOrder.compareTo(b.sortOrder);
-      });
-    }
-    return list;
-  }
-}
 
 class _MiniProgramPoster extends StatelessWidget {
   const _MiniProgramPoster({
@@ -621,38 +540,6 @@ const List<SessionLibraryCategory> _visibleSessionCategories = [
   SessionLibraryCategory.wristsHands,
 ];
 
-class _CategoryRail extends StatelessWidget {
-  const _CategoryRail({
-    required this.selectedCategory,
-    required this.onChanged,
-  });
-
-  final SessionLibraryCategory selectedCategory;
-  final ValueChanged<SessionLibraryCategory> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 92,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.zero,
-        itemCount: _visibleSessionCategories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 4),
-        itemBuilder: (context, index) {
-          final category = _visibleSessionCategories[index];
-          return _CategoryStoryItem(
-            label: _categoryLabel(context, category),
-            imagePath: _categoryImagePath(category),
-            fallbackIcon: _categoryFallbackIcon(category),
-            selected: selectedCategory == category,
-            onTap: () => onChanged(category),
-          );
-        },
-      ),
-    );
-  }
-}
 
 class _CategoryStoryItem extends StatelessWidget {
   const _CategoryStoryItem({
@@ -1380,55 +1267,6 @@ class _BodySessionList extends StatelessWidget {
   }
 }
 
-class _SessionCardGrid extends StatelessWidget {
-  const _SessionCardGrid({
-    required this.sessions,
-    required this.accessSnapshot,
-  });
-
-  final List<SessionSummary> sessions;
-  final AccessSnapshot accessSnapshot;
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final columns = _gridColumnsForWidth(width);
-
-    return GridView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: sessions.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: columns,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        mainAxisExtent: _gridMainAxisExtentForWidth(width),
-      ),
-      itemBuilder: (context, index) {
-        return _SessionTile(
-          session: sessions[index],
-          accessSnapshot: accessSnapshot,
-        );
-      },
-    );
-  }
-
-  int _gridColumnsForWidth(double width) {
-    if (width < 380) return 1;
-    if (width < 720) return 2;
-    if (width < 1100) return 3;
-    return 4;
-  }
-
-  double _gridMainAxisExtentForWidth(double width) {
-    if (width < 380) return 326;
-    if (width < 560) return 238;
-    if (width < 720) return 246;
-    if (width < 900) return 258;
-    if (width < 1100) return 274;
-    return 292;
-  }
-}
 
 class _SessionTile extends StatelessWidget {
   const _SessionTile({
@@ -1912,53 +1750,6 @@ class _SortButton extends StatelessWidget {
   }
 }
 
-class _CategoryChip extends StatelessWidget {
-  const _CategoryChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(999),
-      child: Ink(
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(999),
-          color: selected
-              ? colors.primary
-              : isDark
-                  ? const Color(0xFF101827)
-                  : Colors.white,
-          border: Border.all(
-            color: selected
-                ? colors.primary
-                : isDark
-                    ? const Color(0xFF26324A)
-                    : const Color(0xFFDCE5F0),
-          ),
-        ),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: selected ? colors.onPrimary : colors.onSurface,
-                fontWeight: FontWeight.w900,
-              ),
-        ),
-      ),
-    );
-  }
-}
 
 class _MessageCard extends StatelessWidget {
   const _MessageCard({

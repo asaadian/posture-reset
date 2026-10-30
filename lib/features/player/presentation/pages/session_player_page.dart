@@ -375,6 +375,8 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
   final _guideControlsKey = GlobalKey();
   final FlutterTts _voiceTts = FlutterTts();
   String? _spokenStepVoiceKey;
+  String? _pendingStepVoiceKey;
+  Timer? _voiceStartTimer;
   bool _voiceGuidanceEnabled = true;
 
 
@@ -414,17 +416,44 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
 
     final speechLanguageCode = useGerman ? 'de' : 'en';
     final speechKey = '${step.id}:$speechLanguageCode';
-    if (!force && _spokenStepVoiceKey == speechKey) return;
+    if (!force &&
+        (_spokenStepVoiceKey == speechKey ||
+            _pendingStepVoiceKey == speechKey)) return;
 
-    _spokenStepVoiceKey = speechKey;
-    await _voiceTts.stop();
-    await _voiceTts.setLanguage(useGerman ? 'de-DE' : 'en-US');
-    await _voiceTts.speak(script);
+    _voiceStartTimer?.cancel();
+    _pendingStepVoiceKey = speechKey;
+    // Give the video player time to buffer before Android TTS starts.
+    // Cancel stale speech when the user changes step, pauses, or exits.
+    _voiceStartTimer = Timer(const Duration(seconds: 3), () async {
+      if (!mounted || !_voiceGuidanceEnabled ||
+          _pendingStepVoiceKey != speechKey) return;
+      final current = ref.read(sessionPlayerControllerProvider(_playerArgs)).state;
+      if (current.isPaused || current.isCompleted ||
+          current.currentStep?.id != step.id) {
+        _pendingStepVoiceKey = null;
+        return;
+      }
+      _pendingStepVoiceKey = null;
+      _spokenStepVoiceKey = speechKey;
+      await _voiceTts.stop();
+      if (!mounted || !_voiceGuidanceEnabled ||
+          current.currentStep?.id != step.id) return;
+      await _voiceTts.setLanguage(useGerman ? 'de-DE' : 'en-US');
+      if (!mounted || !_voiceGuidanceEnabled) return;
+      await _voiceTts.speak(script);
+    });
+  }
+
+  void _cancelPendingVoice() {
+    _voiceStartTimer?.cancel();
+    _voiceStartTimer = null;
+    _pendingStepVoiceKey = null;
   }
 
   Future<void> _toggleVoiceGuidance(SessionPlayerState state) async {
     setState(() => _voiceGuidanceEnabled = !_voiceGuidanceEnabled);
     if (!_voiceGuidanceEnabled) {
+      _cancelPendingVoice();
       await _voiceTts.stop();
       return;
     }
@@ -433,28 +462,33 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
 
   Future<void> _handlePauseResume(SessionPlayerController controller, SessionPlayerState state) async {
     if (!state.isPaused) {
-      await _voiceTts.stop();
+      _cancelPendingVoice();
+    await _voiceTts.stop();
     }
     controller.togglePause();
   }
 
   Future<void> _handlePrevious(SessionPlayerController controller) async {
+    _cancelPendingVoice();
     await _voiceTts.stop();
     controller.previousStep();
   }
 
   Future<void> _handleNext(SessionPlayerController controller) async {
+    _cancelPendingVoice();
     await _voiceTts.stop();
     controller.nextStep();
   }
 
   Future<void> _handleReplay(SessionPlayerController controller) async {
+    _cancelPendingVoice();
     await _voiceTts.stop();
     controller.replayStep();
   }
 
   @override
   void dispose() {
+    _cancelPendingVoice();
     unawaited(_voiceTts.stop());
     super.dispose();
   }

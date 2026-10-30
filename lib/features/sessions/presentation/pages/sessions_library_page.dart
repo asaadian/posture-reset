@@ -155,13 +155,6 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
     );
   }
 
-  void _resetFilters() {
-    setState(() {
-      _searchQuery = '';
-      _selectedCategory = SessionLibraryCategory.all;
-      _selectedSort = SessionLibrarySort.recommended;
-    });
-  }
 
   List<SessionSummary> _visibleSessions(List<SessionSummary> sessions) {
     final query = _searchQuery.trim().toLowerCase();
@@ -430,35 +423,7 @@ const List<SessionLibraryCategory> _visibleSessionCategories = [
 
 
 
-String _categoryImagePath(SessionLibraryCategory category) {
-  switch (category) {
-    case SessionLibraryCategory.all:
-      return 'assets/images/filters/all.png';
-    case SessionLibraryCategory.neckShoulders:
-      return 'assets/images/filters/neck_shoulders.png';
-    case SessionLibraryCategory.upperBack:
-      return 'assets/images/filters/upper_back.png';
-    case SessionLibraryCategory.lowerBackHips:
-      return 'assets/images/filters/lower_back_hips.png';
-    case SessionLibraryCategory.wristsHands:
-      return 'assets/images/filters/wrists_hands.png';
-  }
-}
 
-IconData _categoryFallbackIcon(SessionLibraryCategory category) {
-  switch (category) {
-    case SessionLibraryCategory.all:
-      return Icons.apps_rounded;
-    case SessionLibraryCategory.neckShoulders:
-      return Icons.accessibility_new_rounded;
-    case SessionLibraryCategory.upperBack:
-      return Icons.airline_seat_recline_normal_rounded;
-    case SessionLibraryCategory.lowerBackHips:
-      return Icons.self_improvement_rounded;
-    case SessionLibraryCategory.wristsHands:
-      return Icons.pan_tool_alt_rounded;
-  }
-}
 
 /// Goal-first browsing: show meaningful situations rather than a long grid.
 /// Each row is derived from current Supabase session metadata; empty groups
@@ -1532,21 +1497,6 @@ List<Color> _programGradient(String programId) {
 }
 
 
-String _categoryLabel(BuildContext context, SessionLibraryCategory category) {
-  final t = AppText.of(context);
-  switch (category) {
-    case SessionLibraryCategory.all:
-      return t.get('sessions_category_all', fallback: 'All');
-    case SessionLibraryCategory.neckShoulders:
-      return t.get('sessions_category_neck_shoulders', fallback: 'Neck & shoulders');
-    case SessionLibraryCategory.upperBack:
-      return t.get('sessions_category_upper_back', fallback: 'Upper back');
-    case SessionLibraryCategory.lowerBackHips:
-      return t.get('sessions_category_lower_back_hips', fallback: 'Lower back & hips');
-    case SessionLibraryCategory.wristsHands:
-      return t.get('sessions_category_wrists_hands', fallback: 'Wrists & hands');
-  }
-}
 
 String _sortLabel(BuildContext context, SessionLibrarySort sort) {
   final t = AppText.of(context);

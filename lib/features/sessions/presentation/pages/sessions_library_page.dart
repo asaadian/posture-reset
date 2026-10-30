@@ -11,7 +11,6 @@ import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../access/application/access_providers.dart';
 import '../../../access/domain/access_models.dart';
 import '../../../auth/application/auth_providers.dart';
-import '../../../programs/application/recovery_program_providers.dart';
 import '../../../programs/domain/recovery_program_models.dart';
 import '../../application/sessions_providers.dart';
 import '../../domain/session_models.dart';
@@ -28,7 +27,6 @@ class SessionsLibraryPage extends ConsumerStatefulWidget {
 }
 
 class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
-  final GlobalKey _trainingFiltersGuideKey = GlobalKey(debugLabel: 'training_filters_guide');
   final GlobalKey _trainingSessionsGuideKey = GlobalKey(debugLabel: 'training_sessions_guide');
 
   String _searchQuery = '';

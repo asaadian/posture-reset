@@ -269,10 +269,32 @@ class DashboardPage extends ConsumerWidget {
                           ? null
                           : recommendedSessions.first,
                     ),
-                    error: (_, __) => _DashboardNewUserHome(
-                      programs: programs,
-                      sessions: recommendedSessions.take(3).toList(growable: false),
-                      showPremium: !accessSnapshot.hasCoreAccess,
+                    error: (_, __) => Card(
+                      margin: EdgeInsets.zero,
+                      child: Padding(
+                        padding: const EdgeInsets.all(18),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              t.get('dashboard_load_error_title',
+                                  fallback: 'Could not load your activity'),
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              t.get('dashboard_load_error_body',
+                                  fallback: 'Your workout history is safe. Check your connection and retry.'),
+                            ),
+                            const SizedBox(height: 12),
+                            FilledButton.icon(
+                              onPressed: () => ref.invalidate(dashboardControllerProvider),
+                              icon: const Icon(Icons.refresh_rounded),
+                              label: Text(t.commonRetry),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     orElse: () => _DashboardPrimaryAction(
                       dashboardAsync: dashboardAsync,

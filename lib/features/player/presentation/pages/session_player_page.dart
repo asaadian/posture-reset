@@ -434,7 +434,9 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
         return;
       }
       if (!mounted || !_voiceGuidanceEnabled ||
-          _pendingStepVoiceKey != speechKey) return;
+          _pendingStepVoiceKey != speechKey) {
+        return;
+      }
       final current = ref.read(sessionPlayerControllerProvider(_playerArgs)).state;
       if (current.isPaused || current.isCompleted ||
           current.currentStep?.id != step.id) {
@@ -445,9 +447,13 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
       _spokenStepVoiceKey = speechKey;
       await _voiceTts.stop();
       if (!mounted || !_voiceGuidanceEnabled ||
-          current.currentStep?.id != step.id) return;
+          current.currentStep?.id != step.id) {
+        return;
+      }
       await _voiceTts.setLanguage(useGerman ? 'de-DE' : 'en-US');
-      if (!mounted || !_voiceGuidanceEnabled) return;
+      if (!mounted || !_voiceGuidanceEnabled) {
+        return;
+      }
       await _voiceTts.speak(script);
     });
   }
@@ -480,7 +486,7 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
   Future<void> _handlePauseResume(SessionPlayerController controller, SessionPlayerState state) async {
     if (!state.isPaused) {
       _cancelPendingVoice();
-    await _voiceTts.stop();
+      await _voiceTts.stop();
     }
     controller.togglePause();
   }

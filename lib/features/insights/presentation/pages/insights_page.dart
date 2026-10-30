@@ -1156,10 +1156,7 @@ class _InsightsMetricWrap extends StatelessWidget {
           fallback: 'Minutes',
         ),
         value: '${snapshot.recoveryMinutes}',
-        subtitle: t.get(
-          'insights_summary_minutes_subtitle',
-          fallback: 'Completed',
-        ),
+        subtitle: 'Logged time',
         icon: Icons.timer_outlined,
         accent: colors.secondary,
       ),

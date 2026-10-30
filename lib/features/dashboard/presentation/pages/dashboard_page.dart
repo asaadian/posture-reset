@@ -1854,20 +1854,6 @@ List<Color> _programGradient(String programId) {
   }
 }
 
-) {
-  final profileName = profile?.displayName?.trim();
-  if (profileName != null && profileName.isNotEmpty) return profileName;
-
-  final cleanEmail = email?.trim() ?? '';
-  if (cleanEmail.contains('@')) return cleanEmail.split('@').first;
-
-  return AppText.get(
-    context,
-    key: 'profile_account_guest_name',
-    fallback: 'Guest',
-  );
-}
-
 String _intensityLabel(BuildContext context, SessionIntensity intensity) {
   final t = AppText.of(context);
 

@@ -2512,35 +2512,7 @@ class _SessionHeroSpec {
   final IconData metaIcon;
 }
 
-_SessionHeroSpec _resolveSessionHeroSpec(String coverVariant, ColorScheme colors) {
-  switch (coverVariant) {
-    case 'neck':
-      return const _SessionHeroSpec(metaIcon: Icons.accessibility_new_rounded);
-    case 'shoulder':
-      return const _SessionHeroSpec(metaIcon: Icons.fitness_center_rounded);
-    case 'upper_back':
-      return const _SessionHeroSpec(metaIcon: Icons.straighten_rounded);
-    case 'lower_back':
-      return const _SessionHeroSpec(metaIcon: Icons.air_rounded);
-    default:
-      return const _SessionHeroSpec(metaIcon: Icons.auto_awesome_rounded);
-  }
-}
 
-String _equipmentSummaryLabel(SessionSummary session) {
-  final normalized = session.requiredEquipment
-      .map(_equipmentCodeName)
-      .where((item) => item.isNotEmpty && item != 'none')
-      .toSet()
-      .toList();
-
-  if (normalized.isEmpty) return 'No equipment';
-
-  final names = normalized.map(_equipmentDisplayName).toList();
-  if (names.length == 1) return names.first;
-
-  return '${names.first} +${names.length - 1}';
-}
 
 String _equipmentCodeName(Object? equipment) {
   if (equipment == null) return '';
@@ -2583,21 +2555,6 @@ String _equipmentDisplayName(String equipmentCode) {
       return 'Lumbar roll';
     default:
       return 'Equipment';
-  }
-}
-
-String _intensityDisplayLabel(String intensityName) {
-  switch (intensityName) {
-    case 'gentle':
-      return 'Gentle';
-    case 'light':
-      return 'Light';
-    case 'moderate':
-      return 'Moderate';
-    case 'strong':
-      return 'Strong';
-    default:
-      return 'Balanced';
   }
 }
 

@@ -308,6 +308,12 @@ class _PlayerPostSessionFeedbackSheetState
 
       if (!mounted) return;
       navigator.pop(true);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Feedback could not be saved. Please try again.')),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);

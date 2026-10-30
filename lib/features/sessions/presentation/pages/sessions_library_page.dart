@@ -1108,7 +1108,7 @@ class _BodyFocusNavigation extends StatelessWidget {
       (id: 'neck', label: 'Neck & shoulders', image: 'assets/images/filters/neck_shoulders.png', icon: Icons.self_improvement_rounded),
       (id: 'back', label: 'Upper back', image: 'assets/images/filters/upper_back.png', icon: Icons.accessibility_new_rounded),
       (id: 'lower_back', label: 'Lower back', image: 'assets/images/filters/lower_back.png', icon: Icons.airline_seat_recline_normal_rounded),
-      (id: 'hips', label: 'Hips & legs', image: 'assets/images/filters/lower_back_hips.png', icon: Icons.directions_walk_rounded),
+      (id: 'hips', label: 'Hips & legs', image: 'assets/images/filters/hips.png', icon: Icons.directions_walk_rounded),
       (id: 'hands', label: 'Hands & wrists', image: 'assets/images/filters/wrists_hands.png', icon: Icons.back_hand_outlined),
     ];
     final colors = Theme.of(context).colorScheme;

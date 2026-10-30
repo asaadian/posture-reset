@@ -9,6 +9,8 @@ import '../../domain/quick_fix_events_repository.dart';
 import '../../domain/quick_fix_models.dart';
 import '../../domain/quick_fix_repository.dart';
 import '../../domain/quick_fix_state.dart';
+import '../../../access/application/access_providers.dart';
+import '../../../access/domain/access_models.dart';
 import '../../../profile/application/profile_providers.dart';
 import '../../../profile/domain/profile_models.dart';
 import '../../../sessions/application/sessions_providers.dart';
@@ -107,7 +109,20 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
     bool trackRecommendation = false,
   }) async {
     final sessions = await _sessions();
-    final result = _engine.recommend(state: current, sessions: sessions);
+    // Free users should receive a usable match first, rather than a paywall.
+    // Keep catalog entitlements authoritative; do not pretend locked sessions
+    // are free on the client.
+    final access = await ref.read(accessSnapshotProvider.future);
+    final usableSessions = access.hasCoreAccess
+        ? sessions
+        : sessions.where((session) => session.accessTier == AccessTier.free).toList();
+    final freeResult = _engine.recommend(
+      state: current,
+      sessions: usableSessions,
+    );
+    final result = freeResult.primary != null
+        ? freeResult
+        : _engine.recommend(state: current, sessions: sessions);
 
     var next = current.copyWith(
       primaryRecommendation: result.primary,

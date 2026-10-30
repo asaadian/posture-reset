@@ -32,66 +32,76 @@ class SessionHistoryCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(26),
-        onTap: () {
-          context.pushNamed(
-            'session-detail',
-            pathParameters: {'id': item.session.id},
-          );
-        },
+        borderRadius: BorderRadius.circular(28),
+        onTap: () => context.pushNamed(
+          'session-detail',
+          pathParameters: {'id': item.session.id},
+        ),
         child: Ink(
-          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(26),
-            gradient: LinearGradient(
-              colors: isDark
-                  ? [
-                      statusColor.withValues(alpha: 0.08),
-                      colors.surfaceContainerHigh.withValues(alpha: 0.78),
-                      colors.surface.withValues(alpha: 0.96),
-                    ]
-                  : [
-                      statusColor.withValues(alpha: 0.04),
-                      colors.surface.withValues(alpha: 0.98),
-                      colors.surfaceContainerLow.withValues(alpha: 0.90),
-                    ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(28),
             border: Border.all(
-              color: colors.outlineVariant.withValues(
-                alpha: isDark ? 0.74 : 0.58,
-              ),
+              color: colors.outlineVariant.withValues(alpha: isDark ? 0.42 : 0.65),
             ),
             boxShadow: [
               BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.14)
-                    : statusColor.withValues(alpha: 0.045),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
+                color: Colors.black.withValues(alpha: isDark ? 0.16 : 0.045),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
-          child: Row(
-            children: [
-              _HistoryVisual(sessionId: item.session.id),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _HistoryCopy(
-                  title: title,
-                  meta: _meta(context),
-                  statusLabel: _statusLabel(context),
-                  statusColor: statusColor,
-                  statusIcon: _statusIcon(),
-                  resumable: item.isResumable,
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _HistoryVisual(sessionId: item.session.id),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: _HistoryCopy(
+                        title: title,
+                        meta: _meta(context),
+                        statusLabel: _statusLabel(context),
+                        statusColor: statusColor,
+                        statusIcon: _statusIcon(),
+                        resumable: item.isResumable,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              if (item.isResumable) ...[
-                const SizedBox(width: 10),
-                _ResumeIconButton(item: item),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+                  decoration: BoxDecoration(
+                    color: colors.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(17),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.history_rounded, size: 16, color: colors.onSurfaceVariant),
+                      const SizedBox(width: 7),
+                      Expanded(
+                        child: Text(
+                          _meta(context),
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: colors.onSurfaceVariant,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      if (item.isResumable)
+                        _ResumeIconButton(item: item)
+                      else
+                        Icon(Icons.arrow_forward_rounded, size: 20, color: colors.primary),
+                    ],
+                  ),
+                ),
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -158,11 +168,11 @@ class _HistoryVisual extends StatelessWidget {
   Widget build(BuildContext context) {
     return SessionVisualStage(
       sessionId: sessionId,
-      width: 78,
-      height: 90,
+      width: 108,
+      height: 114,
       compact: true,
       padding: const EdgeInsets.fromLTRB(6, 7, 6, 4),
-      borderRadius: 21,
+      borderRadius: 19,
     );
   }
 }
@@ -217,22 +227,7 @@ class _HistoryCopy extends StatelessWidget {
             height: 1.04,
           ),
         ),
-        const SizedBox(height: 5),
-        Row(
-          children: [
-            Icon(statusIcon, size: 16, color: statusColor),
-            const SizedBox(width: 5),
-            Expanded(
-              child: Text(
-                meta,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colors.onSurfaceVariant,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
-        ),
+
       ],
     );
   }

@@ -1104,12 +1104,12 @@ class _BodyFocusNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const options = <({String id, String label, IconData icon})>[
-      (id: 'neck', label: 'Neck & shoulders', icon: Icons.self_improvement_rounded),
-      (id: 'back', label: 'Upper back', icon: Icons.accessibility_new_rounded),
-      (id: 'lower_back', label: 'Lower back', icon: Icons.airline_seat_recline_normal_rounded),
-      (id: 'hips', label: 'Hips & legs', icon: Icons.directions_walk_rounded),
-      (id: 'hands', label: 'Hands & wrists', icon: Icons.back_hand_outlined),
+    const options = <({String id, String label, String image, IconData icon})>[
+      (id: 'neck', label: 'Neck & shoulders', image: 'assets/images/filters/neck_shoulders.png', icon: Icons.self_improvement_rounded),
+      (id: 'back', label: 'Upper back', image: 'assets/images/filters/upper_back.png', icon: Icons.accessibility_new_rounded),
+      (id: 'lower_back', label: 'Lower back', image: 'assets/images/filters/lower_back_hips.png', icon: Icons.airline_seat_recline_normal_rounded),
+      (id: 'hips', label: 'Hips & legs', image: 'assets/images/filters/lower_back_hips.png', icon: Icons.directions_walk_rounded),
+      (id: 'hands', label: 'Hands & wrists', image: 'assets/images/filters/wrists_hands.png', icon: Icons.back_hand_outlined),
     ];
     final colors = Theme.of(context).colorScheme;
     return Column(
@@ -1139,7 +1139,20 @@ class _BodyFocusNavigation extends StatelessWidget {
                           shape: BoxShape.circle,
                           color: colors.primaryContainer,
                         ),
-                        child: Icon(option.icon, color: colors.onPrimaryContainer, size: 26),
+                        padding: const EdgeInsets.all(3),
+                        child: ClipOval(
+                          child: Image.asset(
+                            option.image,
+                            fit: BoxFit.cover,
+                            width: 50,
+                            height: 50,
+                            errorBuilder: (_, __, ___) => Icon(
+                              option.icon,
+                              color: colors.onPrimaryContainer,
+                              size: 26,
+                            ),
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 7),
                       Text(option.label, maxLines: 2, textAlign: TextAlign.center,

@@ -319,11 +319,21 @@ class _NotificationsSection extends ConsumerWidget {
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
+                              duration: const Duration(seconds: 8),
                               content: Text(
                                 t.get(
                                   'notification_permission_denied',
-                                  fallback: 'Notification permission was not granted.',
+                                  fallback: 'Allow notifications in your phone settings.',
                                 ),
+                              ),
+                              action: SnackBarAction(
+                                label: t.get(
+                                  'notification_open_phone_settings',
+                                  fallback: 'Open settings',
+                                ),
+                                onPressed: () {
+                                  service.openSystemNotificationSettings();
+                                },
                               ),
                             ),
                           );
@@ -344,6 +354,35 @@ class _NotificationsSection extends ConsumerWidget {
                         .cancelForCurrentUser();
                   },
                 ),
+                if (Theme.of(context).platform == TargetPlatform.android) ...[
+                  const SizedBox(height: 8),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.settings_outlined),
+                    title: Text(t.get(
+                      'notification_open_phone_settings',
+                      fallback: 'Android notification settings',
+                    )),
+                    subtitle: Text(t.get(
+                      'notification_phone_settings_hint',
+                      fallback: 'Check that notifications are allowed for Desk Workout on your phone.',
+                    )),
+                    trailing: const Icon(Icons.open_in_new_rounded),
+                    onTap: () async {
+                      final opened = await ref
+                          .read(localNotificationServiceProvider)
+                          .openSystemNotificationSettings();
+                      if (!opened && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(t.get(
+                            'notification_phone_settings_error',
+                            fallback: 'Could not open Android notification settings.',
+                          ))),
+                        );
+                      }
+                    },
+                  ),
+                ],
                 if (prefs.notificationsEnabled) ...[
                   const SizedBox(height: 10),
                   _SettingLabel(

@@ -1,6 +1,7 @@
 // lib/features/player/application/session_continuity_providers.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../sessions/application/sessions_providers.dart';
 import '../../../core/supabase/supabase_providers.dart';

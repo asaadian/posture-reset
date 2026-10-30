@@ -988,16 +988,16 @@ class _PopularSessionsShowcaseState extends State<_PopularSessionsShowcase> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('MOST CHOSEN', style: TextStyle(
+          const Text('CURATED FOR YOU', style: TextStyle(
             color: Color(0xFF78E1C6), fontSize: 11,
             letterSpacing: 1.8, fontWeight: FontWeight.w800,
           )),
           const SizedBox(height: 7),
-          const Text('Top 10 sessions', style: TextStyle(
+          const Text('10 featured sessions', style: TextStyle(
             color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800,
           )),
           const SizedBox(height: 5),
-          const Text('Popular picks from real session starts',
+          const Text('A handpicked mix of desk-friendly movement sessions',
             style: TextStyle(color: Color(0xFFD5E2E7), fontSize: 12)),
           const SizedBox(height: 16),
           AnimatedSize(

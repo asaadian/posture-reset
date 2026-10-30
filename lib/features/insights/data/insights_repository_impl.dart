@@ -348,8 +348,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
 
   List<InsightsSeriesPoint> _emptySeries(int days) {
     final now = DateTime.now();
-    final start = DateTime(now.year, now.month, now.day)
-        .subtract(Duration(days: days - 1));
+    final start = DateTime(now.year, now.month, now.day - days + 1);
 
     return List.generate(days, (index) {
       final date = DateTime(start.year, start.month, start.day + index);
@@ -363,8 +362,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
 
   List<InsightsHeatmapCell> _emptyHeatmap() {
     final now = DateTime.now();
-    final start = DateTime(now.year, now.month, now.day)
-        .subtract(const Duration(days: 34));
+    final start = DateTime(now.year, now.month, now.day - 34);
 
     return List.generate(35, (index) {
       final date = DateTime(start.year, start.month, start.day + index);
@@ -1100,6 +1098,9 @@ class InsightsRepositoryImpl implements InsightsRepository {
     final activeSet = activeDays.toSet();
     var streak = 0;
     var cursor = DateTime(now.year, now.month, now.day);
+    if (!activeSet.contains(cursor)) {
+      cursor = DateTime(cursor.year, cursor.month, cursor.day - 1);
+    }
 
     while (activeSet.contains(cursor)) {
       streak += 1;

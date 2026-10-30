@@ -34,7 +34,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
     } catch (error, stackTrace) {
       debugPrint('InsightsRepository.$label failed: $error');
       debugPrintStack(stackTrace: stackTrace);
-      return const <Map<String, dynamic>>[];
+      Error.throwWithStackTrace(error, stackTrace);
     }
   }
 
@@ -64,14 +64,14 @@ class InsightsRepositoryImpl implements InsightsRepository {
       );
     }
 
-    final now = DateTime.now().toUtc();
-    final rangeStart = DateTime.utc(
+    final now = DateTime.now();
+    final rangeStart = DateTime(
       now.year,
       now.month,
       now.day,
     ).subtract(Duration(days: range.days - 1));
 
-    final heatmapStart = DateTime.utc(
+    final heatmapStart = DateTime(
       now.year,
       now.month,
       now.day,
@@ -85,7 +85,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
             'id, user_id, session_id, status, total_elapsed_seconds, created_at, completed_at, abandoned_at, entry_source',
           )
           .eq('user_id', user.id)
-          .gte('created_at', heatmapStart.toIso8601String())
+          .gte('created_at', heatmapStart.toUtc().toIso8601String())
           .order('created_at', ascending: true),
     );
 
@@ -97,7 +97,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
             'run_id, user_id, session_id, helped, tension_delta, pain_delta, energy_delta, perceived_fit, would_repeat, completion_status, entry_source, created_at',
           )
           .eq('user_id', user.id)
-          .gte('created_at', heatmapStart.toIso8601String())
+          .gte('created_at', heatmapStart.toUtc().toIso8601String())
           .order('created_at', ascending: true),
     );
 
@@ -109,7 +109,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
             'run_id, user_id, session_id, snapshot_kind, energy_level, stress_level, focus_level, pain_area_codes, intent_code, entry_source, created_at',
           )
           .eq('user_id', user.id)
-          .gte('created_at', heatmapStart.toIso8601String())
+          .gte('created_at', heatmapStart.toUtc().toIso8601String())
           .order('created_at', ascending: true),
     );
 
@@ -121,7 +121,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
             'user_id, recommended_session_id, action_type, created_at',
           )
           .eq('user_id', user.id)
-          .gte('created_at', heatmapStart.toIso8601String())
+          .gte('created_at', heatmapStart.toUtc().toIso8601String())
           .order('created_at', ascending: true),
     );
 
@@ -133,7 +133,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
             'user_id, run_id, session_id, step_id, event_type, step_index, total_elapsed_seconds, created_at',
           )
           .eq('user_id', user.id)
-          .gte('created_at', heatmapStart.toIso8601String())
+          .gte('created_at', heatmapStart.toUtc().toIso8601String())
           .order('created_at', ascending: true),
     );
 
@@ -169,27 +169,27 @@ class InsightsRepositoryImpl implements InsightsRepository {
     };
 
     final runsInRange = runsRows.where((row) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       return createdAt != null && !createdAt.isBefore(rangeStart);
     }).toList(growable: false);
 
     final feedbackInRange = feedbackRows.where((row) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       return createdAt != null && !createdAt.isBefore(rangeStart);
     }).toList(growable: false);
 
     final snapshotsInRange = snapshotRows.where((row) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       return createdAt != null && !createdAt.isBefore(rangeStart);
     }).toList(growable: false);
 
     final quickFixInRange = quickFixRows.where((row) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       return createdAt != null && !createdAt.isBefore(rangeStart);
     }).toList(growable: false);
 
     final stepEventsInRange = stepEventRows.where((row) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       return createdAt != null && !createdAt.isBefore(rangeStart);
     }).toList(growable: false);
 
@@ -209,8 +209,8 @@ class InsightsRepositoryImpl implements InsightsRepository {
 
     final recoveryMinutes = runsInRange.fold<int>(
       0,
-      (sum, row) => sum + (_asInt(row['total_elapsed_seconds']) ~/ 60),
-    );
+      (sum, row) => sum + _asInt(row['total_elapsed_seconds']),
+    ) ~/ 60;
 
     final quickFixStarts = quickFixInRange.where((row) {
       return (row['action_type'] as String?) == 'startSession';
@@ -254,7 +254,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
 
     final activeDays = recoveryMinutesSeries
         .where((point) => point.value > 0)
-        .map((point) => DateTime.utc(point.date.year, point.date.month, point.date.day))
+        .map((point) => DateTime(point.date.year, point.date.month, point.date.day))
         .toSet()
         .toList()
       ..sort();
@@ -354,7 +354,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
 
   List<InsightsSeriesPoint> _emptySeries(int days) {
     final now = DateTime.now().toUtc();
-    final start = DateTime.utc(now.year, now.month, now.day)
+    final start = DateTime(now.year, now.month, now.day)
         .subtract(Duration(days: days - 1));
 
     return List.generate(days, (index) {
@@ -390,7 +390,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
     final buckets = <DateTime, int>{};
 
     for (var i = 0; i < range.days; i++) {
-      final day = DateTime.utc(
+      final day = DateTime(
         rangeStart.year,
         rangeStart.month,
         rangeStart.day + i,
@@ -399,14 +399,14 @@ class InsightsRepositoryImpl implements InsightsRepository {
     }
 
     for (final row in runsRows) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(rangeStart)) continue;
 
-      final day = DateTime.utc(createdAt.year, createdAt.month, createdAt.day);
+      final day = DateTime(createdAt.year, createdAt.month, createdAt.day);
       buckets.update(
         day,
-        (value) => value + (_asInt(row['total_elapsed_seconds']) ~/ 60),
-        ifAbsent: () => (_asInt(row['total_elapsed_seconds']) ~/ 60),
+        (value) => value + _asInt(row['total_elapsed_seconds']),
+        ifAbsent: () => _asInt(row['total_elapsed_seconds']),
       );
     }
 
@@ -414,7 +414,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
       return InsightsSeriesPoint(
         date: entry.key,
         label: _weekdayLabel(entry.key.weekday),
-        value: entry.value.toDouble(),
+        value: (entry.value ~/ 60).toDouble(),
       );
     }).toList(growable: false);
   }
@@ -427,7 +427,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
     final buckets = <DateTime, List<double>>{};
 
     for (var i = 0; i < range.days; i++) {
-      final day = DateTime.utc(
+      final day = DateTime(
         rangeStart.year,
         rangeStart.month,
         rangeStart.day + i,
@@ -436,10 +436,10 @@ class InsightsRepositoryImpl implements InsightsRepository {
     }
 
     for (final row in feedbackRows) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(rangeStart)) continue;
 
-      final day = DateTime.utc(createdAt.year, createdAt.month, createdAt.day);
+      final day = DateTime(createdAt.year, createdAt.month, createdAt.day);
       buckets.putIfAbsent(day, () => <double>[]).add(_feedbackScore(row));
     }
 
@@ -464,7 +464,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
     final dailyMinutes = <DateTime, int>{};
 
     for (var i = 0; i < 35; i++) {
-      final day = DateTime.utc(
+      final day = DateTime(
         heatmapStart.year,
         heatmapStart.month,
         heatmapStart.day + i,
@@ -473,14 +473,14 @@ class InsightsRepositoryImpl implements InsightsRepository {
     }
 
     for (final row in runsRows) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(heatmapStart)) continue;
 
-      final day = DateTime.utc(createdAt.year, createdAt.month, createdAt.day);
+      final day = DateTime(createdAt.year, createdAt.month, createdAt.day);
       dailyMinutes.update(
         day,
-        (value) => value + (_asInt(row['total_elapsed_seconds']) ~/ 60),
-        ifAbsent: () => (_asInt(row['total_elapsed_seconds']) ~/ 60),
+        (value) => value + _asInt(row['total_elapsed_seconds']),
+        ifAbsent: () => _asInt(row['total_elapsed_seconds']),
       );
     }
 
@@ -490,7 +490,7 @@ class InsightsRepositoryImpl implements InsightsRepository {
       final intensity = maxValue <= 0 ? 0.0 : (entry.value / maxValue);
       return InsightsHeatmapCell(
         date: entry.key,
-        minutes: entry.value,
+        minutes: entry.value ~/ 60,
         intensity: intensity.clamp(0.0, 1.0),
       );
     }).toList(growable: false);
@@ -1075,11 +1075,11 @@ class InsightsRepositoryImpl implements InsightsRepository {
 
     final activeDays = <DateTime>{};
     for (final row in runsRows) {
-      final createdAt = _parseDate(row['created_at']);
+      final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(rangeStart)) continue;
 
       activeDays.add(
-        DateTime.utc(createdAt.year, createdAt.month, createdAt.day),
+        DateTime(createdAt.year, createdAt.month, createdAt.day),
       );
     }
 

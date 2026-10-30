@@ -27,10 +27,9 @@ final completedSessionCountProvider = FutureProvider<int>((ref) async {
 
   final response = await client
       .from('session_runs')
-      .select('id')
+      .select('id', const FetchOptions(count: CountOption.exact))
       .eq('user_id', user.id)
-      .eq('status', 'completed')
-      .count(CountOption.exact);
+      .eq('status', 'completed');
   return response.count ?? 0;
 });
 

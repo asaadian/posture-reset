@@ -241,6 +241,8 @@ class DashboardPage extends ConsumerWidget {
                           ),
                           const SizedBox(height: 16),
                           _RecoveryStatusStrip(snapshot: snapshot),
+                          const SizedBox(height: 16),
+                          _WeeklyGoalCard(completed: snapshot.completedSessionsThisWeek),
                           if (recommendedSessions.isNotEmpty) ...[
                             const SizedBox(height: 16),
                             _DashboardVisualSessions(
@@ -1308,6 +1310,70 @@ class _DashboardSnapshotBlock extends StatelessWidget {
 
         return _RecoveryStatusStrip(snapshot: snapshot);
       },
+    );
+  }
+}
+
+class _WeeklyGoalCard extends StatelessWidget {
+  const _WeeklyGoalCard({required this.completed});
+
+  final int completed;
+  static const int target = 3;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final progress = (completed / target).clamp(0.0, 1.0);
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(26),
+          topRight: Radius.circular(14),
+          bottomLeft: Radius.circular(14),
+          bottomRight: Radius.circular(26),
+        ),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF142943), Color(0xFF175368), Color(0xFF14665E)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            const Icon(Icons.track_changes_rounded, color: Color(0xFF85DFC8)),
+            const SizedBox(width: 9),
+            const Expanded(child: Text(
+              'Weekly goal',
+              style: TextStyle(color: Colors.white, fontSize: 17,
+                fontWeight: FontWeight.w800),
+            )),
+            Text('$completed / $target', style: const TextStyle(
+              color: Color(0xFF85DFC8), fontSize: 16,
+              fontWeight: FontWeight.w800,
+            )),
+          ]),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(99),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 9,
+              backgroundColor: Colors.white.withValues(alpha: 0.15),
+              color: const Color(0xFF85DFC8),
+            ),
+          ),
+          const SizedBox(height: 9),
+          Text(
+            completed >= target
+                ? 'Goal reached. Keep your routine going.'
+                : '${target - completed} more ${target - completed == 1 ? 'session' : 'sessions'} to reach your goal this week.',
+            style: const TextStyle(color: Color(0xFFD3E8EB), fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 }

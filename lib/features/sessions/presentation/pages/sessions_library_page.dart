@@ -1304,59 +1304,7 @@ class _SessionOpenButton extends StatelessWidget {
 
 
 
-class _WhitePill extends StatelessWidget {
-  const _WhitePill({required this.label});
 
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.20),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-      ),
-      child: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-              height: 1,
-            ),
-      ),
-    );
-  }
-}
-
-class _MiniProgress extends StatelessWidget {
-  const _MiniProgress({
-    required this.completed,
-    required this.total,
-  });
-
-  final int completed;
-  final int total;
-
-  @override
-  Widget build(BuildContext context) {
-    final safeTotal = total <= 0 ? 1 : total;
-    final value = (completed / safeTotal).clamp(0.0, 1.0);
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(999),
-      child: LinearProgressIndicator(
-        value: value,
-        minHeight: 5,
-        backgroundColor: Colors.white.withValues(alpha: 0.28),
-        valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-      ),
-    );
-  }
-}
 
 class _SortButton extends StatelessWidget {
   const _SortButton({required this.label});
@@ -1528,39 +1476,6 @@ const String _remoteProgramCoverBaseUrl =
 
 String _remoteProgramCoverUrl(String programId) =>
     '$_remoteProgramCoverBaseUrl/$programId.webp';
-
-class _RemoteProgramCoverImage extends StatelessWidget {
-  const _RemoteProgramCoverImage({
-    required this.programId,
-    required this.fit,
-    required this.alignment,
-    required this.fallbackBuilder,
-  });
-
-  final String programId;
-  final BoxFit fit;
-  final AlignmentGeometry alignment;
-  final WidgetBuilder fallbackBuilder;
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.network(
-      _remoteProgramCoverUrl(programId),
-      fit: fit,
-      alignment: alignment,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return fallbackBuilder(context);
-      },
-      errorBuilder: (context, error, stackTrace) => Image.asset(
-        ProgramPosterAsset.pathForProgramId(programId),
-        fit: fit,
-        alignment: alignment,
-        errorBuilder: (_, __, ___) => fallbackBuilder(context),
-      ),
-    );
-  }
-}
 
 
 const String _remoteSessionCoverBaseUrl =

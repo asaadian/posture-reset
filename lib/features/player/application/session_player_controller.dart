@@ -19,6 +19,10 @@ import '../../access/application/access_providers.dart';
 import '../../access/domain/access_models.dart';
 import '../../access/domain/access_policy.dart';
 import '../../programs/application/recovery_program_providers.dart';
+import '../../dashboard/presentation/controllers/dashboard_controller.dart';
+import '../../insights/application/insights_providers.dart';
+import '../../insights/domain/insights_snapshot.dart';
+import 'session_continuity_providers.dart';
 
 class SessionPlayerController extends ChangeNotifier {
   SessionPlayerController({
@@ -821,6 +825,20 @@ class SessionPlayerController extends ChangeNotifier {
     unawaited(_persistProgressIfNeeded());
   }
 
+  void _refreshCompletedRunData() {
+    // The run has already been persisted; invalidate all dependent views now,
+    // rather than waiting for the optional feedback sheet to be dismissed.
+    _ref.invalidate(dashboardControllerProvider);
+    _ref.read(insightsRefreshSignalProvider.notifier).markDirty();
+    for (final range in InsightsRange.values) {
+      _ref.invalidate(insightsSnapshotProvider(range));
+    }
+    _ref.invalidate(recentSessionRunsProvider);
+    _ref.invalidate(sessionHistoryItemsProvider);
+    _ref.invalidate(sessionContinuitySnapshotProvider);
+    _ref.invalidate(continueSessionCandidateProvider);
+  }
+
   Future<void> completeSession() async {
     if (_runFinalized || _state.runId == null || _state.isCompleted) return;
 
@@ -834,6 +852,8 @@ class SessionPlayerController extends ChangeNotifier {
         totalElapsedSeconds: _state.totalSessionDurationSeconds,
         lastStepId: _state.currentStep?.id,
       );
+
+      _refreshCompletedRunData();
 
       final completedStep = _state.currentStep;
       final completedStepDuration = completedStep?.durationSeconds ?? 0;

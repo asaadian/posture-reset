@@ -131,7 +131,7 @@ class SupabaseNotificationContextRepository
           .order('started_at', ascending: false)
           .limit(10);
 
-      if (rows is! List || rows.isEmpty) return null;
+      if (rows.isEmpty) return null;
 
       for (final item in rows) {
         final run = Map<String, dynamic>.from(item as Map);
@@ -197,7 +197,7 @@ class SupabaseNotificationContextRepository
           .order('last_started_day_at', ascending: false)
           .limit(1);
 
-      if (rows is! List || rows.isEmpty) return null;
+      if (rows.isEmpty) return null;
 
       final row = Map<String, dynamic>.from(rows.first as Map);
       final programId = _string(row['program_id'] ?? row['id']);
@@ -243,7 +243,7 @@ class SupabaseNotificationContextRepository
           .order('started_at', ascending: false)
           .limit(1);
 
-      if (rows is! List || rows.isEmpty) return null;
+      if (rows.isEmpty) return null;
 
       final row = Map<String, dynamic>.from(rows.first as Map);
       final last = _date(row['completed_at'] ?? row['started_at'] ?? row['created_at']);
@@ -284,7 +284,7 @@ class SupabaseNotificationContextRepository
           .order('created_at', ascending: false)
           .limit(1);
 
-      if (rows is! List || rows.isEmpty) return null;
+      if (rows.isEmpty) return null;
 
       final row = Map<String, dynamic>.from(rows.first as Map);
       final createdAt = _date(row['created_at']);
@@ -327,7 +327,7 @@ class SupabaseNotificationContextRepository
           .order('started_at', ascending: false)
           .limit(5);
 
-      if (rows is! List || rows.isEmpty) return false;
+      if (rows.isEmpty) return false;
 
       for (final item in rows) {
         final row = Map<String, dynamic>.from(item as Map);

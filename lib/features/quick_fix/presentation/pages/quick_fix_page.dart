@@ -9,7 +9,6 @@ import '../../../../core/localization/app_text.dart';
 import '../../../../shared/onboarding/page_onboarding.dart';
 import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../player/domain/session_feedback_models.dart';
-import '../../../sessions/domain/session_models.dart';
 import '../../../sessions/presentation/widgets/session_visual_asset.dart';
 import '../../domain/quick_fix_models.dart';
 import '../../domain/quick_fix_state.dart';
@@ -2504,50 +2503,6 @@ class _ImageDurationBadge extends StatelessWidget {
 
 
 
-
-String _equipmentCodeName(Object? equipment) {
-  if (equipment == null) return '';
-
-  final raw = equipment.toString();
-  if (raw.contains('.')) {
-    return raw.split('.').last;
-  }
-
-  return raw;
-}
-
-String _equipmentDisplayName(String equipmentCode) {
-  switch (equipmentCode) {
-    case 'chair':
-      return 'Chair';
-    case 'desk':
-      return 'Desk';
-    case 'wall':
-      return 'Wall';
-    case 'towel':
-      return 'Towel';
-    case 'miniBand':
-    case 'mini_band':
-      return 'Mini band';
-    case 'foamRoller':
-    case 'foam_roller':
-      return 'Foam roller';
-    case 'massageBall':
-    case 'massage_ball':
-      return 'Massage ball';
-    case 'yogaMat':
-    case 'yoga_mat':
-      return 'Yoga mat';
-    case 'smallCushion':
-    case 'small_cushion':
-      return 'Small cushion';
-    case 'lumbarRoll':
-    case 'lumbar_roll':
-      return 'Lumbar roll';
-    default:
-      return 'Equipment';
-  }
-}
 
 
 class _QuickFixLoadingState extends StatelessWidget {

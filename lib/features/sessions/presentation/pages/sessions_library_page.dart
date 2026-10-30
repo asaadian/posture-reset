@@ -861,15 +861,25 @@ class _TrainingDiscoverySections extends StatelessWidget {
         : session.tags.map((e) => e.code).toList();
     if (codes.isEmpty) return 'other';
     final code = codes.first.toLowerCase().replaceAll('-', '_');
-    if (code.contains('neck') || code.contains('shoulder')) return 'neck';
+    if (code.contains('neck') || code.contains('shoulder')) {
+      return 'neck';
+    }
     if (code.contains('upper_back') || code.contains('thoracic') ||
-        code.contains('chest')) return 'upper_back';
+        code.contains('chest')) {
+      return 'upper_back';
+    }
     if (code.contains('lower_back') || code.contains('low_back') ||
-        code.contains('lumbar') || code == 'back') return 'lower_back';
+        code.contains('lumbar') || code == 'back') {
+      return 'lower_back';
+    }
     if (code.contains('hip') || code.contains('glute') ||
-        code.contains('hamstring')) return 'hips';
+        code.contains('hamstring')) {
+      return 'hips';
+    }
     if (code.contains('wrist') || code.contains('hand') ||
-        code.contains('finger') || code.contains('forearm')) return 'hands';
+        code.contains('finger') || code.contains('forearm')) {
+      return 'hands';
+    }
     return 'other';
   }
 
@@ -968,7 +978,6 @@ class _PopularSessionsShowcaseState extends State<_PopularSessionsShowcase> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final displayed = expanded ? widget.sessions : widget.sessions.take(3).toList();
     return Container(
       padding: const EdgeInsets.all(18),

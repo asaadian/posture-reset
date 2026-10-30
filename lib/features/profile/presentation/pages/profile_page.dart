@@ -36,7 +36,6 @@ class ProfilePage extends ConsumerWidget {
 
     final profileAsync = ref.watch(currentUserProfileProvider);
     final savedIdsAsync = ref.watch(savedSessionIdsProvider);
-    final recentRunsAsync = ref.watch(recentSessionRunsProvider);
     final completedCountAsync = ref.watch(completedSessionCountProvider);
     final continueCandidateAsync = ref.watch(continueSessionCandidateProvider);
 

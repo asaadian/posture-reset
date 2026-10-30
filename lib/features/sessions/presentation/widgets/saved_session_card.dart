@@ -35,82 +35,112 @@ class SavedSessionCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
         onTap: () => context.pushNamed(
           'session-detail',
           pathParameters: {'id': item.session.id},
         ),
         child: Ink(
-          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: colors.surface,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(28),
             border: Border.all(
-              color: colors.outlineVariant.withValues(alpha: isDark ? 0.62 : 0.48),
+              color: colors.outlineVariant.withValues(alpha: isDark ? 0.42 : 0.65),
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.12 : 0.035),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
+                color: Colors.black.withValues(alpha: isDark ? 0.16 : 0.045),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SessionVisualStage(
-                sessionId: item.session.id,
-                width: 76,
-                height: 86,
-                compact: true,
-                padding: const EdgeInsets.fromLTRB(6, 7, 6, 4),
-                borderRadius: 20,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: colors.onSurface,
-                        fontWeight: FontWeight.w900,
-                        height: 1.15,
-                      ),
+                    SessionVisualStage(
+                      sessionId: item.session.id,
+                      width: 108,
+                      height: 116,
+                      compact: true,
+                      padding: const EdgeInsets.fromLTRB(7, 8, 7, 6),
+                      borderRadius: 19,
                     ),
-                    if (subtitle.trim().isNotEmpty) ...[
-                      const SizedBox(height: 5),
-                      Text(
-                        subtitle,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colors.onSurfaceVariant,
-                          fontWeight: FontWeight.w600,
-                          height: 1.3,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 9),
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: [
-                        _MetaText(label: '${item.session.durationMinutes} min'),
-                        _MetaText(label: _intensityLabel(context, item.session.intensity)),
-                        if (item.latestRun != null)
-                          _MetaText(
-                            label: _actionLabel(context, item.action),
-                            emphasized: true,
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: colors.primary.withValues(alpha: 0.10),
+                              borderRadius: BorderRadius.circular(9),
+                            ),
+                            child: Text(
+                              _actionLabel(context, item.action),
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: colors.primary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
                           ),
-                      ],
+                          const SizedBox(height: 9),
+                          Text(
+                            title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: colors.onSurface,
+                              fontWeight: FontWeight.w800,
+                              height: 1.15,
+                            ),
+                          ),
+                          if (subtitle.trim().isNotEmpty) ...[
+                            const SizedBox(height: 5),
+                            Text(
+                              subtitle,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colors.onSurfaceVariant,
+                                height: 1.35,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(width: 10),
-              _QuickStartButton(item: item),
-            ],
+                const SizedBox(height: 13),
+                Container(
+                  decoration: BoxDecoration(
+                    color: colors.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(12, 7, 7, 7),
+                  child: Row(
+                    children: [
+                      Icon(Icons.schedule_rounded, size: 16, color: colors.onSurfaceVariant),
+                      const SizedBox(width: 5),
+                      _MetaText(label: '${item.session.durationMinutes} min'),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: _MetaText(label: _intensityLabel(context, item.session.intensity)),
+                      ),
+                      const Spacer(),
+                      _QuickStartButton(item: item),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

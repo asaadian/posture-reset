@@ -31,7 +31,7 @@ final completedSessionCountProvider = FutureProvider<int>((ref) async {
       .eq('user_id', user.id)
       .eq('status', 'completed')
       .count(CountOption.exact);
-  return response.count;
+  return response.count ?? 0;
 });
 
 final recentSessionRunsProvider = FutureProvider<List<SessionRun>>((ref) async {

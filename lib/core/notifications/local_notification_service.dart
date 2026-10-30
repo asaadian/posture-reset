@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
@@ -79,6 +80,27 @@ class LocalNotificationService {
     final payload = _initialLaunchPayload;
     _initialLaunchPayload = null;
     return payload;
+  }
+
+  static const MethodChannel _appSettingsChannel =
+      MethodChannel('com.weglabs.posturereset/app_settings');
+
+  /// Opens this app's Android notification settings, with native fallback
+  /// to the app-info page for devices without that specific settings screen.
+  Future<bool> openSystemNotificationSettings() async {
+    if (kIsWeb || !Platform.isAndroid) return false;
+    try {
+      return await _appSettingsChannel.invokeMethod<bool>(
+            'openNotificationSettings',
+          ) ??
+          false;
+    } on PlatformException catch (error) {
+      debugPrint('[Notifications] Android settings could not open: $error');
+      return false;
+    } on MissingPluginException {
+      debugPrint('[Notifications] Android settings channel unavailable.');
+      return false;
+    }
   }
 
   Future<bool> requestPermissions() async {

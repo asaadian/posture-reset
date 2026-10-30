@@ -961,6 +961,7 @@ class _InsightsCompactHero extends StatelessWidget {
             streakDays: snapshot.currentStreakDays,
             completion: completion,
             helpful: helpful,
+            feedbackCount: snapshot.feedbackCount,
             consistency: consistency,
           );
 
@@ -994,6 +995,7 @@ class _HeroSignalRail extends StatelessWidget {
     required this.streakDays,
     required this.completion,
     required this.helpful,
+    required this.feedbackCount,
     required this.consistency,
   });
 
@@ -1002,6 +1004,7 @@ class _HeroSignalRail extends StatelessWidget {
   final int streakDays;
   final int completion;
   final int helpful;
+  final int feedbackCount;
   final int consistency;
 
   @override
@@ -1032,7 +1035,7 @@ class _HeroSignalRail extends StatelessWidget {
       _HeroSignalChip(
         icon: Icons.favorite_border_rounded,
         label: t.get('insights_focus_helpful_title', fallback: 'Helpful'),
-        value: snapshot.feedbackCount == 0 ? '—' : '$helpful%',
+        value: feedbackCount == 0 ? '—' : '$helpful%',
       ),
       _HeroSignalChip(
         icon: Icons.check_circle_outline_rounded,

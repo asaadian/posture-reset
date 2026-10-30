@@ -117,6 +117,52 @@ class SavedSessionsPage extends ConsumerWidget {
                 ResponsiveContentSection(
                   spacing: pageInfo.sectionSpacing,
                   children: [
+                    if (items.isNotEmpty) ...[
+                      Container(
+                        padding: const EdgeInsets.all(22),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(28),
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF172C45), Color(0xFF245B61)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              child: const Icon(Icons.bookmark_added_rounded, color: Color(0xFF8CEBD3), size: 26),
+                            ),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('YOUR COLLECTION', style: TextStyle(
+                                    color: Color(0xFF8CEBD3), letterSpacing: 1.4,
+                                    fontWeight: FontWeight.w800, fontSize: 11,
+                                  )),
+                                  const SizedBox(height: 5),
+                                  Text('${items.length} sessions', style: const TextStyle(
+                                    color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800,
+                                  )),
+                                  const SizedBox(height: 4),
+                                  const Text('Your favorite resets, ready whenever you need them.', style: TextStyle(
+                                    color: Color(0xFFDAE7EE), fontSize: 12, height: 1.35,
+                                  )),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                    ],
                     ...items.asMap().entries.map(
                       (entry) => _SavedSessionListEntry(
                         index: entry.key,

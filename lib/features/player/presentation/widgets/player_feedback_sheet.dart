@@ -165,13 +165,13 @@ class PlayerPostSessionFeedbackSheet extends StatefulWidget {
 
 class _PlayerPostSessionFeedbackSheetState
     extends State<PlayerPostSessionFeedbackSheet> {
-  bool _helped = true;
-  final bool _wouldRepeat = true;
+  bool? _helped;
+  final bool _wouldRepeat = false;
 
-  SessionDelta _tension = SessionDelta.better;
-  SessionDelta _pain = SessionDelta.better;
-  final SessionDelta _energyDelta = SessionDelta.better;
-  final SessionPerceivedFit _fit = SessionPerceivedFit.great;
+  SessionDelta? _tension;
+  SessionDelta? _pain;
+  final SessionDelta _energyDelta = SessionDelta.same;
+  final SessionPerceivedFit _fit = SessionPerceivedFit.okay;
 
   final SessionStateLevel _afterEnergy = SessionStateLevel.medium;
   final SessionStateLevel _afterStress = SessionStateLevel.medium;
@@ -266,6 +266,12 @@ class _PlayerPostSessionFeedbackSheetState
   }
 
   Future<void> _submit() async {
+    if (_helped == null || _tension == null || _pain == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please answer all three questions before saving.')),
+      );
+      return;
+    }
     setState(() => _isSubmitting = true);
 
     try {
@@ -275,9 +281,9 @@ class _PlayerPostSessionFeedbackSheetState
         completionStatus: widget.isAbandoned
             ? SessionFeedbackCompletionStatus.abandoned
             : SessionFeedbackCompletionStatus.completed,
-        helped: _helped,
-        tensionDelta: _tension,
-        painDelta: _pain,
+        helped: _helped!,
+        tensionDelta: _tension!,
+        painDelta: _pain!,
         energyDelta: _energyDelta,
         perceivedFit: _fit,
         wouldRepeat: _wouldRepeat,
@@ -555,7 +561,7 @@ class _DeltaRow extends StatelessWidget {
 
   final IconData icon;
   final String title;
-  final SessionDelta value;
+  final SessionDelta? value;
   final ValueChanged<SessionDelta> onChanged;
 
   @override
@@ -581,7 +587,7 @@ class _BoolSegment extends StatelessWidget {
     required this.onChanged,
   });
 
-  final bool value;
+  final bool? value;
   final String trueLabel;
   final String falseLabel;
   final ValueChanged<bool> onChanged;
@@ -605,7 +611,7 @@ class _SegmentedSelector<T> extends StatelessWidget {
     required this.onChanged,
   });
 
-  final T value;
+  final T? value;
   final List<T> values;
   final String Function(T value) labelBuilder;
   final ValueChanged<T> onChanged;

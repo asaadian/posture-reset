@@ -426,7 +426,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     final buckets = <DateTime, int>{};
 
     for (var i = 0; i < 7; i++) {
-      final day = DateTime.utc(start7.year, start7.month, start7.day + i);
+      final day = DateTime(start7.year, start7.month, start7.day + i);
       buckets[day] = 0;
     }
 
@@ -434,18 +434,18 @@ class DashboardRepositoryImpl implements DashboardRepository {
       final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(start7)) continue;
 
-      final day = DateTime.utc(createdAt.year, createdAt.month, createdAt.day);
+      final day = DateTime(createdAt.year, createdAt.month, createdAt.day);
       buckets.update(
         day,
-        (value) => value + (_asInt(row['total_elapsed_seconds']) ~/ 60),
-        ifAbsent: () => (_asInt(row['total_elapsed_seconds']) ~/ 60),
+        (value) => value + _asInt(row['total_elapsed_seconds']),
+        ifAbsent: () => _asInt(row['total_elapsed_seconds']),
       );
     }
 
     return buckets.entries.map((entry) {
       return DashboardSeriesPoint(
         label: _weekdayLabel(entry.key.weekday),
-        value: entry.value.toDouble(),
+        value: (entry.value ~/ 60).toDouble(),
       );
     }).toList(growable: false);
   }
@@ -457,7 +457,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     final buckets = <DateTime, List<double>>{};
 
     for (var i = 0; i < 7; i++) {
-      final day = DateTime.utc(start7.year, start7.month, start7.day + i);
+      final day = DateTime(start7.year, start7.month, start7.day + i);
       buckets[day] = <double>[];
     }
 
@@ -465,7 +465,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
       final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(start7)) continue;
 
-      final day = DateTime.utc(createdAt.year, createdAt.month, createdAt.day);
+      final day = DateTime(createdAt.year, createdAt.month, createdAt.day);
       buckets.putIfAbsent(day, () => <double>[]).add(_feedbackScore(row));
     }
 
@@ -489,7 +489,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     final dailyMinutes = <DateTime, int>{};
 
     for (var i = 0; i < 21; i++) {
-      final day = DateTime.utc(start21.year, start21.month, start21.day + i);
+      final day = DateTime(start21.year, start21.month, start21.day + i);
       dailyMinutes[day] = 0;
     }
 
@@ -497,7 +497,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
       final createdAt = _parseDate(row['created_at'])?.toLocal();
       if (createdAt == null || createdAt.isBefore(start21)) continue;
 
-      final day = DateTime.utc(createdAt.year, createdAt.month, createdAt.day);
+      final day = DateTime(createdAt.year, createdAt.month, createdAt.day);
       dailyMinutes.update(
         day,
         (value) => value + (_asInt(row['total_elapsed_seconds']) ~/ 60),

@@ -414,7 +414,9 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
 
     final useGerman = wantsGerman && germanScript.isNotEmpty;
     final script = useGerman ? germanScript : englishScript;
-    if (script.isEmpty) return;
+    if (script.isEmpty) {
+      return;
+    }
 
     final speechLanguageCode = useGerman ? 'de' : 'en';
     final speechKey = '${step.id}:$speechLanguageCode';

@@ -39,10 +39,12 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
     ref.listen(currentUserProvider, (previous, next) {
       if (previous?.id == next?.id) return;
       ref.invalidate(sessionSummariesProvider);
+      ref.invalidate(personalPopularSessionIdsProvider);
       ref.invalidate(accessSnapshotProvider);
     });
 
     final sessionsAsync = ref.watch(sessionSummariesProvider);
+    final personalPopularAsync = ref.watch(personalPopularSessionIdsProvider);
     final accessAsync = ref.watch(accessSnapshotProvider);
 
     return ResponsivePageScaffold(
@@ -104,6 +106,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
               child: RefreshIndicator(
               onRefresh: () async {
                 ref.invalidate(sessionSummariesProvider);
+                ref.invalidate(personalPopularSessionIdsProvider);
                 await ref.read(sessionSummariesProvider.future);
               },
               child: ListView(
@@ -132,6 +135,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                           child: widget.bodyCategory == null
                               ? _TrainingDiscoverySections(
                                   sessions: visibleSessions,
+                                  popularIds: personalPopularAsync.value ?? const <String>[],
                                   accessSnapshot: accessSnapshot,
                                 )
                               : _BodySessionList(
@@ -835,10 +839,12 @@ bool _matchesBodyPage(SessionSummary session, String id) {
 class _TrainingDiscoverySections extends StatelessWidget {
   const _TrainingDiscoverySections({
     required this.sessions,
+    required this.popularIds,
     required this.accessSnapshot,
   });
 
   final List<SessionSummary> sessions;
+  final List<String> popularIds;
   final AccessSnapshot accessSnapshot;
 
   static const _groupIds = <String>[
@@ -872,7 +878,7 @@ class _TrainingDiscoverySections extends StatelessWidget {
     final grouped = <String, List<SessionSummary>>{
       for (final id in _groupIds) id: <SessionSummary>[],
     };
-    final topSessions = _rankedPopularSessions(sessions);
+    final topSessions = _rankedPopularSessions(sessions, popularIds);
     for (final session in sessions) {
       // Popular highlights remain discoverable in their primary body category.
       grouped[_primaryGroup(session)]!.add(session);
@@ -937,23 +943,13 @@ class _TrainingDiscoverySections extends StatelessWidget {
 // Snapshot based on actual session_run starts observed on 29 October 2026.
 // Never manufacture rankings from session sort order. Refresh via a future
 // aggregate endpoint when approved.
-const _popularSessionIds = <String>[
-  'sess_cervical_isometric_stability_07',
-  'sess_towel_deep_neck_flexor_control_07',
-  'sess_serratus_wall_slide_miniband_07',
-  'sess_shoulder_release_04',
-  'sess_hip_flexor_release_glute_rebalance_07',
-  'sess_band_rotator_cuff_scapular_control_08',
-  'sess_pec_minor_ball_release_band_row_07',
-  'sess_ball_upper_trap_levator_reset_07',
-  'sess_chair_core_bracing_low_back_support_07',
-  'sess_desk_thoracic_rotation_scapular_integration_07',
-];
-
-List<SessionSummary> _rankedPopularSessions(List<SessionSummary> sessions) {
+List<SessionSummary> _rankedPopularSessions(
+  List<SessionSummary> sessions,
+  List<String> rankedIds,
+) {
   final byId = {for (final session in sessions) session.id: session};
   return [
-    for (final id in _popularSessionIds)
+    for (final id in rankedIds)
       if (byId.containsKey(id)) byId[id]!,
   ];
 }
@@ -988,16 +984,16 @@ class _PopularSessionsShowcaseState extends State<_PopularSessionsShowcase> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('CURATED FOR YOU', style: TextStyle(
+          const Text('YOUR ACTIVITY', style: TextStyle(
             color: Color(0xFF78E1C6), fontSize: 11,
             letterSpacing: 1.8, fontWeight: FontWeight.w800,
           )),
           const SizedBox(height: 7),
-          const Text('10 featured sessions', style: TextStyle(
+          const Text('Your most played sessions', style: TextStyle(
             color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800,
           )),
           const SizedBox(height: 5),
-          const Text('A handpicked mix of desk-friendly movement sessions',
+          const Text('Ranked by your session starts in the last 90 days',
             style: TextStyle(color: Color(0xFFD5E2E7), fontSize: 12)),
           const SizedBox(height: 16),
           AnimatedSize(
@@ -1009,7 +1005,7 @@ class _PopularSessionsShowcaseState extends State<_PopularSessionsShowcase> {
                 for (var i = 0; i < displayed.length; i++) ...[
                   _PopularSessionRow(
                     session: displayed[i],
-                    rank: _popularSessionIds.indexOf(displayed[i].id) + 1,
+                    rank: i + 1,
                   ),
                   if (i < displayed.length - 1) const SizedBox(height: 10),
                 ],

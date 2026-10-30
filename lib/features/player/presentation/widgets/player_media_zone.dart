@@ -358,11 +358,13 @@ class _LoopingStepVideoState extends State<_LoopingStepVideo> {
       await controller.setLooping(true);
       await controller.setVolume(widget.muted ? 0 : 1);
 
-      if (!mounted) return;
+      if (!mounted || !identical(controller, _controller)) return;
       setState(() {});
       await _syncPlayback();
     } catch (_) {
-      if (mounted) setState(() => _hasError = true);
+      if (mounted && identical(controller, _controller)) {
+        setState(() => _hasError = true);
+      }
     }
   }
 

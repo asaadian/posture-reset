@@ -500,8 +500,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
       final day = DateTime(createdAt.year, createdAt.month, createdAt.day);
       dailyMinutes.update(
         day,
-        (value) => value + (_asInt(row['total_elapsed_seconds']) ~/ 60),
-        ifAbsent: () => (_asInt(row['total_elapsed_seconds']) ~/ 60),
+        (value) => value + _asInt(row['total_elapsed_seconds']),
+        ifAbsent: () => _asInt(row['total_elapsed_seconds']),
       );
     }
 

@@ -10,7 +10,6 @@ import '../../../../core/localization/app_locale_controller.dart';
 import '../../../../core/localization/app_text.dart';
 import '../../../../core/notifications/notification_providers.dart';
 import '../../../../core/notifications/notification_schedule_preferences.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_theme_controller.dart';
 import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../application/profile_providers.dart';

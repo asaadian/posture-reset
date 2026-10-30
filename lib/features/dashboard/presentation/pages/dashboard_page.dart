@@ -1854,11 +1854,7 @@ List<Color> _programGradient(String programId) {
   }
 }
 
-String _displayName({
-  required UserProfile? profile,
-  required String? email,
-  required BuildContext context,
-}) {
+) {
   final profileName = profile?.displayName?.trim();
   if (profileName != null && profileName.isNotEmpty) return profileName;
 

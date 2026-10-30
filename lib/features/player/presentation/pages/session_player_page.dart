@@ -422,7 +422,9 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
     final speechKey = '${step.id}:$speechLanguageCode';
     if (!force &&
         (_spokenStepVoiceKey == speechKey ||
-            _pendingStepVoiceKey == speechKey)) return;
+            _pendingStepVoiceKey == speechKey)) {
+      return;
+    }
 
     _voiceStartTimer?.cancel();
     _pendingStepVoiceKey = speechKey;

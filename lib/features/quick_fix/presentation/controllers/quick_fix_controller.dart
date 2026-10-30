@@ -124,9 +124,9 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
       state: current,
       sessions: usableSessions,
     );
-    final result = freeResult.primary != null
-        ? freeResult
-        : _engine.recommend(state: current, sessions: sessions);
+    // Do not fall back to locked content for free users: it would send them
+    // straight to a paywall after a supposedly usable Quick Fix recommendation.
+    final result = freeResult;
 
     var next = current.copyWith(
       primaryRecommendation: result.primary,

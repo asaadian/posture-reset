@@ -1850,15 +1850,14 @@ class _RemoteSessionCoverImage extends StatelessWidget {
 class _SessionCoverFallback extends StatelessWidget {
   const _SessionCoverFallback({
     this.iconSize = 34,
-    this.dark = false,
   });
 
   final double iconSize;
-  final bool dark;
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final dark = Theme.of(context).brightness == Brightness.dark;
 
     return DecoratedBox(
       decoration: BoxDecoration(

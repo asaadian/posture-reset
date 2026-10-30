@@ -1,7 +1,6 @@
 // lib/features/sessions/application/sessions_providers.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/supabase/supabase_providers.dart';
 
 import '../../../core/localization/app_locale_controller.dart';
 import '../../../core/supabase/supabase_providers.dart';

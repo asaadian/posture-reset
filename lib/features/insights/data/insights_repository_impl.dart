@@ -65,17 +65,9 @@ class InsightsRepositoryImpl implements InsightsRepository {
     }
 
     final now = DateTime.now();
-    final rangeStart = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    ).subtract(Duration(days: range.days - 1));
+    final rangeStart = DateTime(now.year, now.month, now.day - range.days + 1);
 
-    final heatmapStart = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    ).subtract(const Duration(days: 34));
+    final heatmapStart = DateTime(now.year, now.month, now.day - 34);
 
     final runsRows = await _safeSelectList(
       'session_runs',
@@ -252,9 +244,11 @@ class InsightsRepositoryImpl implements InsightsRepository {
       heatmapStart: heatmapStart,
     );
 
-    final activeDays = recoveryMinutesSeries
-        .where((point) => point.value > 0)
-        .map((point) => DateTime(point.date.year, point.date.month, point.date.day))
+    final activeDays = runsInRange
+        .where((row) => _asInt(row['total_elapsed_seconds']) > 0)
+        .map((row) => _parseDate(row['created_at'])?.toLocal())
+        .whereType<DateTime>()
+        .map((date) => DateTime(date.year, date.month, date.day))
         .toSet()
         .toList()
       ..sort();
@@ -353,12 +347,12 @@ class InsightsRepositoryImpl implements InsightsRepository {
   }
 
   List<InsightsSeriesPoint> _emptySeries(int days) {
-    final now = DateTime.now().toUtc();
+    final now = DateTime.now();
     final start = DateTime(now.year, now.month, now.day)
         .subtract(Duration(days: days - 1));
 
     return List.generate(days, (index) {
-      final date = DateTime.utc(start.year, start.month, start.day + index);
+      final date = DateTime(start.year, start.month, start.day + index);
       return InsightsSeriesPoint(
         date: date,
         label: _weekdayLabel(date.weekday),
@@ -368,12 +362,12 @@ class InsightsRepositoryImpl implements InsightsRepository {
   }
 
   List<InsightsHeatmapCell> _emptyHeatmap() {
-    final now = DateTime.now().toUtc();
-    final start = DateTime.utc(now.year, now.month, now.day)
+    final now = DateTime.now();
+    final start = DateTime(now.year, now.month, now.day)
         .subtract(const Duration(days: 34));
 
     return List.generate(35, (index) {
-      final date = DateTime.utc(start.year, start.month, start.day + index);
+      final date = DateTime(start.year, start.month, start.day + index);
       return InsightsHeatmapCell(
         date: date,
         minutes: 0,
@@ -1105,11 +1099,11 @@ class InsightsRepositoryImpl implements InsightsRepository {
 
     final activeSet = activeDays.toSet();
     var streak = 0;
-    var cursor = DateTime.utc(now.year, now.month, now.day);
+    var cursor = DateTime(now.year, now.month, now.day);
 
     while (activeSet.contains(cursor)) {
       streak += 1;
-      cursor = cursor.subtract(const Duration(days: 1));
+      cursor = DateTime(cursor.year, cursor.month, cursor.day - 1);
     }
 
     return streak;

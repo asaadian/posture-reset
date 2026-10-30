@@ -408,7 +408,6 @@ class _DashboardProgramCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final ordered = [...programs]..sort((a, b) {
       if (a.id == activeProgram?.programId) return -1;
       if (b.id == activeProgram?.programId) return 1;
@@ -1353,7 +1352,6 @@ class _WeeklyGoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final progress = (completed / target).clamp(0.0, 1.0);
     return Container(
       padding: const EdgeInsets.all(18),

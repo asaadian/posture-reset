@@ -378,6 +378,7 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
   String? _pendingStepVoiceKey;
   Timer? _voiceStartTimer;
   bool _voiceGuidanceEnabled = true;
+  String? _readyVideoStepId;
 
 
   @override
@@ -424,7 +425,14 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
     _pendingStepVoiceKey = speechKey;
     // Give the video player time to buffer before Android TTS starts.
     // Cancel stale speech when the user changes step, pauses, or exits.
+    final isVideo = step.visualType == SessionStepVisualType.videoUrl ||
+        step.visualType == SessionStepVisualType.videoStorage;
+    final hasVideo = isVideo && (step.visualUrl?.trim().isNotEmpty ?? false);
     _voiceStartTimer = Timer(const Duration(seconds: 3), () async {
+      if (hasVideo && _readyVideoStepId != step.id) {
+        _pendingStepVoiceKey = null;
+        return;
+      }
       if (!mounted || !_voiceGuidanceEnabled ||
           _pendingStepVoiceKey != speechKey) return;
       final current = ref.read(sessionPlayerControllerProvider(_playerArgs)).state;
@@ -442,6 +450,15 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
       if (!mounted || !_voiceGuidanceEnabled) return;
       await _voiceTts.speak(script);
     });
+  }
+
+  void _onStepMediaReady(String stepId) {
+    if (!mounted) return;
+    _readyVideoStepId = stepId;
+    final state = ref.read(sessionPlayerControllerProvider(_playerArgs)).state;
+    if (state.currentStep?.id == stepId && !state.isPaused) {
+      unawaited(_speakCurrentStep(state, force: true));
+    }
   }
 
   void _cancelPendingVoice() {
@@ -1140,6 +1157,7 @@ class _SessionPlayerPageState extends ConsumerState<SessionPlayerPage> {
               onFinishPressed: controller.completeSession,
               voiceGuidanceEnabled: _voiceGuidanceEnabled,
               onVoiceGuidancePressed: () => _toggleVoiceGuidance(state),
+              onMediaReady: _onStepMediaReady,
             ),
           );
             },
@@ -1497,6 +1515,7 @@ class _FocusedPlayerShell extends StatelessWidget {
     required this.onFinishPressed,
     required this.voiceGuidanceEnabled,
     required this.onVoiceGuidancePressed,
+    required this.onMediaReady,
   });
 
   final SessionPlayerState state;
@@ -1514,6 +1533,7 @@ class _FocusedPlayerShell extends StatelessWidget {
   final VoidCallback onFinishPressed;
   final bool voiceGuidanceEnabled;
   final VoidCallback onVoiceGuidancePressed;
+  final ValueChanged<String> onMediaReady;
 
   @override
   Widget build(BuildContext context) {
@@ -1538,6 +1558,7 @@ class _FocusedPlayerShell extends StatelessWidget {
           compactHeight: compactContent,
           voiceGuidanceEnabled: voiceGuidanceEnabled,
           onVoiceGuidancePressed: onVoiceGuidancePressed,
+          onMediaReady: onMediaReady,
         );
 
         return _FocusModeBackdrop(
@@ -1621,6 +1642,7 @@ class _GlassHudPlayerContent extends StatelessWidget {
     required this.compactHeight,
     required this.voiceGuidanceEnabled,
     required this.onVoiceGuidancePressed,
+    required this.onMediaReady,
   });
 
   final SessionPlayerState state;
@@ -1639,6 +1661,7 @@ class _GlassHudPlayerContent extends StatelessWidget {
   final bool compactHeight;
   final bool voiceGuidanceEnabled;
   final VoidCallback onVoiceGuidancePressed;
+  final ValueChanged<String> onMediaReady;
 
   @override
   Widget build(BuildContext context) {
@@ -1672,6 +1695,7 @@ class _GlassHudPlayerContent extends StatelessWidget {
         progress: stepProgress,
         fillAvailableHeight: true,
         mediaFit: BoxFit.cover,
+        onMediaReady: () => onMediaReady(step.id),
       ),
     );
 

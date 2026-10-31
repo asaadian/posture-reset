@@ -21,6 +21,7 @@ import '../../../profile/domain/profile_models.dart';
 import '../../../programs/application/recovery_program_providers.dart';
 import '../../../programs/domain/recovery_program_models.dart';
 import '../../../sessions/application/sessions_providers.dart';
+import '../../../sessions/application/public_activity_stats_providers.dart';
 import '../../../sessions/domain/session_models.dart';
 import '../../../sessions/presentation/widgets/session_visual_asset.dart';
 
@@ -118,6 +119,7 @@ class DashboardPage extends ConsumerWidget {
     final programSummariesAsync = ref.watch(recoveryProgramSummariesProvider);
     final savedSessionsAsync = ref.watch(_dashboardSavedSessionsProvider);
     final sessionSummariesAsync = ref.watch(sessionSummariesProvider);
+    final programJoinCountsAsync = ref.watch(publicProgramJoinCountsProvider);
     final dashboardAsync = ref.watch(dashboardControllerProvider);
 
     final profile = profileAsync.maybeWhen(
@@ -231,6 +233,7 @@ class DashboardPage extends ConsumerWidget {
                     _DashboardProgramCarousel(
                       programs: programs,
                       activeProgram: activeProgram,
+                      joinedCounts: programJoinCountsAsync.value ?? const <String, int>{},
                     ),
                     const SizedBox(height: 8),
                   ],
@@ -423,8 +426,10 @@ class _DashboardProgramCarousel extends StatelessWidget {
   const _DashboardProgramCarousel({
     required this.programs,
     required this.activeProgram,
+    required this.joinedCounts,
   });
 
+  final Map<String, int> joinedCounts;
   final List<RecoveryProgramSummary> programs;
   final RecoveryProgramDashboardProgress? activeProgram;
 
@@ -466,6 +471,7 @@ class _DashboardProgramCarousel extends StatelessWidget {
                 child: _ProgramPosterCard(
                   program: program,
                   activeProgram: activeProgram,
+                  joinedCount: joinedCounts[program.id],
                 ),
               );
             },
@@ -1159,10 +1165,12 @@ class _ProgramPosterCard extends StatelessWidget {
   const _ProgramPosterCard({
     required this.program,
     required this.activeProgram,
+    this.joinedCount,
   });
 
   final RecoveryProgramSummary program;
   final RecoveryProgramDashboardProgress? activeProgram;
+  final int? joinedCount;
 
   @override
   Widget build(BuildContext context) {
@@ -1218,6 +1226,25 @@ class _ProgramPosterCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (joinedCount != null)
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.58),
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                      child: Text(
+                        '${joinedCount!} joined',
+                        style: const TextStyle(
+                          color: Colors.white, fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ),
                 if (isActive)
                   _ActiveDashboardProgramContent(
                     program: program,

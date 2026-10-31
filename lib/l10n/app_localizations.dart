@@ -4308,7 +4308,6 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'View all'**
-  String get common_view_all;
 
   /// No description provided for @dashboard_program_discovery_pill_guided.
   ///

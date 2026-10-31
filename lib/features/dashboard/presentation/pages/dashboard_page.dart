@@ -216,7 +216,7 @@ class DashboardPage extends ConsumerWidget {
             padding: EdgeInsets.only(bottom: pageInfo.isCompact ? 120 : 48),
             children: [
               ResponsiveContentSection(
-                spacing: 16,
+                spacing: 8,
                 children: [
                   _DashboardQuickFixDiscovery(
                     title: t.get(
@@ -235,7 +235,7 @@ class DashboardPage extends ConsumerWidget {
                       activeProgram: activeProgram,
                       joinedCounts: programJoinCountsAsync.value ?? const <String, int>{},
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 2),
                   ],
                   dashboardAsync.maybeWhen(
                     data: (snapshot) => _WeeklyGoalCard(
@@ -243,7 +243,7 @@ class DashboardPage extends ConsumerWidget {
                     ),
                     orElse: () => const SizedBox.shrink(),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 2),
                   dashboardAsync.maybeWhen(
                     data: (snapshot) {
                       final isNewUser = !snapshot.hasContent &&

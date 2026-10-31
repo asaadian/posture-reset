@@ -1335,113 +1335,9 @@ class _ProgramDiscoveryCard extends StatelessWidget {
 
 
 
-class _ActiveDashboardProgramContent extends StatelessWidget {
-  const _ActiveDashboardProgramContent({
-    required this.program,
-    required this.activeProgram,
-  });
 
-  final RecoveryProgramSummary program;
-  final RecoveryProgramDashboardProgress activeProgram;
 
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-    final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _WhitePill(label: t.get('program_active_badge', fallback: 'Active')),
-          const Spacer(),
-          Text(
-            'MISSION ${activeProgram.currentDay}',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.displaySmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-              height: 0.86,
-              letterSpacing: 0.4,
-            ),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: 190,
-            child: Text(
-              t.get(program.titleKey, fallback: program.titleFallback),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.95),
-                fontWeight: FontWeight.w900,
-                height: 1.0,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          _WhiteProgress(
-            completed: activeProgram.completedDayCount,
-            total: activeProgram.durationDays,
-          ),
-          const SizedBox(height: 10),
-          _WhiteButton(
-            label: t.get('dashboard_programs_continue_cta', fallback: 'Continue'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InactiveDashboardProgramContent extends StatelessWidget {
-  const _InactiveDashboardProgramContent({required this.program});
-
-  final RecoveryProgramSummary program;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.all(13),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _WhitePill(
-            label:
-                '${program.durationDays} ${t.get('program_day_unit', fallback: 'missions')}',
-          ),
-          const Spacer(),
-          SizedBox(
-            width: 160,
-            child: Text(
-              t.get(program.titleKey, fallback: program.titleFallback),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-                height: 1.0,
-              ),
-            ),
-          ),
-          const SizedBox(height: 9),
-          Text(
-            t.get('program_start_cta', fallback: 'Start'),
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: Colors.white.withValues(alpha: 0.92),
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 
 
@@ -1687,95 +1583,11 @@ class _DashboardPremiumShowcase extends StatelessWidget {
   }
 }
 
-class _SessionThumb extends StatelessWidget {
-  const _SessionThumb({
-    required this.sessionId,
-    required this.size,
-  });
 
-  final String sessionId;
-  final double size;
 
-  @override
-  Widget build(BuildContext context) {
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: _RemoteSessionCoverImage(
-          sessionId: sessionId,
-          fit: BoxFit.cover,
-          alignment: Alignment.center,
-          fallbackBuilder: (_) => const _SessionCoverFallback(iconSize: 28),
-        ),
-      ),
-    );
-  }
-}
 
-class _SoftMetaRow extends StatelessWidget {
-  const _SoftMetaRow({
-    required this.icon,
-    required this.label,
-  });
 
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return Row(
-      children: [
-        Icon(icon, size: 14, color: colors.primary),
-        const SizedBox(width: 5),
-        Flexible(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: colors.onSurfaceVariant,
-                  fontWeight: FontWeight.w800,
-                ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _TinyPill extends StatelessWidget {
-  const _TinyPill({
-    required this.label,
-  });
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        color: colors.surfaceContainerHighest.withValues(alpha: 0.62),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: colors.onSurfaceVariant,
-              fontWeight: FontWeight.w800,
-              fontSize: 10,
-            ),
-      ),
-    );
-  }
-}
 
 class _SectionTitleRow extends StatelessWidget {
   const _SectionTitleRow({
@@ -2105,20 +1917,7 @@ String _displayName({
   );
 }
 
-String _intensityLabel(BuildContext context, SessionIntensity intensity) {
-  final t = AppText.of(context);
 
-  switch (intensity) {
-    case SessionIntensity.gentle:
-      return t.get('session_intensity_gentle', fallback: 'Gentle');
-    case SessionIntensity.light:
-      return t.get('session_intensity_light', fallback: 'Light');
-    case SessionIntensity.moderate:
-      return t.get('session_intensity_moderate', fallback: 'Moderate');
-    case SessionIntensity.strong:
-      return t.get('session_intensity_strong', fallback: 'Strong');
-  }
-}
 
 
 const String _remoteProgramCoverBaseUrl =

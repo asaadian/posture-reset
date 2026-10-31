@@ -1038,5 +1038,17 @@
         "type": "String"
       }
     }
+  },
+  "program_milestone_label": "Milestone",
+  "program_day_of_total_label": "Mission {day} of {total}",
+  "@program_day_of_total_label": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
   }
 }

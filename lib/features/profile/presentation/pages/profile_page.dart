@@ -315,11 +315,11 @@ class _ProfileHeroCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.auto_awesome_rounded, size: 16, color: Color(0xFF85DFC8)),
+              const Icon(Icons.auto_awesome_rounded, size: 16, color: Color(0xFF85DFC8)),
               SizedBox(width: 7),
-              Text('YOUR SPACE', style: TextStyle(
+              Text(AppText.get(context, key: 'profile_your_space', fallback: 'YOUR SPACE'), style: TextStyle(
                 color: Color(0xFF85DFC8), letterSpacing: 2,
                 fontSize: 11, fontWeight: FontWeight.w800,
               )),
@@ -438,7 +438,7 @@ class _ProfileActionGrid extends StatelessWidget {
 
     final premium = _ProfileActionData(
       icon: Icons.workspace_premium_rounded,
-      title: 'Unlock Premium',
+      title: t.get('premium_unlock_label', fallback: 'Unlock Premium'),
       subtitle: t.get(
         'profile_action_premium_subtitle_large',
         fallback: 'Unlock all sessions, programs, Quick Fix, and insights.',
@@ -996,12 +996,12 @@ class _ProfilePremiumActionTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Unlock Premium', style: TextStyle(
+                    Text(AppText.get(context, key: 'premium_unlock_label', fallback: 'Unlock Premium'), style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.w900,
                       fontSize: 17,
                     )),
                     SizedBox(height: 3),
-                    Text('One payment. Full access.', style: TextStyle(
+                    Text(AppText.get(context, key: 'premium_one_payment_full_access', fallback: 'One payment. Full access.'), style: TextStyle(
                       color: Color(0xFFD1E8E8), fontSize: 12,
                     )),
                   ],

@@ -1956,6 +1956,14 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.explore_body_default;
       case 'insights_recovery_label':
         return _t.insights_recovery_label;
+      case 'explore_level_signature':
+        return _t.explore_level_signature;
+      case 'explore_level_advanced':
+        return _t.explore_level_advanced;
+      case 'explore_level_therapy':
+        return _t.explore_level_therapy;
+      case 'explore_level_all':
+        return _t.explore_level_all;
       default:
         return _translateDynamicFallback(fallback);
     }

@@ -1038,5 +1038,17 @@
         "type": "String"
       }
     }
+  },
+  "program_milestone_label": "Etappenziel",
+  "program_day_of_total_label": "Einheit {day} von {total}",
+  "@program_day_of_total_label": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
   }
 }

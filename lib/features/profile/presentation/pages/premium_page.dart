@@ -17,8 +17,6 @@ import '../../../billing/application/billing_providers.dart';
 import '../../../billing/application/billing_state.dart';
 import '../../../billing/domain/billing_models.dart';
 
-const String _premiumHeroGifAsset = 'assets/images/premium_recovery_loop.gif';
-
 DateTime? _lastPremiumPaywallViewedTrackedAt;
 
 class PremiumPage extends ConsumerWidget {
@@ -683,8 +681,6 @@ class _PurchaseHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final t = AppText.of(context);
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -716,7 +712,7 @@ class _PurchaseHeader extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Pay once'
+                'Pay once',
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: colors.primary,
                   fontWeight: FontWeight.w900,

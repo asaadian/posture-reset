@@ -11,7 +11,6 @@ import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../access/application/access_providers.dart';
 import '../../../access/domain/access_models.dart';
 import '../../../auth/application/auth_providers.dart';
-import '../../../programs/domain/recovery_program_models.dart';
 import '../../application/sessions_providers.dart';
 import '../../domain/session_models.dart';
 import '../session_library_models.dart';
@@ -976,59 +975,9 @@ class _SessionOpenButton extends StatelessWidget {
 
 
 
-class _WhitePill extends StatelessWidget {
-  const _WhitePill({required this.label});
 
-  final String label;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.20),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-      ),
-      child: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-              height: 1,
-            ),
-      ),
-    );
-  }
-}
 
-class _MiniProgress extends StatelessWidget {
-  const _MiniProgress({
-    required this.completed,
-    required this.total,
-  });
-
-  final int completed;
-  final int total;
-
-  @override
-  Widget build(BuildContext context) {
-    final safeTotal = total <= 0 ? 1 : total;
-    final value = (completed / safeTotal).clamp(0.0, 1.0);
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(999),
-      child: LinearProgressIndicator(
-        value: value,
-        minHeight: 5,
-        backgroundColor: Colors.white.withValues(alpha: 0.28),
-        valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-      ),
-    );
-  }
-}
 
 class _SortButton extends StatelessWidget {
   const _SortButton({required this.label});
@@ -1152,22 +1101,6 @@ class ProgramPosterAsset {
   }
 }
 
-List<Color> _programGradient(String programId) {
-  switch (programId) {
-    case 'prog_desk_neck_shoulder_reset_14':
-      return const [Color(0xFF0891B2), Color(0xFF1D4ED8)];
-    case 'prog_lower_back_hip_relief_14':
-      return const [Color(0xFF6D28D9), Color(0xFF1E1B4B)];
-    case 'prog_wrist_forearm_mouse_recovery_10':
-      return const [Color(0xFF0F766E), Color(0xFF0F172A)];
-    case 'prog_upper_back_posture_control_14':
-      return const [Color(0xFF2563EB), Color(0xFF312E81)];
-    case 'prog_full_desk_body_reset_21':
-      return const [Color(0xFF0EA5E9), Color(0xFF0F172A)];
-    default:
-      return const [Color(0xFF2563EB), Color(0xFF0F172A)];
-  }
-}
 
 
 String _categoryLabel(BuildContext context, SessionLibraryCategory category) {
@@ -1217,38 +1150,6 @@ const String _remoteProgramCoverBaseUrl =
 String _remoteProgramCoverUrl(String programId) =>
     '$_remoteProgramCoverBaseUrl/$programId.webp';
 
-class _RemoteProgramCoverImage extends StatelessWidget {
-  const _RemoteProgramCoverImage({
-    required this.programId,
-    required this.fit,
-    required this.alignment,
-    required this.fallbackBuilder,
-  });
-
-  final String programId;
-  final BoxFit fit;
-  final AlignmentGeometry alignment;
-  final WidgetBuilder fallbackBuilder;
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.network(
-      _remoteProgramCoverUrl(programId),
-      fit: fit,
-      alignment: alignment,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return fallbackBuilder(context);
-      },
-      errorBuilder: (context, error, stackTrace) => Image.asset(
-        ProgramPosterAsset.pathForProgramId(programId),
-        fit: fit,
-        alignment: alignment,
-        errorBuilder: (_, __, ___) => fallbackBuilder(context),
-      ),
-    );
-  }
-}
 
 
 const String _remoteSessionCoverBaseUrl =

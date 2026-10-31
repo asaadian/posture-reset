@@ -2961,4 +2961,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get explore_level_therapy => 'Therapy';
   @override
   String get explore_level_all => 'All levels';
+  @override
+  String get dashboard_quick_fix_badge => 'QUICK FIX';
+  @override
+  String get dashboard_quick_fix_cta => 'Choose an area';
+  @override
+  String get program_mission_label => 'Mission';
+  @override
+  String get common_min => 'min';
+  @override
+  String get program_short_session => 'Short session';
+  @override
+  String get program_load_label => 'Load';
+  @override
+  String get program_recovery_label => 'Recovery';
+  @override
+  String get program_today_target => 'Today’s target';
+  @override
+  String get program_why_mission => 'Why this mission';
+  @override
+  String get program_notice_after => 'What to notice after';
+  @override
+  String get program_start_mission => 'Start mission';
+  @override
+  String get common_done => 'Done';
+  @override
+  String get program_back_current_mission => 'Back to current mission';
 }

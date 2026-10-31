@@ -1996,6 +1996,44 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.insights_more_premium_body;
       case 'program_user_joined_one':
         return _t.program_user_joined_one;
+      case 'explore_group_neck_title':
+        return _t.explore_group_neck_title;
+      case 'explore_group_upper_back_title':
+        return _t.explore_group_upper_back_title;
+      case 'explore_group_lower_back_title':
+        return _t.explore_group_lower_back_title;
+      case 'explore_group_hips_title':
+        return _t.explore_group_hips_title;
+      case 'explore_group_hands_title':
+        return _t.explore_group_hands_title;
+      case 'explore_group_other_title':
+        return _t.explore_group_other_title;
+      case 'explore_group_neck_subtitle':
+        return _t.explore_group_neck_subtitle;
+      case 'explore_group_upper_back_subtitle':
+        return _t.explore_group_upper_back_subtitle;
+      case 'explore_group_lower_back_subtitle':
+        return _t.explore_group_lower_back_subtitle;
+      case 'explore_group_hips_subtitle':
+        return _t.explore_group_hips_subtitle;
+      case 'explore_group_hands_subtitle':
+        return _t.explore_group_hands_subtitle;
+      case 'explore_group_other_subtitle':
+        return _t.explore_group_other_subtitle;
+      case 'explore_show_less':
+        return _t.explore_show_less;
+      case 'explore_view_more':
+        return _t.explore_view_more;
+      case 'saved_collection_label':
+        return _t.saved_collection_label;
+      case 'saved_collection_subtitle':
+        return _t.saved_collection_subtitle;
+      case 'history_journey_label':
+        return _t.history_journey_label;
+      case 'history_journey_subtitle':
+        return _t.history_journey_subtitle;
+      case 'common_session_count':
+        return _t.common_session_count('{count}');
       default:
         return _translateDynamicFallback(fallback);
     }

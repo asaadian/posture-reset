@@ -423,15 +423,6 @@ String _dashboardGreeting({
 
 
 
-String _compactPublicCount(int count) {
-  if (count < 1000) return '$count';
-  if (count < 1000000) {
-    if (count < 10000) return '${(count / 100).floor() / 10}K';
-    return '${count ~/ 1000}K';
-  }
-  return '${(count / 100000).floor() / 10}M';
-}
-
 class _DashboardProgramCarousel extends StatelessWidget {
   const _DashboardProgramCarousel({
     required this.programs,
@@ -1249,10 +1240,6 @@ class _ProgramPosterCard extends StatelessWidget {
                       programId: program.id,
                       count: joinedCount!,
                       compact: true,
-                    ),
-                  ),
-              ],
-                      ),
                     ),
                   ),
               ],

@@ -257,11 +257,11 @@ class _PremiumHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const benefits = [
-      'Every recovery session',
-      'All guided programs',
-      'Full Quick Fix recommendations',
-      'Insights, history and saved sessions',
+    final benefits = [
+      AppText.get(context, key: 'premium_benefit_sessions', fallback: 'Every recovery session'),
+      AppText.get(context, key: 'premium_benefit_programs', fallback: 'All guided programs'),
+      AppText.get(context, key: 'premium_benefit_quick_fix', fallback: 'Full Quick Fix recommendations'),
+      AppText.get(context, key: 'premium_benefit_insights', fallback: 'Insights, history and saved sessions'),
     ];
     return Container(
       padding: const EdgeInsets.fromLTRB(22, 24, 22, 25),
@@ -311,7 +311,7 @@ class _PremiumHeroCard extends StatelessWidget {
           ),
           const SizedBox(height: 9),
           Text(
-            hasCoreAccess ? 'Premium is active' : 'Desk Workout Premium',
+            hasCoreAccess ? AppText.get(context, key: 'premium_is_active', fallback: 'Premium is active') : 'Desk Workout Premium',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               color: Colors.white,
@@ -322,8 +322,8 @@ class _PremiumHeroCard extends StatelessWidget {
           const SizedBox(height: 7),
           Text(
             hasCoreAccess
-                ? 'Your complete recovery toolkit is ready.'
-                : 'One payment. More ways to feel better at your desk.',
+                ? AppText.get(context, key: 'premium_toolkit_ready', fallback: 'Your complete recovery toolkit is ready.')
+                : AppText.get(context, key: 'premium_hero_subtitle', fallback: 'One payment. More ways to feel better at your desk.'),
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Color(0xFFD2E6E7),
@@ -433,8 +433,8 @@ class _PremiumPurchaseCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             hasCoreAccess
-                ? 'Your Premium access is ready.'
-                : 'Pay once. Keep access. No subscription.',
+                ? AppText.get(context, key: 'premium_access_ready', fallback: 'Your Premium access is ready.')
+                : AppText.get(context, key: 'premium_no_subscription', fallback: 'Pay once. Keep access. No subscription.'),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -499,7 +499,7 @@ class _PurchaseHeader extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Text(
-            hasCoreAccess ? 'Premium active' : 'Premium lifetime',
+            hasCoreAccess ? AppText.get(context, key: 'premium_active_label', fallback: 'Premium active') : AppText.get(context, key: 'premium_lifetime_label', fallback: 'Premium lifetime'),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.titleLarge?.copyWith(
@@ -523,7 +523,7 @@ class _PurchaseHeader extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Pay once',
+                AppText.get(context, key: 'premium_pay_once', fallback: 'Pay once'),
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: colors.primary,
                   fontWeight: FontWeight.w900,

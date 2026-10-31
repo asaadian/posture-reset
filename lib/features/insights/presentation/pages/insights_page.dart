@@ -143,8 +143,8 @@ class InsightsPage extends ConsumerWidget {
                       margin: EdgeInsets.zero,
                       child: ListTile(
                         leading: const Icon(Icons.workspace_premium_rounded),
-                        title: const Text('More insights with Premium'),
-                        subtitle: const Text('Unlock advanced analysis and your complete recovery picture.'),
+                        title: Text(AppText.get(context, key: 'insights_more_premium', fallback: 'More insights with Premium')),
+                        subtitle: Text(AppText.get(context, key: 'insights_more_premium_body', fallback: 'Unlock advanced analysis and your complete recovery picture.')),
                         trailing: const Icon(Icons.arrow_forward_rounded),
                         onTap: () => context.pushNamed('premium'),
                       ),

@@ -2861,4 +2861,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get player_guidance_safety => 'Safety';
   @override
   String get player_guidance_avoid_mistakes => 'Avoid these mistakes';
+  @override
+  String player_phase_named_complete_body(String phase) {
+    return '$phase is complete. Your next phase is now ready.';
+  }
+  @override
+  String player_mission_streak(String count) {
+    return '$count mission streak';
+  }
+  @override
+  String player_phase_unlocked_named(String phase) {
+    return '$phase unlocked';
+  }
 }

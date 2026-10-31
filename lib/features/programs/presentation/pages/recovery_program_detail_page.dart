@@ -1579,9 +1579,9 @@ class _CompactProgramDayTile extends ConsumerWidget {
 
     final canTap = completed || accessLocked || isCurrent || isFuture;
     final compactMeta = <String>[
-      if (day.isAssessmentDay) 'Assessment',
-      if (day.isRecoveryDay) 'Recovery',
-      if (day.isPhaseEnd) 'Milestone',
+      if (day.isAssessmentDay) AppText.get(context, key: 'program_assessment_label', fallback: 'Assessment'),
+      if (day.isRecoveryDay) AppText.get(context, key: 'program_recovery_label', fallback: 'Recovery'),
+      if (day.isPhaseEnd) AppText.get(context, key: 'program_milestone_label', fallback: 'Milestone'),
     ];
 
     return Padding(
@@ -1702,7 +1702,7 @@ class _CompactProgramDayTile extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(999),
                                 ),
                                 child: Text(
-                                  'TODAY',
+                                  AppText.get(context, key: 'program_today_badge', fallback: 'TODAY'),
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w900,

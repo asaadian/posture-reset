@@ -2935,4 +2935,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premium_access_ready => 'Your Premium access is ready.';
   @override
   String get premium_no_subscription => 'Pay once. Keep access. No subscription.';
+  @override
+  String program_users_joined(String count) => '$count people joined';
+  @override
+  String get explore_title => 'Explore';
+  @override
+  String get explore_body_neck => 'Neck & shoulders';
+  @override
+  String get explore_body_upper_back => 'Upper back';
+  @override
+  String get explore_body_lower_back => 'Lower back';
+  @override
+  String get explore_body_hips => 'Hips & legs';
+  @override
+  String get explore_body_hands => 'Hands & wrists';
+  @override
+  String get explore_body_default => 'Body focus';
+  @override
+  String get insights_recovery_label => 'Recovery';
 }

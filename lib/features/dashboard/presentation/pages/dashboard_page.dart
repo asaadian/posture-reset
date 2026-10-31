@@ -386,7 +386,7 @@ class _DashboardProgramCarousel extends StatelessWidget {
           )),
           TextButton.icon(
             onPressed: () => context.pushNamed('recovery-programs'),
-            label: const Text(AppText.get(context, key: 'common_view_all', fallback: 'View all')),
+            label: Text(AppText.get(context, key: 'common_view_all', fallback: 'View all')),
             icon: const Icon(Icons.arrow_forward_rounded, size: 17),
           ),
         ]),
@@ -1474,7 +1474,7 @@ class _DashboardPremiumShowcase extends StatelessWidget {
               errorBuilder: (_, __, ___) => const Icon(
                 Icons.workspace_premium_rounded, color: Color(0xFFFFD58A), size: 34)),
             const SizedBox(width: 10),
-            const Expanded(child: Column(
+            Expanded(child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(AppText.get(context, key: 'premium_unlock_label', fallback: 'Unlock Premium'), style: TextStyle(

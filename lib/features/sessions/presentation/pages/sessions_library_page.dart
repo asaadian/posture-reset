@@ -12,6 +12,7 @@ import '../../../access/application/access_providers.dart';
 import '../../../access/domain/access_models.dart';
 import '../../../auth/application/auth_providers.dart';
 import '../../application/sessions_providers.dart';
+import '../../application/public_activity_stats_providers.dart';
 import '../../domain/session_models.dart';
 import '../session_library_models.dart';
 
@@ -38,12 +39,12 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
     ref.listen(currentUserProvider, (previous, next) {
       if (previous?.id == next?.id) return;
       ref.invalidate(sessionSummariesProvider);
-      ref.invalidate(personalPopularSessionIdsProvider);
+      ref.invalidate(globalPopularSessionIdsProvider);
       ref.invalidate(accessSnapshotProvider);
     });
 
     final sessionsAsync = ref.watch(sessionSummariesProvider);
-    final personalPopularAsync = ref.watch(personalPopularSessionIdsProvider);
+    final globalPopularAsync = ref.watch(globalPopularSessionIdsProvider);
     final accessAsync = ref.watch(accessSnapshotProvider);
 
     return ResponsivePageScaffold(
@@ -105,7 +106,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
               child: RefreshIndicator(
               onRefresh: () async {
                 ref.invalidate(sessionSummariesProvider);
-                ref.invalidate(personalPopularSessionIdsProvider);
+                ref.invalidate(globalPopularSessionIdsProvider);
                 await ref.read(sessionSummariesProvider.future);
               },
               child: ListView(
@@ -134,7 +135,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                           child: widget.bodyCategory == null
                               ? _TrainingDiscoverySections(
                                   sessions: visibleSessions,
-                                  popularIds: personalPopularAsync.value ?? const <String>[],
+                                  popularIds: globalPopularAsync.value ?? const <String>[],
                                   accessSnapshot: accessSnapshot,
                                 )
                               : _BodySessionList(
@@ -606,16 +607,16 @@ class _PopularSessionsShowcaseState extends State<_PopularSessionsShowcase> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('YOUR ACTIVITY', style: TextStyle(
+          const Text('COMMUNITY FAVORITES', style: TextStyle(
             color: Color(0xFF78E1C6), fontSize: 11,
             letterSpacing: 1.8, fontWeight: FontWeight.w800,
           )),
           const SizedBox(height: 7),
-          const Text('Your most played sessions', style: TextStyle(
+          const Text('Top 10 most played sessions', style: TextStyle(
             color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800,
           )),
           const SizedBox(height: 5),
-          const Text('Ranked by your session starts in the last 90 days',
+          const Text('Based on completed sessions across Desk Workout',
             style: TextStyle(color: Color(0xFFD5E2E7), fontSize: 12)),
           const SizedBox(height: 16),
           AnimatedSize(

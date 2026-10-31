@@ -1990,6 +1990,12 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.common_done;
       case 'program_back_current_mission':
         return _t.program_back_current_mission;
+      case 'insights_more_premium':
+        return _t.insights_more_premium;
+      case 'insights_more_premium_body':
+        return _t.insights_more_premium_body;
+      case 'program_user_joined_one':
+        return _t.program_user_joined_one;
       default:
         return _translateDynamicFallback(fallback);
     }

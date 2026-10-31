@@ -3029,4 +3029,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get history_journey_subtitle => 'Every session is progress worth keeping track of.';
   @override
   String common_session_count(String count) => '$count Sessions';
+  @override
+  String get program_milestone_label => 'Milestone';
+  @override
+  String program_day_of_total_label(String day, String total) => 'Mission $day of $total';
 }

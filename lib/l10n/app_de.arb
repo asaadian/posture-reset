@@ -1009,5 +1009,8 @@
   "program_notice_after": "Darauf kannst du danach achten",
   "program_start_mission": "Einheit starten",
   "common_done": "Erledigt",
-  "program_back_current_mission": "Zurück zur aktuellen Einheit"
+  "program_back_current_mission": "Zurück zur aktuellen Einheit",
+  "insights_more_premium": "Mehr Einblicke mit Premium",
+  "insights_more_premium_body": "Entdecke detaillierte Auswertungen und sieh deine Fortschritte auf einen Blick.",
+  "program_user_joined_one": "1 Person macht mit"
 }

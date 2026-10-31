@@ -5311,6 +5311,15 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recovery route'**
   String get program_recovery_route;
+  String program_users_joined(String count);
+  String get explore_title;
+  String get explore_body_neck;
+  String get explore_body_upper_back;
+  String get explore_body_lower_back;
+  String get explore_body_hips;
+  String get explore_body_hands;
+  String get explore_body_default;
+  String get insights_recovery_label;
   String get premium_benefit_sessions;
   String get premium_benefit_programs;
   String get premium_benefit_quick_fix;

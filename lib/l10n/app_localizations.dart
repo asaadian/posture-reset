@@ -5311,6 +5311,70 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recovery route'**
   String get program_recovery_route;
+  /// Localized UI string: dashboard_load_error_title.
+  String get dashboard_load_error_title;
+  /// Localized UI string: dashboard_load_error_body.
+  String get dashboard_load_error_body;
+  /// Localized UI string: program_sessions_title.
+  String get program_sessions_title;
+  /// Localized UI string: program_card_label.
+  String get program_card_label;
+  /// Localized UI string: program_card_open.
+  String get program_card_open;
+  /// Localized UI string: quick_fix_no_match_hint.
+  String get quick_fix_no_match_hint;
+  /// Localized UI string: quick_fix_browse_sessions.
+  String get quick_fix_browse_sessions;
+  /// Localized UI string: profile_metric_completed.
+  String get profile_metric_completed;
+  /// Localized UI string: notification_open_phone_settings.
+  String get notification_open_phone_settings;
+  /// Localized UI string: premium_loading_products.
+  String get premium_loading_products;
+  /// Localized UI string: premium_purchase_processing.
+  String get premium_purchase_processing;
+  /// Localized UI string: premium_product_unavailable.
+  String get premium_product_unavailable;
+  /// Localized UI string: player_journey_complete.
+  String get player_journey_complete;
+  /// Localized UI string: player_phase_complete.
+  String get player_phase_complete;
+  /// Localized UI string: player_mission_complete.
+  String get player_mission_complete;
+  /// Localized UI string: player_journey_complete_body.
+  String get player_journey_complete_body;
+  /// Localized UI string: player_phase_complete_body.
+  String get player_phase_complete_body;
+  /// Localized UI string: player_mission_complete_body.
+  String get player_mission_complete_body;
+  /// Localized UI string: player_journey_progress.
+  String get player_journey_progress;
+  /// Localized UI string: player_milestone_reached.
+  String get player_milestone_reached;
+  /// Localized UI string: player_next_phase_unlocked.
+  String get player_next_phase_unlocked;
+  /// Localized UI string: player_next_mission_unlocked.
+  String get player_next_mission_unlocked;
+  /// Localized UI string: player_view_completed_journey.
+  String get player_view_completed_journey;
+  /// Localized UI string: player_back_to_journey.
+  String get player_back_to_journey;
+  /// Localized UI string: player_guidance_how_to.
+  String get player_guidance_how_to;
+  /// Localized UI string: player_guidance_goal.
+  String get player_guidance_goal;
+  /// Localized UI string: player_guidance_notice.
+  String get player_guidance_notice;
+  /// Localized UI string: player_guidance_coach_cue.
+  String get player_guidance_coach_cue;
+  /// Localized UI string: player_guidance_breathing.
+  String get player_guidance_breathing;
+  /// Localized UI string: player_guidance_coach_tip.
+  String get player_guidance_coach_tip;
+  /// Localized UI string: player_guidance_safety.
+  String get player_guidance_safety;
+  /// Localized UI string: player_guidance_avoid_mistakes.
+  String get player_guidance_avoid_mistakes;
 
   /// No description provided for @insights_active_suffix.
   ///

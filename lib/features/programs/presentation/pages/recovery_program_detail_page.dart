@@ -267,8 +267,6 @@ class _ProgramHero extends ConsumerWidget {
                     activeProgram: activeProgram,
                   ),
         ),
-        const SizedBox(height: 12),
-        _HeroTodayCard(program: viewModel.program),
       ],
     );
   }
@@ -1328,7 +1326,7 @@ class _AccessBadge extends StatelessWidget {
 
 
 
-class _ProgramDaysSection extends StatefulWidget {
+class _ProgramDaysSection extends StatelessWidget {
   const _ProgramDaysSection({
     required this.detail,
     required this.progress,
@@ -1344,169 +1342,68 @@ class _ProgramDaysSection extends StatefulWidget {
   final AccessSnapshot accessSnapshot;
 
   @override
-  State<_ProgramDaysSection> createState() => _ProgramDaysSectionState();
-}
-
-class _ProgramDaysSectionState extends State<_ProgramDaysSection> {
-  int? _selectedPhaseOrder;
-
-  @override
   Widget build(BuildContext context) {
     final t = AppText.of(context);
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-    final currentDay = widget.progress?.currentDay ?? 1;
+    final days = [...detail.days]
+      ..sort((a, b) => a.dayNumber.compareTo(b.dayNumber));
+    final currentDay = progress?.currentDay ?? 1;
+    final completedCount = days.where(
+      (day) => dayProgress[day.dayNumber]?.isCompleted ?? false,
+    ).length;
 
-    if (widget.detail.days.isEmpty) {
-      return Container(
-        width: double.infinity,
+    if (days.isEmpty) {
+      return Padding(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(26),
-          color: isDark ? const Color(0xFF101827) : Colors.white,
-          border: Border.all(
-            color: isDark
-                ? const Color(0xFF26324A)
-                : const Color(0xFFE2E8F0),
-          ),
-        ),
         child: Text(
-          t.get(
-            'program_no_days_title',
-            fallback: 'No missions available yet.',
-          ),
-          style: theme.textTheme.titleSmall?.copyWith(
-            color: colors.onSurface,
-            fontWeight: FontWeight.w900,
-          ),
+          t.get('program_no_days_title',
+              fallback: 'No missions available yet.'),
         ),
       );
     }
 
-    final phases = _JourneyPhaseGroup.fromDays(widget.detail.days);
-    final currentPhaseIndex = phases.indexWhere(
-      (phase) => phase.days.any((day) => day.dayNumber == currentDay),
-    );
-    final defaultPhase = currentPhaseIndex >= 0 ? currentPhaseIndex : 0;
-    final selectedIndex = _selectedPhaseOrder == null
-        ? defaultPhase
-        : phases.indexWhere((phase) => phase.order == _selectedPhaseOrder);
-    final safeSelectedIndex = selectedIndex >= 0 ? selectedIndex : defaultPhase;
-    final selectedPhase = phases[safeSelectedIndex];
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        gradient: LinearGradient(
-          colors: isDark
-              ? [
-                  colors.surfaceContainerHigh.withValues(alpha: .78),
-                  colors.surface.withValues(alpha: .98),
-                ]
-              : [
-                  colors.surface.withValues(alpha: .98),
-                  colors.surfaceContainerLow.withValues(alpha: .88),
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(
-          color: colors.outlineVariant.withValues(
-            alpha: isDark ? .76 : .58,
-          ),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: .14)
-                : colors.primary.withValues(alpha: .045),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(2, 4, 2, 10),
+          child: Row(
             children: [
               Expanded(
-                child: _SmallSectionTitle(
-                  icon: Icons.route_rounded,
-                  title: t.get(
-                    'program_view_full_plan_title',
-                    fallback: 'Journey map',
+                child: Text(
+                  t.get('program_sessions_title', fallback: 'Your sessions'),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.4,
                   ),
                 ),
               ),
-              _PlanCountBadge(count: widget.detail.summary.durationDays),
+              Text(
+                '$completedCount / ${days.length}',
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: colors.primary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            t.get(
-              'program_sequential_hint',
-              fallback: 'Choose a phase to view its missions and progress.',
-            ),
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: colors.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
-              height: 1.24,
+        ),
+        for (var index = 0; index < days.length; index++)
+          Padding(
+            key: ValueKey('program-session-${days[index].dayNumber}'),
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _CompactProgramDayTile(
+              day: days[index],
+              currentDay: currentDay,
+              dayProgress: dayProgress[days[index].dayNumber],
+              actionState: actionState,
+              accessSnapshot: accessSnapshot,
+              programAccessTier: detail.summary.accessTier,
+              isLast: index == days.length - 1,
             ),
           ),
-          const SizedBox(height: 14),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final useSideRail = constraints.maxWidth >= 760;
-              final navigator = _PhaseNavigator(
-                phases: phases,
-                selectedIndex: safeSelectedIndex,
-                currentDay: currentDay,
-                dayProgress: widget.dayProgress,
-                vertical: useSideRail,
-                onSelected: (index) {
-                  setState(() => _selectedPhaseOrder = phases[index].order);
-                },
-              );
-              final phaseCard = _PhaseJourneySection(
-                key: ValueKey('phase-${selectedPhase.order}'),
-                index: safeSelectedIndex,
-                phase: selectedPhase,
-                currentDay: currentDay,
-                dayProgress: widget.dayProgress,
-                actionState: widget.actionState,
-                accessSnapshot: widget.accessSnapshot,
-                programAccessTier: widget.detail.summary.accessTier,
-                expandedByDefault: true,
-                showCollapseControl: false,
-              );
-
-              if (!useSideRail) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    navigator,
-                    const SizedBox(height: 12),
-                    phaseCard,
-                  ],
-                );
-              }
-
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(width: 190, child: navigator),
-                  const SizedBox(width: 14),
-                  Expanded(child: phaseCard),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+      ],
     );
   }
 }

@@ -555,6 +555,30 @@ class _PlanSignalLine extends StatelessWidget {
 
 
 
+String _purchaseButtonLabel(BuildContext context, BillingState state) {
+  final t = AppText.of(context);
+  if (state.status == BillingPurchaseStatus.loadingProducts) {
+    return t.get('premium_loading_products', fallback: 'Loading price...');
+  }
+  if (state.status == BillingPurchaseStatus.purchasing ||
+      state.status == BillingPurchaseStatus.verifying) {
+    return t.get('premium_purchase_processing', fallback: 'Processing...');
+  }
+  if (!state.isStoreAvailable || state.selectedProduct == null) {
+    return t.get('premium_product_unavailable', fallback: 'Premium unavailable');
+  }
+  return 'Unlock Premium · ${state.selectedProduct!.price}';
+}
+
+String _billingFailureMessage(BuildContext context, BillingFailure failure) {
+  final message = failure.message.trim();
+  if (message.isNotEmpty) return message;
+  return AppText.of(context).get(
+    'premium_purchase_failed',
+    fallback: 'Purchase could not be completed. Please try again.',
+  );
+}
+
 class _PrimaryPurchaseButton extends StatelessWidget {
   const _PrimaryPurchaseButton({
     required this.hasCoreAccess,

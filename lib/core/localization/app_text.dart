@@ -1938,6 +1938,24 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.premium_access_ready;
       case 'premium_no_subscription':
         return _t.premium_no_subscription;
+      case 'program_users_joined':
+        return _t.program_users_joined('{count}');
+      case 'explore_title':
+        return _t.explore_title;
+      case 'explore_body_neck':
+        return _t.explore_body_neck;
+      case 'explore_body_upper_back':
+        return _t.explore_body_upper_back;
+      case 'explore_body_lower_back':
+        return _t.explore_body_lower_back;
+      case 'explore_body_hips':
+        return _t.explore_body_hips;
+      case 'explore_body_hands':
+        return _t.explore_body_hands;
+      case 'explore_body_default':
+        return _t.explore_body_default;
+      case 'insights_recovery_label':
+        return _t.insights_recovery_label;
       default:
         return _translateDynamicFallback(fallback);
     }

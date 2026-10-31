@@ -1,6 +1,6 @@
-// lib/ieatures/sessions/application/sessions_providers.dart
+// lib/features/sessions/application/sessions_providers.dart
 
-import 'package:ilutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_locale_controller.dart';
 import '../../auth/application/auth_providers.dart';

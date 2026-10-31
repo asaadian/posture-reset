@@ -129,16 +129,16 @@ class SessionHistoryPage extends ConsumerWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('YOUR JOURNEY', style: TextStyle(
+                                  Text(AppText.get(context, key: 'history_journey_label', fallback: 'YOUR JOURNEY'), style: TextStyle(
                                     color: Color(0xFF8CEBD3), letterSpacing: 1.4,
                                     fontWeight: FontWeight.w800, fontSize: 11,
                                   )),
                                   const SizedBox(height: 5),
-                                  Text('${items.length} sessions', style: const TextStyle(
+                                  Text(AppText.get(context, key: 'common_session_count', fallback: '{count} sessions').replaceAll('{count}', items.length.toString()), style: const TextStyle(
                                     color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800,
                                   )),
                                   const SizedBox(height: 4),
-                                  const Text('Every session is progress worth keeping track of.', style: TextStyle(
+                                  Text(AppText.get(context, key: 'history_journey_subtitle', fallback: 'Every session is progress worth keeping track of.'), style: TextStyle(
                                     color: Color(0xFFDAE7EE), fontSize: 12, height: 1.35,
                                   )),
                                 ],

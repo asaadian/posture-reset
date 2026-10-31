@@ -472,7 +472,7 @@ class _ProgramCard extends StatelessWidget {
                             height: 1.12,
                           ),
                         ),
-                        if (joinedCount != null && joinedCount! > 0) ...[
+                        if (joinedCount != null) ...[
                           const SizedBox(height: 7),
                           FittedBox(
                             fit: BoxFit.scaleDown,

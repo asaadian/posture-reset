@@ -1147,8 +1147,7 @@ String _sortShortLabel(BuildContext context, SessionLibrarySort sort) {
 const String _remoteProgramCoverBaseUrl =
     'https://weglabs.com/data/desk-workout/covers/programs';
 
-String _remoteProgramCoverUrl(String programId) =>
-    '$_remoteProgramCoverBaseUrl/$programId.webp';
+
 
 
 

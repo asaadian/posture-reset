@@ -14,7 +14,6 @@ import '../../../../core/app_data/app_data_reset_signal.dart';
 import '../../../../core/localization/app_text.dart';
 import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../../shared/widgets/modern_progress_track.dart';
-import '../../../../shared/onboarding/page_onboarding.dart';
 import '../../../access/application/access_providers.dart';
 import '../../../access/domain/access_models.dart';
 import '../../../programs/application/recovery_program_providers.dart';
@@ -22,22 +21,6 @@ import '../../../programs/domain/recovery_program_models.dart';
 import '../../application/insights_providers.dart';
 import '../../domain/insights_snapshot.dart';
 
-
-Rect _insightsHeroGuideTarget(Size size, EdgeInsets safePadding) {
-  final top = safePadding.top + 108;
-  return Rect.fromLTWH(14, top, size.width - 28, 128);
-}
-
-Rect _insightsMetricGuideTarget(Size size, EdgeInsets safePadding) {
-  final top = safePadding.top + 246;
-  return Rect.fromLTWH(14, top, size.width - 28, 170);
-}
-
-Rect _insightsChartGuideTarget(Size size, EdgeInsets safePadding) {
-  final top = safePadding.top + 430;
-  final height = (size.height - top - safePadding.bottom - 154).clamp(170.0, 260.0);
-  return Rect.fromLTWH(14, top, size.width - 28, height);
-}
 
 class InsightsPage extends ConsumerWidget {
   const InsightsPage({super.key});
@@ -210,65 +193,6 @@ class _JourneyIntelMetric extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme=Theme.of(context); final colors=theme.colorScheme;
     return Container(padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 11),decoration: BoxDecoration(borderRadius: BorderRadius.circular(19),color: colors.surface.withValues(alpha: 0.70),border: Border.all(color: colors.outlineVariant.withValues(alpha: 0.46))),child: Column(crossAxisAlignment: CrossAxisAlignment.start,children:[Icon(icon,size:17,color:colors.primary),const SizedBox(height:7),Text(value,style:theme.textTheme.titleMedium?.copyWith(color:colors.onSurface,fontWeight:FontWeight.w900)),const SizedBox(height:2),Text(label,maxLines:1,overflow:TextOverflow.ellipsis,style:theme.textTheme.labelSmall?.copyWith(color:colors.onSurfaceVariant,fontWeight:FontWeight.w700))]));
-  }
-}
-
-class _LockedInsightsPreview extends StatelessWidget {
-  const _LockedInsightsPreview({
-    required this.pageInfo,
-    required this.onUpgrade,
-  });
-
-  final ResponsivePageInfo pageInfo;
-  final VoidCallback onUpgrade;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-
-    return Stack(
-      children: [
-        ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.only(bottom: pageInfo.isCompact ? 120 : 48),
-          children: const [
-            _InsightsLockedViewedTracker(),
-            _PreviewHeroCard(),
-            SizedBox(height: 10),
-            _PreviewMetricGrid(),
-            SizedBox(height: 10),
-            _PreviewChartDeck(),
-            SizedBox(height: 10),
-            _PreviewNotesCard(),
-          ],
-        ),
-        Positioned.fill(
-          child: IgnorePointer(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 3.8, sigmaY: 3.8),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .surface
-                      .withValues(alpha: 0.14),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          left: 18,
-          right: 18,
-          top: MediaQuery.of(context).padding.top + 138,
-          child: _InsightsUnlockMiniCard(
-            title: t.get('insights_locked_preview_title', fallback: 'Unlock Insights'),
-            body: t.get('insights_locked_preview_body', fallback: 'Core Access shows your real trends.'),
-            onUpgrade: onUpgrade,
-          ),
-        ),
-      ],
-    );
   }
 }
 

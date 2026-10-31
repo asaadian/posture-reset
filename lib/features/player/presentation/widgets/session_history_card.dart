@@ -53,7 +53,7 @@ class SessionHistoryCard extends StatelessWidget {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(11),
             child: Column(
               children: [
                 Row(
@@ -73,7 +73,7 @@ class SessionHistoryCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 9),
                 Container(
                   padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
                   decoration: BoxDecoration(
@@ -168,10 +168,11 @@ class _HistoryVisual extends StatelessWidget {
   Widget build(BuildContext context) {
     return SessionVisualStage(
       sessionId: sessionId,
-      width: 108,
-      height: 114,
+      width: 94,
+      height: 94,
+      imageFit: BoxFit.cover,
       compact: true,
-      padding: const EdgeInsets.fromLTRB(6, 7, 6, 4),
+      padding: EdgeInsets.zero,
       borderRadius: 19,
     );
   }

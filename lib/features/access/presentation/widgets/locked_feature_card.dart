@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/localization/app_text.dart';
 
 class LockedFeatureCard extends StatelessWidget {
   const LockedFeatureCard({
@@ -61,7 +62,7 @@ class LockedFeatureCard extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: onUpgrade,
               icon: const Icon(Icons.arrow_forward_rounded),
-              label: const Text('Explore Premium'),
+              label: Text(AppText.get(context, key: 'premium_explore_cta', fallback: 'Explore Premium')),
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF173D4B),
@@ -70,7 +71,7 @@ class LockedFeatureCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 7),
-          const Center(child: Text('One payment · Lifetime access',
+          Center(child: Text(AppText.get(context, key: 'premium_lifetime_note', fallback: 'One payment · Lifetime access'),
             style: TextStyle(color: Color(0xFFA9DBD5), fontSize: 11))),
         ],
       ),

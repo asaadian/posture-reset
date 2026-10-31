@@ -46,7 +46,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
     final accessAsync = ref.watch(accessSnapshotProvider);
 
     return ResponsivePageScaffold(
-      title: Text(widget.bodyCategory == null ? 'Explore' : _bodyPageTitle(widget.bodyCategory!)),
+      title: Text(widget.bodyCategory == null ? AppText.get(context, key: 'nav_sessions', fallback: 'Explore') : _bodyPageTitle(context, widget.bodyCategory!)),
       bodyBuilder: (context, pageInfo) {
         final accessSnapshot = accessAsync.maybeWhen(
           data: (value) => value,
@@ -409,15 +409,21 @@ class _SearchSortBarState extends State<_SearchSortBar> {
 /// Goal-first browsing: show meaningful situations rather than a long grid.
 /// Each row is derived from current Supabase session metadata; empty groups
 /// are hidden, and the complete library remains available at the bottom.
-String _bodyPageTitle(String id) {
-  const titles = <String, String>{
-    'neck': 'Neck & shoulders',
-    'back': 'Upper back',
-    'lower_back': 'Lower back',
-    'hips': 'Hips & legs',
-    'hands': 'Hands & wrists',
-  };
-  return titles[id] ?? 'Body focus';
+String _bodyPageTitle(BuildContext context, String id) {
+  switch (id) {
+    case 'neck':
+      return AppText.get(context, key: 'explore_body_neck', fallback: 'Neck & shoulders');
+    case 'back':
+      return AppText.get(context, key: 'explore_body_upper_back', fallback: 'Upper back');
+    case 'lower_back':
+      return AppText.get(context, key: 'explore_body_lower_back', fallback: 'Lower back');
+    case 'hips':
+      return AppText.get(context, key: 'explore_body_hips', fallback: 'Hips & legs');
+    case 'hands':
+      return AppText.get(context, key: 'explore_body_hands', fallback: 'Hands & wrists');
+    default:
+      return AppText.get(context, key: 'explore_body_default', fallback: 'Body focus');
+  }
 }
 
 bool _matchesBodyPage(SessionSummary session, String id) {

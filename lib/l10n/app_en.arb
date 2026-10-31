@@ -1009,5 +1009,8 @@
   "program_notice_after": "What to notice after",
   "program_start_mission": "Start mission",
   "common_done": "Done",
-  "program_back_current_mission": "Back to current mission"
+  "program_back_current_mission": "Back to current mission",
+  "insights_more_premium": "More insights with Premium",
+  "insights_more_premium_body": "Unlock advanced analysis and your complete recovery picture.",
+  "program_user_joined_one": "1 person joined"
 }

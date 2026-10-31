@@ -5311,6 +5311,9 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recovery route'**
   String get program_recovery_route;
+  String player_phase_unlocked_named(String phase);
+  String player_mission_streak(String count);
+  String player_phase_named_complete_body(String phase);
   /// Localized UI string: dashboard_load_error_title.
   String get dashboard_load_error_title;
   /// Localized UI string: dashboard_load_error_body.

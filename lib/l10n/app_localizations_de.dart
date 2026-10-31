@@ -2917,4 +2917,34 @@ class AppLocalizationsDe extends AppLocalizations {
   String get premium_one_payment_full_access => 'Einmal zahlen. Alles nutzen.';
   @override
   String get quick_fix_unlock_all => 'Alle Quick-Fix-Übungen freischalten';
+  @override
+  String get dashboard_your_programs => 'Deine Programme';
+  @override
+  String get dashboard_weekly_goal => 'Wochenziel';
+  @override
+  String get dashboard_goal_reached => 'Ziel erreicht! Bleib dran.';
+  @override
+  String dashboard_goal_remaining(String count) => 'Noch $count Sessions bis zu deinem Wochenziel.';
+  @override
+  String get explore_community_favorites => 'BELIEBT IN DER COMMUNITY';
+  @override
+  String get explore_top_ten_title => 'Die 10 beliebtesten Sessions';
+  @override
+  String get explore_top_ten_subtitle => 'Basierend auf abgeschlossenen Sessions in Desk Workout';
+  @override
+  String get explore_body_focus_heading => 'Körperbereich auswählen';
+  @override
+  String get insights_logged_time => 'Trainingszeit';
+  @override
+  String insights_day_window(String count) => 'Zeitraum: $count Tage';
+  @override
+  String get insights_premium_heading => 'Deine Fortschritte im Detail';
+  @override
+  String get insights_premium_body => 'Entdecke mit Premium deine Entwicklungen, Gewohnheiten und Fortschritte.';
+  @override
+  String get premium_explore_cta => 'Premium entdecken';
+  @override
+  String get profile_your_space => 'DEIN BEREICH';
+  @override
+  String get premium_lifetime_note => 'Einmal zahlen · Dauerhaft nutzen';
 }

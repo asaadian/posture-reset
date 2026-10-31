@@ -1872,6 +1872,12 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.player_guidance_safety;
       case 'player_guidance_avoid_mistakes':
         return _t.player_guidance_avoid_mistakes;
+      case 'player_phase_named_complete_body':
+        return _t.player_phase_named_complete_body('{phase}');
+      case 'player_mission_streak':
+        return _t.player_mission_streak('{count}');
+      case 'player_phase_unlocked_named':
+        return _t.player_phase_unlocked_named('{phase}');
       default:
         return _translateDynamicFallback(fallback);
     }

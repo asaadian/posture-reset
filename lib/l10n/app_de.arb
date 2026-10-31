@@ -935,5 +935,34 @@
   },
   "premium_unlock_label": "Premium freischalten",
   "premium_one_payment_full_access": "Einmal zahlen. Alles nutzen.",
-  "quick_fix_unlock_all": "Alle Quick-Fix-Übungen freischalten"
+  "quick_fix_unlock_all": "Alle Quick-Fix-Übungen freischalten",
+  "dashboard_your_programs": "Deine Programme",
+  "dashboard_weekly_goal": "Wochenziel",
+  "dashboard_goal_reached": "Ziel erreicht! Bleib dran.",
+  "dashboard_goal_remaining": "Noch {count} Sessions bis zu deinem Wochenziel.",
+  "@dashboard_goal_remaining": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "explore_community_favorites": "BELIEBT IN DER COMMUNITY",
+  "explore_top_ten_title": "Die 10 beliebtesten Sessions",
+  "explore_top_ten_subtitle": "Basierend auf abgeschlossenen Sessions in Desk Workout",
+  "explore_body_focus_heading": "Körperbereich auswählen",
+  "insights_logged_time": "Trainingszeit",
+  "insights_day_window": "Zeitraum: {count} Tage",
+  "@insights_day_window": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_premium_heading": "Deine Fortschritte im Detail",
+  "insights_premium_body": "Entdecke mit Premium deine Entwicklungen, Gewohnheiten und Fortschritte.",
+  "premium_explore_cta": "Premium entdecken",
+  "profile_your_space": "DEIN BEREICH",
+  "premium_lifetime_note": "Einmal zahlen · Dauerhaft nutzen"
 }

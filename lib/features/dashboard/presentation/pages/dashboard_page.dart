@@ -504,8 +504,6 @@ class _DashboardNewUserHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = AppText.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

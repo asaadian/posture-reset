@@ -2451,58 +2451,7 @@ class _LargeRecoveryRing extends StatelessWidget {
   }
 }
 
-class _InsightGlassPanel extends StatelessWidget {
-  const _InsightGlassPanel({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.child,
-  });
 
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(26),
-        color: isDark
-            ? colors.surfaceContainerHigh.withValues(alpha: 0.62)
-            : colors.surface.withValues(alpha: 0.94),
-        border: Border.all(color: colors.outlineVariant.withValues(alpha: isDark ? 0.68 : 0.54)),
-        boxShadow: [
-          BoxShadow(
-            color: isDark ? Colors.black.withValues(alpha: 0.12) : colors.primary.withValues(alpha: 0.045),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _CompactCardHeader(
-            icon: icon,
-            title: title,
-            subtitle: subtitle,
-            accent: colors.primary,
-          ),
-          const SizedBox(height: 10),
-          child,
-        ],
-      ),
-    );
-  }
-}
 
 class _InsightMiniPill extends StatelessWidget {
   const _InsightMiniPill({required this.label});
@@ -2534,64 +2483,9 @@ class _InsightMiniPill extends StatelessWidget {
   }
 }
 
-class _InsightCoachNote extends StatelessWidget {
-  const _InsightCoachNote({required this.icon, required this.text});
 
-  final IconData icon;
-  final String text;
 
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(11),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        color: colors.primary.withValues(alpha: 0.075),
-        border: Border.all(color: colors.primary.withValues(alpha: 0.12)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 18, color: colors.primary),
-          const SizedBox(width: 9),
-          Expanded(
-            child: Text(
-              text,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: colors.onSurfaceVariant,
-                fontWeight: FontWeight.w700,
-                height: 1.22,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmptyInsightLine extends StatelessWidget {
-  const _EmptyInsightLine({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    return Text(
-      message,
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-        color: colors.onSurfaceVariant,
-        fontWeight: FontWeight.w700,
-      ),
-    );
-  }
-}
 
 class _InsightsLoadingState extends StatelessWidget {
   const _InsightsLoadingState();

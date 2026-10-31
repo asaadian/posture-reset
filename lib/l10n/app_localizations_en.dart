@@ -2254,8 +2254,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get dashboard_programs_title => 'Therapy journeys';
 
-  @override
-  String get common_view_all => 'View all';
 
   @override
   String get dashboard_program_discovery_pill_guided => 'Guided';

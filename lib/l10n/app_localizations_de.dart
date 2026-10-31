@@ -1200,11 +1200,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Körperzonen-Muster erscheinen nach mehr erfassten Runs.';
 
   @override
-  String get dashboard_trends_title => 'Recovery-Trends';
+  String get dashboard_trends_title => 'Erholung im Verlauf';
 
   @override
   String get dashboard_trends_subtitle =>
-      'Eine visuelle Übersicht darüber, wie viel Recovery-Zeit du loggst und wie hilfreich sich diese Sessions anfühlen.';
+      'Sieh, wie viel Zeit du dir für deine Erholung nimmst und wie hilfreich die Sessions für dich sind.';
 
   @override
   String get dashboard_chart_minutes_title => 'Recovery-Minuten';
@@ -2019,7 +2019,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get insights_relief_subtitle => 'Durchschnittswert';
 
   @override
-  String get insights_recovery_minutes_title => 'Recovery-Trend';
+  String get insights_recovery_minutes_title => 'Erholungsverlauf';
 
   @override
   String get insights_recovery_minutes_subtitle_short =>

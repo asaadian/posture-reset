@@ -996,5 +996,18 @@
   "explore_level_signature": "Signature",
   "explore_level_advanced": "Advanced therapy",
   "explore_level_therapy": "Therapy",
-  "explore_level_all": "All levels"
+  "explore_level_all": "All levels",
+  "dashboard_quick_fix_badge": "QUICK FIX",
+  "dashboard_quick_fix_cta": "Choose an area",
+  "program_mission_label": "Mission",
+  "common_min": "min",
+  "program_short_session": "Short session",
+  "program_load_label": "Load",
+  "program_recovery_label": "Recovery",
+  "program_today_target": "Today’s target",
+  "program_why_mission": "Why this mission",
+  "program_notice_after": "What to notice after",
+  "program_start_mission": "Start mission",
+  "common_done": "Done",
+  "program_back_current_mission": "Back to current mission"
 }

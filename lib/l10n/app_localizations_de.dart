@@ -3023,4 +3023,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get common_done => 'Erledigt';
   @override
   String get program_back_current_mission => 'Zurück zur aktuellen Einheit';
+  @override
+  String get insights_more_premium => 'Mehr Einblicke mit Premium';
+  @override
+  String get insights_more_premium_body => 'Entdecke detaillierte Auswertungen und sieh deine Fortschritte auf einen Blick.';
+  @override
+  String get program_user_joined_one => '1 Person macht mit';
 }

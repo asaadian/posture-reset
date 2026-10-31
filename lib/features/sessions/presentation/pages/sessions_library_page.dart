@@ -1155,13 +1155,15 @@ class _PremiumSessionImage extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            left: 9,
-            top: 9,
-            child: _ImageGlassBadge(
-              icon: isLocked ? Icons.workspace_premium_rounded : Icons.bolt_rounded,
+          if (isLocked)
+            Positioned(
+              left: 9, top: 9,
+              child: Image.asset('assets/images/premium-badge.png',
+                width: 29, height: 29,
+                errorBuilder: (_, __, ___) => const Icon(
+                  Icons.workspace_premium_rounded,
+                  color: Color(0xFFFFD58A), size: 26)),
             ),
-          ),
           if (isLocked)
             DecoratedBox(
               decoration: BoxDecoration(

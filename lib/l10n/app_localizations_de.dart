@@ -2947,4 +2947,28 @@ class AppLocalizationsDe extends AppLocalizations {
   String get profile_your_space => 'DEIN BEREICH';
   @override
   String get premium_lifetime_note => 'Einmal zahlen · Dauerhaft nutzen';
+  @override
+  String get premium_benefit_sessions => 'Alle Recovery-Sessions';
+  @override
+  String get premium_benefit_programs => 'Alle angeleiteten Programme';
+  @override
+  String get premium_benefit_quick_fix => 'Alle Quick-Fix-Empfehlungen';
+  @override
+  String get premium_benefit_insights => 'Auswertungen, Verlauf und gespeicherte Sessions';
+  @override
+  String get premium_is_active => 'Premium ist aktiviert';
+  @override
+  String get premium_toolkit_ready => 'Alle Funktionen stehen dir jetzt zur Verfügung.';
+  @override
+  String get premium_hero_subtitle => 'Einmal zahlen und langfristig mehr für dein Wohlbefinden tun.';
+  @override
+  String get premium_active_label => 'Premium aktiviert';
+  @override
+  String get premium_lifetime_label => 'Premium auf Lebenszeit';
+  @override
+  String get premium_pay_once => 'Einmal zahlen';
+  @override
+  String get premium_access_ready => 'Dein Premium-Zugang ist aktiv.';
+  @override
+  String get premium_no_subscription => 'Einmal zahlen, dauerhaft nutzen. Kein Abo.';
 }

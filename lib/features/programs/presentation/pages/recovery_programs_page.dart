@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/localization/app_text.dart';
 import '../../../../shared/layout/responsive_content_section.dart';
 import '../../../../shared/layout/responsive_page_scaffold.dart';
+import '../../../../shared/widgets/program_join_social_proof.dart';
+import '../../../sessions/application/public_activity_stats_providers.dart';
 import '../../../access/application/access_providers.dart';
 import '../../../access/domain/access_models.dart';
 import '../../application/recovery_program_providers.dart';
@@ -19,6 +21,7 @@ class RecoveryProgramsPage extends ConsumerWidget {
     final programsAsync = ref.watch(recoveryProgramSummariesProvider);
     final activeAsync = ref.watch(activeRecoveryProgramDashboardProgressProvider);
     final accessAsync = ref.watch(accessSnapshotProvider);
+    final joinCounts = ref.watch(publicProgramJoinCountsProvider).value ?? const <String, int>{};
 
     return ResponsivePageScaffold(
       title: Text(t.get('programs_title', fallback: 'Programs')),
@@ -98,6 +101,7 @@ class RecoveryProgramsPage extends ConsumerWidget {
                           programs: sorted,
                           activeProgramId: active?.programId,
                           accessSnapshot: access,
+                          joinCounts: joinCounts,
                         ),
                     ],
                   ),
@@ -270,11 +274,13 @@ class _ProgramsGrid extends StatelessWidget {
     required this.programs,
     required this.activeProgramId,
     required this.accessSnapshot,
+    required this.joinCounts,
   });
 
   final List<RecoveryProgramSummary> programs;
   final String? activeProgramId;
   final AccessSnapshot accessSnapshot;
+  final Map<String, int> joinCounts;
 
   @override
   Widget build(BuildContext context) {
@@ -303,6 +309,7 @@ class _ProgramsGrid extends StatelessWidget {
                   width: itemWidth,
                   child: _ProgramCard(
                     program: program,
+                    joinedCount: joinCounts[program.id],
                     isLocked: program.accessTier == AccessTier.coreAccess &&
                         !accessSnapshot.hasCoreAccess,
                   ),
@@ -319,10 +326,12 @@ class _ProgramCard extends StatelessWidget {
   const _ProgramCard({
     required this.program,
     required this.isLocked,
+    this.joinedCount,
   });
 
   final RecoveryProgramSummary program;
   final bool isLocked;
+  final int? joinedCount;
 
   @override
   Widget build(BuildContext context) {
@@ -391,6 +400,16 @@ class _ProgramCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                      if (joinedCount != null && joinedCount! > 0)
+                        Positioned(
+                          left: 5,
+                          bottom: 5,
+                          child: ProgramJoinSocialProof(
+                            programId: program.id,
+                            count: joinedCount!,
+                            compact: true,
+                          ),
+                        ),
                       if (isLocked)
                         Positioned(
                           left: 9,

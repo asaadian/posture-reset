@@ -2897,4 +2897,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get player_guidance_safety => 'Sicherheit';
   @override
   String get player_guidance_avoid_mistakes => 'Häufige Fehler vermeiden';
+  @override
+  String player_phase_named_complete_body(String phase) {
+    return '$phase ist abgeschlossen. Die nächste Phase kann beginnen.';
+  }
+  @override
+  String player_mission_streak(String count) {
+    return '$count Sessions in Folge';
+  }
+  @override
+  String player_phase_unlocked_named(String phase) {
+    return '$phase freigeschaltet';
+  }
 }

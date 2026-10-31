@@ -109,7 +109,9 @@ class ProgramJoinSocialProof extends StatelessWidget {
             ProgramAvatarStack(programId: programId),
             const SizedBox(width: 5),
           ],
-          Text(AppText.get(context, key: 'program_users_joined', fallback: '{count} people joined').replaceAll('{count}', countLabel),
+          Text((count == 1
+              ? AppText.get(context, key: 'program_user_joined_one', fallback: '1 person joined')
+              : AppText.get(context, key: 'program_users_joined', fallback: '{count} people joined').replaceAll('{count}', countLabel)),
             style: TextStyle(color: Colors.white,
               fontSize: compact ? 9 : 10, fontWeight: FontWeight.w800)),
         ],

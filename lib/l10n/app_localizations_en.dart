@@ -2991,4 +2991,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get insights_more_premium_body => 'Unlock advanced analysis and your complete recovery picture.';
   @override
   String get program_user_joined_one => '1 person joined';
+  @override
+  String get explore_group_neck_title => 'Neck & shoulders feel tight?';
+  @override
+  String get explore_group_upper_back_title => 'Tension between your shoulders?';
+  @override
+  String get explore_group_lower_back_title => 'Give your lower back a break';
+  @override
+  String get explore_group_hips_title => 'Hips stiff after sitting?';
+  @override
+  String get explore_group_hands_title => 'Hands & wrists need relief?';
+  @override
+  String get explore_group_other_title => 'Move and feel better';
+  @override
+  String get explore_group_neck_subtitle => 'A reset for the neck and shoulders';
+  @override
+  String get explore_group_upper_back_subtitle => 'Open up after a long day at your desk';
+  @override
+  String get explore_group_lower_back_subtitle => 'Comfortable movement for your back';
+  @override
+  String get explore_group_hips_subtitle => 'Loosen up your hips and legs';
+  @override
+  String get explore_group_hands_subtitle => 'Small movements with a big difference';
+  @override
+  String get explore_group_other_subtitle => 'Discover more ways to move';
+  @override
+  String get explore_show_less => 'Show less';
+  @override
+  String get explore_view_more => 'View more';
+  @override
+  String get saved_collection_label => 'YOUR COLLECTION';
+  @override
+  String get saved_collection_subtitle => 'Your favorite resets, ready whenever you need them.';
+  @override
+  String get history_journey_label => 'YOUR JOURNEY';
+  @override
+  String get history_journey_subtitle => 'Every session is progress worth keeping track of.';
+  @override
+  String common_session_count(String count) => '$count Sessions';
 }

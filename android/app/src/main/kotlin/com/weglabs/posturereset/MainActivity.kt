@@ -20,7 +20,7 @@ class MainActivity : FlutterActivity() {
                 if (call.method == "needsExactAlarmAccess") {
                     val needed = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                        !alarmManager.canScheduleExactAlarms()
+                        alarmManager.canScheduleExactAlarms() == false
                     } else {
                         false
                     }

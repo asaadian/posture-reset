@@ -81,49 +81,6 @@ class InsightsPage extends ConsumerWidget {
           return const _InsightsLoadingState();
         }
 
-        if (!accessDecision.allowed) {
-          return PageOnboarding(
-            pageId: 'insights_guide_v2_locked_preview',
-            tips: [
-              OnboardingTip(
-                targetBuilder: _insightsHeroGuideTarget,
-                icon: Icons.insights_rounded,
-                title: t.get('guide_insights_signal_title', fallback: 'Recovery signal'),
-                body: t.get('guide_insights_signal_body', fallback: 'This area summarizes your recent recovery rhythm after you unlock insights.'),
-              ),
-              OnboardingTip(
-                targetBuilder: _insightsMetricGuideTarget,
-                icon: Icons.dashboard_customize_rounded,
-                title: t.get('guide_insights_metrics_title', fallback: 'Key numbers'),
-                body: t.get('guide_insights_metrics_body', fallback: 'Here you will see minutes, consistency, focus zones, and Quick Fix activity.'),
-              ),
-              OnboardingTip(
-                targetBuilder: _insightsChartGuideTarget,
-                icon: Icons.auto_graph_rounded,
-                title: t.get('guide_insights_patterns_title', fallback: 'Trends and patterns'),
-                body: t.get('guide_insights_patterns_body', fallback: 'Charts help you understand what improves and where tension keeps returning.'),
-              ),
-            ],
-            child: _LockedInsightsPreview(
-              pageInfo: pageInfo,
-              onUpgrade: () {
-                unawaited(
-                  ref.read(analyticsServiceProvider).track(
-                        AnalyticsEvent(
-                          eventName: AnalyticsEvents.lockedFeatureCtaTapped,
-                          sourceSurface: AnalyticsSurfaces.insights,
-                          featureKey: LockedFeature.insightsFullAccess.code,
-                          accessTier: AccessTier.coreAccess.code,
-                          entitlementKey: Entitlement.coreAccess.key,
-                        ),
-                      ),
-                );
-
-                context.pushNamed('premium');
-              },
-            ),
-          );
-        }
 
         return insightsAsync.when(
           loading: () => const _InsightsLoadingState(),

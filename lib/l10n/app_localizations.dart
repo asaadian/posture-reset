@@ -5311,6 +5311,21 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recovery route'**
   String get program_recovery_route;
+  String get dashboard_your_programs;
+  String get dashboard_weekly_goal;
+  String get dashboard_goal_reached;
+  String dashboard_goal_remaining(String count);
+  String get explore_community_favorites;
+  String get explore_top_ten_title;
+  String get explore_top_ten_subtitle;
+  String get explore_body_focus_heading;
+  String get insights_logged_time;
+  String insights_day_window(String count);
+  String get insights_premium_heading;
+  String get insights_premium_body;
+  String get premium_explore_cta;
+  String get profile_your_space;
+  String get premium_lifetime_note;
   String get common_view_all;
   String get premium_unlock_label;
   String get premium_one_payment_full_access;

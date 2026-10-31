@@ -2797,4 +2797,68 @@ class AppLocalizationsEn extends AppLocalizations {
   String player_step_of(Object current, Object total) {
     return 'Step $current of $total';
   }
+  @override
+  String get dashboard_load_error_title => 'Could not load your activity';
+  @override
+  String get dashboard_load_error_body => 'Your workout history is safe. Check your connection and retry.';
+  @override
+  String get program_sessions_title => 'Your sessions';
+  @override
+  String get program_card_label => 'GUIDED PROGRAM';
+  @override
+  String get program_card_open => 'View program';
+  @override
+  String get quick_fix_no_match_hint => 'Try another body area or equipment option, or browse available sessions.';
+  @override
+  String get quick_fix_browse_sessions => 'Explore sessions';
+  @override
+  String get profile_metric_completed => 'Completed';
+  @override
+  String get notification_open_phone_settings => 'Open settings';
+  @override
+  String get premium_loading_products => 'Loading price...';
+  @override
+  String get premium_purchase_processing => 'Processing...';
+  @override
+  String get premium_product_unavailable => 'Premium unavailable';
+  @override
+  String get player_journey_complete => 'Journey complete';
+  @override
+  String get player_phase_complete => 'Phase complete';
+  @override
+  String get player_mission_complete => 'Mission complete';
+  @override
+  String get player_journey_complete_body => 'You completed the full therapy journey.';
+  @override
+  String get player_phase_complete_body => 'This phase is complete. Your next phase is now ready.';
+  @override
+  String get player_mission_complete_body => 'This mission is now part of your completed path.';
+  @override
+  String get player_journey_progress => 'Journey progress';
+  @override
+  String get player_milestone_reached => 'Milestone reached';
+  @override
+  String get player_next_phase_unlocked => 'The next phase is unlocked';
+  @override
+  String get player_next_mission_unlocked => 'Next mission unlocked';
+  @override
+  String get player_view_completed_journey => 'View completed journey';
+  @override
+  String get player_back_to_journey => 'Back to journey';
+  @override
+  String get player_guidance_how_to => 'How to do it';
+  @override
+  String get player_guidance_goal => 'Goal';
+  @override
+  String get player_guidance_notice => 'What to notice';
+  @override
+  String get player_guidance_coach_cue => 'Coach cue';
+  @override
+  String get player_guidance_breathing => 'Breathing';
+  @override
+  String get player_guidance_coach_tip => 'Coach tip';
+  @override
+  String get player_guidance_safety => 'Safety';
+  @override
+  String get player_guidance_avoid_mistakes => 'Avoid these mistakes';
 }

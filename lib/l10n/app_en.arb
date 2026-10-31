@@ -976,5 +976,21 @@
   "premium_lifetime_label": "Premium lifetime",
   "premium_pay_once": "Pay once",
   "premium_access_ready": "Your Premium access is ready.",
-  "premium_no_subscription": "Pay once. Keep access. No subscription."
+  "premium_no_subscription": "Pay once. Keep access. No subscription.",
+  "program_users_joined": "{count} people joined",
+  "@program_users_joined": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "explore_title": "Explore",
+  "explore_body_neck": "Neck & shoulders",
+  "explore_body_upper_back": "Upper back",
+  "explore_body_lower_back": "Lower back",
+  "explore_body_hips": "Hips & legs",
+  "explore_body_hands": "Hands & wrists",
+  "explore_body_default": "Body focus",
+  "insights_recovery_label": "Recovery"
 }

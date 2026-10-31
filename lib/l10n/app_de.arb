@@ -1012,5 +1012,31 @@
   "program_back_current_mission": "Zurück zur aktuellen Einheit",
   "insights_more_premium": "Mehr Einblicke mit Premium",
   "insights_more_premium_body": "Entdecke detaillierte Auswertungen und sieh deine Fortschritte auf einen Blick.",
-  "program_user_joined_one": "1 Person macht mit"
+  "program_user_joined_one": "1 Person macht mit",
+  "explore_group_neck_title": "Nacken und Schultern verspannt?",
+  "explore_group_upper_back_title": "Verspannt zwischen den Schulterblättern?",
+  "explore_group_lower_back_title": "Entlaste deinen unteren Rücken",
+  "explore_group_hips_title": "Hüfte steif vom Sitzen?",
+  "explore_group_hands_title": "Hände und Handgelenke entlasten",
+  "explore_group_other_title": "Mehr Bewegung, mehr Wohlbefinden",
+  "explore_group_neck_subtitle": "Sanfte Übungen für Nacken und Schultern",
+  "explore_group_upper_back_subtitle": "Lockere deinen oberen Rücken nach der Schreibtischarbeit",
+  "explore_group_lower_back_subtitle": "Wohltuende Bewegung für deinen Rücken",
+  "explore_group_hips_subtitle": "Bring Hüfte und Beine wieder in Bewegung",
+  "explore_group_hands_subtitle": "Kleine Bewegungen, die viel bewirken",
+  "explore_group_other_subtitle": "Entdecke neue Möglichkeiten, dich zu bewegen",
+  "explore_show_less": "Weniger anzeigen",
+  "explore_view_more": "Mehr anzeigen",
+  "saved_collection_label": "DEINE SAMMLUNG",
+  "saved_collection_subtitle": "Deine gespeicherten Übungen – jederzeit griffbereit.",
+  "history_journey_label": "DEIN VERLAUF",
+  "history_journey_subtitle": "Jede Session zählt. Hier siehst du deine Fortschritte.",
+  "common_session_count": "{count} Sessions",
+  "@common_session_count": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

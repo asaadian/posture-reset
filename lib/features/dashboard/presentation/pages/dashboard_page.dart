@@ -1907,8 +1907,6 @@ class _RemoteProgramCoverImage extends StatelessWidget {
 const String _remoteSessionCoverBaseUrl =
     'https://weglabs.com/data/desk-workout/covers/sessions';
 
-String _remoteSessionCoverUrl(String sessionId) =>
-    '$_remoteSessionCoverBaseUrl/$sessionId.webp';
 
 
 

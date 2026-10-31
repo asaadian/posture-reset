@@ -5310,6 +5310,25 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recovery route'**
   String get program_recovery_route;
+  String get explore_group_neck_title;
+  String get explore_group_upper_back_title;
+  String get explore_group_lower_back_title;
+  String get explore_group_hips_title;
+  String get explore_group_hands_title;
+  String get explore_group_other_title;
+  String get explore_group_neck_subtitle;
+  String get explore_group_upper_back_subtitle;
+  String get explore_group_lower_back_subtitle;
+  String get explore_group_hips_subtitle;
+  String get explore_group_hands_subtitle;
+  String get explore_group_other_subtitle;
+  String get explore_show_less;
+  String get explore_view_more;
+  String get saved_collection_label;
+  String get saved_collection_subtitle;
+  String get history_journey_label;
+  String get history_journey_subtitle;
+  String common_session_count(String count);
   String get insights_more_premium;
   String get insights_more_premium_body;
   String get program_user_joined_one;

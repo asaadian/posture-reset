@@ -1144,8 +1144,6 @@ String _sortShortLabel(BuildContext context, SessionLibrarySort sort) {
 }
 
 
-const String _remoteProgramCoverBaseUrl =
-    'https://weglabs.com/data/desk-workout/covers/programs';
 
 
 

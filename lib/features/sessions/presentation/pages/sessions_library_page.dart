@@ -46,7 +46,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
     final accessAsync = ref.watch(accessSnapshotProvider);
 
     return ResponsivePageScaffold(
-      title: Text(widget.bodyCategory == null ? AppText.get(context, key: 'nav_sessions', fallback: 'Explore') : _bodyPageTitle(context, widget.bodyCategory!)),
+      title: Text(widget.bodyCategory == null ? AppText.get(context, key: 'explore_title', fallback: 'Explore') : _bodyPageTitle(context, widget.bodyCategory!)),
       bodyBuilder: (context, pageInfo) {
         final accessSnapshot = accessAsync.maybeWhen(
           data: (value) => value,
@@ -779,7 +779,7 @@ class _BodyFocusNavigation extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 7),
-                      Text(option.label, maxLines: 2, textAlign: TextAlign.center,
+                      Text(_bodyPageTitle(context, option.id), maxLines: 2, textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.labelSmall),
                     ],
                   ),

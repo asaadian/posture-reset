@@ -710,7 +710,7 @@ class _PopularSessionRow extends StatelessWidget {
                     style: const TextStyle(color: Colors.white,
                       fontWeight: FontWeight.w700, fontSize: 13)),
                   const SizedBox(height: 5),
-                  Text('${session.durationMinutes} min · ${_sessionLevelLabel(session)}',
+                  Text('${session.durationMinutes} min · ${_sessionLevelLabel(context, session)}',
                     style: const TextStyle(color: Color(0xFFCFDCE2), fontSize: 11)),
                 ],
               )),
@@ -864,16 +864,18 @@ class _TrainingDiscoveryRow extends StatelessWidget {
   }
 }
 
-String _sessionLevelLabel(SessionSummary session) {
+String _sessionLevelLabel(BuildContext context, SessionSummary session) {
   switch (session.sessionLevelTag) {
     case SessionLevelTag.flagship:
-      return 'Signature';
+      return AppText.get(context, key: 'explore_level_signature', fallback: 'Signature');
     case SessionLevelTag.advancedTherapy:
-      return 'Advanced therapy';
+      return AppText.get(context, key: 'explore_level_advanced', fallback: 'Advanced therapy');
     case SessionLevelTag.therapy:
-      return 'Therapy';
+      return AppText.get(context, key: 'explore_level_therapy', fallback: 'Therapy');
     case SessionLevelTag.freeStarter:
-      return session.isBeginnerFriendly ? 'Beginner' : 'All levels';
+      return session.isBeginnerFriendly
+          ? AppText.get(context, key: 'program_difficulty_beginner', fallback: 'Beginner')
+          : AppText.get(context, key: 'explore_level_all', fallback: 'All levels');
   }
 }
 
@@ -954,7 +956,7 @@ class _TrainingHorizontalTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${session.durationMinutes} ${t.get('session_duration_unit_min', fallback: 'min')} · ${_sessionLevelLabel(session)}',
+                      '${session.durationMinutes} ${t.get('session_duration_unit_min', fallback: 'min')} · ${_sessionLevelLabel(context, session)}',
                       maxLines: 2,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: _isAdvancedSession(session)
@@ -1089,7 +1091,7 @@ class _SessionTile extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              _sessionLevelLabel(session),
+                              _sessionLevelLabel(context, session),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.labelSmall?.copyWith(

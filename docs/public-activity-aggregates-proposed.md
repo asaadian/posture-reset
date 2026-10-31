@@ -1,12 +1,12 @@
 # Public activity aggregates for Desk Workout
 
-**Status: prepared, NOT applied.** Requires explicit approval before executing database changes.
+**Status: APPLIED to Posture Reset Supabase on 2026-10-31** with explicit user authorization.
 
 These SQL functions return only public aggregate counts. They do not return user IDs,
 email addresses, raw activity records, or session timestamps. The client
 queries `public_top_sessions` and `public_program_join_counts`. 
 
-Review access and privacy requirements before enabling these functions on production.
+The live app uses these functions for aggregate-only statistics. Counts remain truthful; compact notation appears only at larger magnitudes.
 
 ```sql
 BEGIN;

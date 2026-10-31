@@ -1313,29 +1313,6 @@ Color _phaseAccent(String code, ColorScheme colors) {
   }
 }
 
-IconData _phaseIcon(String code) {
-  switch (code) {
-    case 'calm':
-      return Icons.self_improvement_rounded;
-    case 'release':
-      return Icons.air_rounded;
-    case 'activate':
-      return Icons.bolt_rounded;
-    case 'control':
-      return Icons.tune_rounded;
-    case 'stability':
-      return Icons.shield_outlined;
-    case 'integrate':
-      return Icons.hub_rounded;
-    case 'maintain':
-      return Icons.all_inclusive_rounded;
-    default:
-      return Icons.route_rounded;
-  }
-}
-
-
-
 class _SafeAnimatedProgramDay extends StatefulWidget {
   const _SafeAnimatedProgramDay({
     required this.index,

@@ -349,7 +349,7 @@ class _ProgramCard extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(24),
         child: Ink(
-          height: 126,
+          height: 162,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             color: isDark

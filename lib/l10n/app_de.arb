@@ -706,7 +706,7 @@
   "dashboard_run_started": "Gestartet",
   "dashboard_programs_active_title": "Setze deinen Weg fort",
   "dashboard_programs_title": "Therapiepfade",
-  "common_view_all": "Alle anzeigen",
+  "common_view_all": "Alle ansehen",
   "dashboard_program_discovery_pill_guided": "Geführt",
   "dashboard_program_discovery_title": "Wähle einen Therapiepfad",
   "dashboard_program_discovery_cta": "Pfade ansehen",
@@ -932,5 +932,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "premium_unlock_label": "Premium freischalten",
+  "premium_one_payment_full_access": "Einmal zahlen. Alles nutzen.",
+  "quick_fix_unlock_all": "Alle Quick-Fix-Übungen freischalten"
 }

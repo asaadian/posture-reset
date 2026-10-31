@@ -1190,39 +1190,6 @@ class _PremiumSessionImage extends StatelessWidget {
   }
 }
 
-class _ImageGlassBadge extends StatelessWidget {
-  const _ImageGlassBadge({required this.icon});
-
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(13),
-        color: Colors.white.withValues(alpha: 0.78),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.82),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.10),
-            blurRadius: 12,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Icon(
-        icon,
-        color: const Color(0xFF5364F6),
-        size: 17,
-      ),
-    );
-  }
-}
-
 class _SessionMetaPill extends StatelessWidget {
   const _SessionMetaPill({
     required this.label,

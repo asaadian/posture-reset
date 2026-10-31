@@ -908,5 +908,29 @@
   "player_guidance_breathing": "Breathing",
   "player_guidance_coach_tip": "Coach tip",
   "player_guidance_safety": "Safety",
-  "player_guidance_avoid_mistakes": "Avoid these mistakes"
+  "player_guidance_avoid_mistakes": "Avoid these mistakes",
+  "player_phase_named_complete_body": "{phase} is complete. Your next phase is now ready.",
+  "@player_phase_named_complete_body": {
+    "placeholders": {
+      "phase": {
+        "type": "String"
+      }
+    }
+  },
+  "player_mission_streak": "{count} mission streak",
+  "@player_mission_streak": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "player_phase_unlocked_named": "{phase} unlocked",
+  "@player_phase_unlocked_named": {
+    "placeholders": {
+      "phase": {
+        "type": "String"
+      }
+    }
+  }
 }

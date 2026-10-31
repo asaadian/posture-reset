@@ -34,36 +34,42 @@ final completedSessionCountProvider = FutureProvider<int>((ref) async {
 });
 
 final recentSessionRunsProvider = FutureProvider<List<SessionRun>>((ref) async {
+  ref.watch(currentUserProvider.select((user) => user?.id));
   final repository = ref.watch(sessionRunsRepositoryProvider);
   return repository.getRecentRuns();
 });
 
 final sessionContinuitySnapshotProvider =
     FutureProvider<SessionContinuitySnapshot>((ref) async {
+  ref.watch(currentUserProvider.select((user) => user?.id));
   final repository = ref.watch(sessionContinuityRepositoryProvider);
   return repository.getSnapshot();
 });
 
 final continueSessionCandidateProvider =
     FutureProvider<ContinueSessionCandidate?>((ref) async {
+  ref.watch(currentUserProvider.select((user) => user?.id));
   final repository = ref.watch(sessionContinuityRepositoryProvider);
   return repository.getContinueCandidate();
 });
 
 final sessionHistoryItemsProvider =
     FutureProvider<List<SessionHistoryItem>>((ref) async {
+  ref.watch(currentUserProvider.select((user) => user?.id));
   final repository = ref.watch(sessionContinuityRepositoryProvider);
   return repository.getHistory(limit: 24);
 });
 
 final savedSessionContinuityItemsProvider =
     FutureProvider<List<SavedSessionContinuityItem>>((ref) async {
+  ref.watch(currentUserProvider.select((user) => user?.id));
   final repository = ref.watch(sessionContinuityRepositoryProvider);
   return repository.getSavedSessions(limit: 24);
 });
 
 final recentlySavedSessionsProvider =
     FutureProvider<List<SavedSessionContinuityItem>>((ref) async {
+  ref.watch(currentUserProvider.select((user) => user?.id));
   final repository = ref.watch(sessionContinuityRepositoryProvider);
   return repository.getSavedSessions(limit: 8);
 });

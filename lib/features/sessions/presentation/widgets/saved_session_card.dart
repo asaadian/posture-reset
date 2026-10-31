@@ -150,10 +150,9 @@ class SavedSessionCard extends StatelessWidget {
 }
 
 class _MetaText extends StatelessWidget {
-  const _MetaText({required this.label, this.emphasized = false});
+  const _MetaText({required this.label});
 
   final String label;
-  final bool emphasized;
 
   @override
   Widget build(BuildContext context) {
@@ -162,13 +161,13 @@ class _MetaText extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(999),
-        color: (emphasized ? colors.secondary : colors.primary)
+        color: colors.primary
             .withValues(alpha: 0.075),
       ),
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: emphasized ? colors.secondary : colors.onSurfaceVariant,
+              color: colors.onSurfaceVariant,
               fontWeight: FontWeight.w800,
               height: 1.05,
             ),

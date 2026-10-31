@@ -3027,4 +3027,42 @@ class AppLocalizationsDe extends AppLocalizations {
   String get insights_more_premium_body => 'Entdecke detaillierte Auswertungen und sieh deine Fortschritte auf einen Blick.';
   @override
   String get program_user_joined_one => '1 Person macht mit';
+  @override
+  String get explore_group_neck_title => 'Nacken und Schultern verspannt?';
+  @override
+  String get explore_group_upper_back_title => 'Verspannt zwischen den Schulterblättern?';
+  @override
+  String get explore_group_lower_back_title => 'Entlaste deinen unteren Rücken';
+  @override
+  String get explore_group_hips_title => 'Hüfte steif vom Sitzen?';
+  @override
+  String get explore_group_hands_title => 'Hände und Handgelenke entlasten';
+  @override
+  String get explore_group_other_title => 'Mehr Bewegung, mehr Wohlbefinden';
+  @override
+  String get explore_group_neck_subtitle => 'Sanfte Übungen für Nacken und Schultern';
+  @override
+  String get explore_group_upper_back_subtitle => 'Lockere deinen oberen Rücken nach der Schreibtischarbeit';
+  @override
+  String get explore_group_lower_back_subtitle => 'Wohltuende Bewegung für deinen Rücken';
+  @override
+  String get explore_group_hips_subtitle => 'Bring Hüfte und Beine wieder in Bewegung';
+  @override
+  String get explore_group_hands_subtitle => 'Kleine Bewegungen, die viel bewirken';
+  @override
+  String get explore_group_other_subtitle => 'Entdecke neue Möglichkeiten, dich zu bewegen';
+  @override
+  String get explore_show_less => 'Weniger anzeigen';
+  @override
+  String get explore_view_more => 'Mehr anzeigen';
+  @override
+  String get saved_collection_label => 'DEINE SAMMLUNG';
+  @override
+  String get saved_collection_subtitle => 'Deine gespeicherten Übungen – jederzeit griffbereit.';
+  @override
+  String get history_journey_label => 'DEIN VERLAUF';
+  @override
+  String get history_journey_subtitle => 'Jede Session zählt. Hier siehst du deine Fortschritte.';
+  @override
+  String common_session_count(String count) => '$count Sessions';
 }

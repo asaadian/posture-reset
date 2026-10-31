@@ -2504,84 +2504,9 @@ class _ImageDurationBadge extends StatelessWidget {
 
 
 
-class _SoftBadge extends StatelessWidget {
-  const _SoftBadge({required this.label});
 
-  final String label;
 
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        color: colors.primary.withValues(alpha: 0.10),
-        border: Border.all(color: colors.primary.withValues(alpha: 0.12)),
-      ),
-      child: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-          color: colors.primary,
-          fontWeight: FontWeight.w900,
-          height: 1.0,
-        ),
-      ),
-    );
-  }
-}
-
-class _SessionMetaChip extends StatelessWidget {
-  const _SessionMetaChip({
-    required this.icon,
-    required this.label,
-  });
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 210),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        color: isDark
-            ? colors.surface.withValues(alpha: 0.34)
-            : colors.surface.withValues(alpha: 0.80),
-        border: Border.all(
-          color: colors.outlineVariant.withValues(alpha: isDark ? 0.54 : 0.42),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: colors.primary),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: colors.onSurface,
-                fontWeight: FontWeight.w800,
-                height: 1.0,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _SessionHeroSpec {
   const _SessionHeroSpec({
@@ -2591,35 +2516,9 @@ class _SessionHeroSpec {
   final IconData metaIcon;
 }
 
-_SessionHeroSpec _resolveSessionHeroSpec(String coverVariant, ColorScheme colors) {
-  switch (coverVariant) {
-    case 'neck':
-      return const _SessionHeroSpec(metaIcon: Icons.accessibility_new_rounded);
-    case 'shoulder':
-      return const _SessionHeroSpec(metaIcon: Icons.fitness_center_rounded);
-    case 'upper_back':
-      return const _SessionHeroSpec(metaIcon: Icons.straighten_rounded);
-    case 'lower_back':
-      return const _SessionHeroSpec(metaIcon: Icons.air_rounded);
-    default:
-      return const _SessionHeroSpec(metaIcon: Icons.auto_awesome_rounded);
-  }
-}
 
-String _equipmentSummaryLabel(SessionSummary session) {
-  final normalized = session.requiredEquipment
-      .map(_equipmentCodeName)
-      .where((item) => item.isNotEmpty && item != 'none')
-      .toSet()
-      .toList();
 
-  if (normalized.isEmpty) return 'No equipment';
 
-  final names = normalized.map(_equipmentDisplayName).toList();
-  if (names.length == 1) return names.first;
-
-  return '${names.first} +${names.length - 1}';
-}
 
 String _equipmentCodeName(Object? equipment) {
   if (equipment == null) return '';
@@ -2665,20 +2564,6 @@ String _equipmentDisplayName(String equipmentCode) {
   }
 }
 
-String _intensityDisplayLabel(String intensityName) {
-  switch (intensityName) {
-    case 'gentle':
-      return 'Gentle';
-    case 'light':
-      return 'Light';
-    case 'moderate':
-      return 'Moderate';
-    case 'strong':
-      return 'Strong';
-    default:
-      return 'Balanced';
-  }
-}
 
 
 class _QuickFixLoadingState extends StatelessWidget {

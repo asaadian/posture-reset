@@ -976,5 +976,21 @@
   "premium_lifetime_label": "Premium auf Lebenszeit",
   "premium_pay_once": "Einmal zahlen",
   "premium_access_ready": "Dein Premium-Zugang ist aktiv.",
-  "premium_no_subscription": "Einmal zahlen, dauerhaft nutzen. Kein Abo."
+  "premium_no_subscription": "Einmal zahlen, dauerhaft nutzen. Kein Abo.",
+  "program_users_joined": "{count} Personen machen mit",
+  "@program_users_joined": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "explore_title": "Entdecken",
+  "explore_body_neck": "Nacken & Schultern",
+  "explore_body_upper_back": "Oberer Rücken",
+  "explore_body_lower_back": "Unterer Rücken",
+  "explore_body_hips": "Hüfte & Beine",
+  "explore_body_hands": "Hände & Handgelenke",
+  "explore_body_default": "Körperbereich",
+  "insights_recovery_label": "Erholung"
 }

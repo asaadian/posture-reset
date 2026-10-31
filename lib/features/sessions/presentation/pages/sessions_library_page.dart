@@ -687,10 +687,24 @@ class _PopularSessionRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: SizedBox(
                   width: 68, height: 68,
-                  child: _RemoteSessionCoverImage(
-                    sessionId: session.id, fit: BoxFit.cover,
-                    alignment: Alignment.center,
-                    fallbackBuilder: (_) => const _SessionCoverFallback(iconSize: 20),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      _RemoteSessionCoverImage(
+                        sessionId: session.id, fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        fallbackBuilder: (_) => const _SessionCoverFallback(iconSize: 20),
+                      ),
+                      if (session.accessTier == AccessTier.coreAccess)
+                        Positioned(
+                          top: 3, left: 3,
+                          child: Image.asset('assets/images/premium-badge.png',
+                            width: 21, height: 21,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.workspace_premium_rounded,
+                              color: Color(0xFFFFD58A), size: 19)),
+                        ),
+                    ],
                   ),
                 ),
               ),

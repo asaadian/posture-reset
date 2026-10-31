@@ -2953,4 +2953,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get explore_body_default => 'Body focus';
   @override
   String get insights_recovery_label => 'Recovery';
+  @override
+  String get explore_level_signature => 'Signature';
+  @override
+  String get explore_level_advanced => 'Advanced therapy';
+  @override
+  String get explore_level_therapy => 'Therapy';
+  @override
+  String get explore_level_all => 'All levels';
 }

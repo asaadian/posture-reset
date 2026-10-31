@@ -197,7 +197,7 @@ class _QuickFixPageState extends ConsumerState<QuickFixPage> {
                 children: [
                   if (!hasPremium) ...[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+                      padding: const EdgeInsets.fromLTRB(16, 2, 16, 5),
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
@@ -205,7 +205,7 @@ class _QuickFixPageState extends ConsumerState<QuickFixPage> {
                           borderRadius: BorderRadius.circular(20),
                           child: Ink(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 12,
+                              horizontal: 12, vertical: 6,
                             ),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
@@ -216,24 +216,20 @@ class _QuickFixPageState extends ConsumerState<QuickFixPage> {
                             child: Row(
                               children: [
                                 Image.asset('assets/images/premium-badge.png',
-                                  width: 46, height: 46,
+                                  width: 31, height: 31,
                                   errorBuilder: (_, __, ___) => const Icon(
                                     Icons.workspace_premium_rounded,
-                                    color: Color(0xFFFFD58A), size: 36,
+                                    color: Color(0xFFFFD58A), size: 27,
                                   ),
                                 ),
-                                const SizedBox(width: 12),
+                                const SizedBox(width: 8),
                                 const Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Unlock more Quick Fix sessions',
+                                      Text('Unlock all Quick Fix resets',
                                         style: TextStyle(color: Colors.white,
                                           fontWeight: FontWeight.w800)),
-                                      SizedBox(height: 3),
-                                      Text('Get access to every recommended reset.',
-                                        style: TextStyle(color: Color(0xFFD1E8E8),
-                                          fontSize: 12)),
                                     ],
                                   ),
                                 ),

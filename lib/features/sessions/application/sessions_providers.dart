@@ -1,8 +1,9 @@
-// lib/features/sessions/application/sessions_providers.dart
+// lib/ieatures/sessions/application/sessions_providers.dart
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ilutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/localization/app_locale_controller.dart';
+import '../../auth/application/auth_providers.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../data/supabase_saved_sessions_repository.dart';
 import '../data/supabase_sessions_repository.dart';

@@ -379,7 +379,7 @@ class _DashboardProgramCarousel extends StatelessWidget {
       children: [
         Row(children: [
           Expanded(child: Text(
-            'Your programs',
+            AppText.get(context, key: 'dashboard_your_programs', fallback: 'Your programs'),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w800,
             ),
@@ -883,8 +883,8 @@ class _WeeklyGoalCard extends StatelessWidget {
           Row(children: [
             const Icon(Icons.track_changes_rounded, color: Color(0xFF85DFC8)),
             const SizedBox(width: 9),
-            const Expanded(child: Text(
-              'Weekly goal',
+            Expanded(child: Text(
+              AppText.get(context, key: 'dashboard_weekly_goal', fallback: 'Weekly goal'),
               style: TextStyle(color: Colors.white, fontSize: 17,
                 fontWeight: FontWeight.w800),
             )),
@@ -906,8 +906,8 @@ class _WeeklyGoalCard extends StatelessWidget {
           const SizedBox(height: 9),
           Text(
             completed >= target
-                ? 'Goal reached. Keep your routine going.'
-                : '${target - completed} more ${target - completed == 1 ? 'session' : 'sessions'} to reach your goal this week.',
+                ? AppText.get(context, key: 'dashboard_goal_reached', fallback: 'Goal reached. Keep your routine going.')
+                : AppText.get(context, key: 'dashboard_goal_remaining', fallback: '{count} more sessions to reach your weekly goal.').replaceAll('{count}', '${target - completed}'),
             style: const TextStyle(color: Color(0xFFD3E8EB), fontSize: 12),
           ),
         ],
@@ -1206,7 +1206,7 @@ class _ActiveDashboardProgramContent extends StatelessWidget {
           _WhitePill(label: t.get('program_active_badge', fallback: 'Active')),
           const Spacer(),
           Text(
-            'MISSION ${activeProgram.currentDay}',
+            AppText.get(context, key: 'program_mission_label', fallback: 'Mission') + ' ${activeProgram.currentDay}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.displaySmall?.copyWith(

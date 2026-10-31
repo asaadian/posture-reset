@@ -2989,4 +2989,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get explore_body_default => 'Körperbereich';
   @override
   String get insights_recovery_label => 'Erholung';
+  @override
+  String get explore_level_signature => 'Besonders beliebt';
+  @override
+  String get explore_level_advanced => 'Fortgeschrittenes Training';
+  @override
+  String get explore_level_therapy => 'Gezieltes Training';
+  @override
+  String get explore_level_all => 'Alle Levels';
 }

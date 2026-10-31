@@ -1964,6 +1964,32 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.explore_level_therapy;
       case 'explore_level_all':
         return _t.explore_level_all;
+      case 'dashboard_quick_fix_badge':
+        return _t.dashboard_quick_fix_badge;
+      case 'dashboard_quick_fix_cta':
+        return _t.dashboard_quick_fix_cta;
+      case 'program_mission_label':
+        return _t.program_mission_label;
+      case 'common_min':
+        return _t.common_min;
+      case 'program_short_session':
+        return _t.program_short_session;
+      case 'program_load_label':
+        return _t.program_load_label;
+      case 'program_recovery_label':
+        return _t.program_recovery_label;
+      case 'program_today_target':
+        return _t.program_today_target;
+      case 'program_why_mission':
+        return _t.program_why_mission;
+      case 'program_notice_after':
+        return _t.program_notice_after;
+      case 'program_start_mission':
+        return _t.program_start_mission;
+      case 'common_done':
+        return _t.common_done;
+      case 'program_back_current_mission':
+        return _t.program_back_current_mission;
       default:
         return _translateDynamicFallback(fallback);
     }

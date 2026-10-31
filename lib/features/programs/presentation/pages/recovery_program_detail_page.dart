@@ -854,10 +854,7 @@ class _HeroOverlay extends StatelessWidget {
         children: [
           const SizedBox(height: 2),
           const Spacer(),
-          _HeroTodaySummary(
-            phaseCode: '',
-            phaseTitle: viewModel.phaseTitle,
-          ),
+          _HeroTodaySummary(phaseTitle: viewModel.phaseTitle),
           _HeroProgress(
             currentDay: viewModel.currentDay,
             completedCount: viewModel.completedCount,
@@ -870,17 +867,12 @@ class _HeroOverlay extends StatelessWidget {
 }
 
 class _HeroTodaySummary extends StatelessWidget {
-  const _HeroTodaySummary({
-    required this.phaseCode,
-    required this.phaseTitle,
-  });
+  const _HeroTodaySummary({required this.phaseTitle});
 
-  final String phaseCode;
   final String phaseTitle;
 
   @override
   Widget build(BuildContext context) {
-    final t = AppText.of(context);
     final textTheme = Theme.of(context).textTheme;
 
     return Column(

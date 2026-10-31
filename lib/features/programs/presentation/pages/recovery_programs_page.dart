@@ -111,90 +111,7 @@ class RecoveryProgramsPage extends ConsumerWidget {
   }
 }
 
-class _ProgramsIntroHeader extends StatelessWidget {
-  const _ProgramsIntroHeader({
-    required this.count,
-    required this.hasActiveProgram,
-  });
 
-  final int count;
-  final bool hasActiveProgram;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final t = AppText.of(context);
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        gradient: LinearGradient(
-          colors: [
-            colors.primaryContainer.withValues(alpha: 0.78),
-            colors.tertiaryContainer.withValues(alpha: 0.62),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(
-          color: colors.outlineVariant.withValues(alpha: 0.45),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colors.surface.withValues(alpha: 0.88),
-            ),
-            child: Icon(Icons.route_rounded, color: colors.primary, size: 27),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  hasActiveProgram
-                      ? t.get(
-                          'programs_header_active',
-                          fallback: 'Keep your momentum',
-                        )
-                      : t.get(
-                          'programs_header_new',
-                          fallback: 'Build a healthier workday',
-                        ),
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: colors.onSurface,
-                    fontWeight: FontWeight.w900,
-                    height: 1.05,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  t.get(
-                    'programs_header_body',
-                    fallback:
-                        '$count guided programs with a clear daily structure.',
-                  ),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colors.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                    height: 1.3,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _ActiveJourneyCard extends StatelessWidget {
   const _ActiveJourneyCard({
@@ -657,39 +574,7 @@ class _GlassBadge extends StatelessWidget {
   }
 }
 
-class _MetaChip extends StatelessWidget {
-  const _MetaChip({required this.icon, required this.label});
 
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
-      decoration: BoxDecoration(
-        color: colors.surfaceContainerHighest.withValues(alpha: 0.55),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: colors.primary),
-          const SizedBox(width: 5),
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: colors.onSurfaceVariant,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.title});
@@ -881,17 +766,7 @@ class _RemoteProgramCoverImage extends StatelessWidget {
   }
 }
 
-String _difficultyLabel(BuildContext context, RecoveryProgramDifficulty difficulty) {
-  final t = AppText.of(context);
-  switch (difficulty) {
-    case RecoveryProgramDifficulty.beginner:
-      return t.get('program_difficulty_beginner', fallback: 'Beginner');
-    case RecoveryProgramDifficulty.intermediate:
-      return t.get('program_difficulty_intermediate', fallback: 'Intermediate');
-    case RecoveryProgramDifficulty.advanced:
-      return t.get('program_difficulty_advanced', fallback: 'Advanced');
-  }
-}
+
 
 List<Color> _programGradient(String programId) {
   switch (programId) {

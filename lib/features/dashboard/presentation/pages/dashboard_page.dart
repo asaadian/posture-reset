@@ -228,7 +228,7 @@ class DashboardPage extends ConsumerWidget {
                       fallback: 'Find a matching desk reset in seconds.',
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 2),
                   if (programs.isNotEmpty) ...[
                     _DashboardProgramCarousel(
                       programs: programs,
@@ -1251,7 +1251,7 @@ class _ProgramPosterCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(99),
                       ),
                       child: Text(
-                        '${_compactPublicCount(joinedCount!)} joined',
+                        '${_compactPublicCount(joinedCount!)} users joined',
                         style: const TextStyle(
                           color: Colors.white, fontSize: 11,
                           fontWeight: FontWeight.w800,
@@ -1774,10 +1774,15 @@ class _DashboardAccountAction extends StatelessWidget {
             child: SizedBox(
               width: 44,
               height: 44,
-              child: Icon(
-                Icons.workspace_premium_rounded,
-                color: colors.onPrimaryContainer,
-                size: 27,
+              child: Image.asset(
+                'assets/images/premium-badge.png',
+                width: 36,
+                height: 36,
+                errorBuilder: (_, __, ___) => Icon(
+                  Icons.workspace_premium_rounded,
+                  color: colors.onPrimaryContainer,
+                  size: 27,
+                ),
               ),
             ),
           ),

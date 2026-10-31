@@ -52,10 +52,10 @@ class ProfilePage extends ConsumerWidget {
       ]);
     }
 
-    return WillPopScope(
-      onWillPop: () async {
-        context.goNamed('dashboard');
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) context.goNamed('dashboard');
       },
       child: ResponsivePageScaffold(
       leading: IconButton(
@@ -276,11 +276,6 @@ class _ProfileHeroCard extends StatelessWidget {
     final displayName = _profileDisplayName(context, profile, userEmail, isAuthenticated);
     final email = (userEmail ?? '').trim();
     final initials = displayName.trim().isEmpty ? 'P' : displayName.characters.first.toUpperCase();
-    final primaryLabel = isAuthenticated
-        ? continueCandidate != null
-            ? t.get('profile_primary_continue', fallback: 'Continue recovery')
-            : t.get('profile_primary_open_sessions', fallback: 'Start training')
-        : t.get('profile_sign_in_cta', fallback: 'Sign in');
 
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -1228,55 +1223,7 @@ class _HeroMetric extends StatelessWidget {
   }
 }
 
-class _PrimaryProfileButton extends StatelessWidget {
-  const _PrimaryProfileButton({required this.label, required this.icon, required this.onTap});
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(22),
-          gradient: const LinearGradient(colors: [Color(0xFF5B6CFF), Color(0xFF12B8C7)]),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF5B6CFF).withValues(alpha: 0.30),
-              blurRadius: 24,
-              offset: const Offset(0, 12),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(22),
-            onTap: onTap,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, color: Colors.white, size: 23),
-                const SizedBox(width: 10),
-                Flexible(
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w900, height: 1),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({required this.label, required this.icon});

@@ -19,11 +19,25 @@ import '../../../billing/domain/billing_models.dart';
 
 DateTime? _lastPremiumPaywallViewedTrackedAt;
 
-class PremiumPage extends ConsumerWidget {
+class PremiumPage extends ConsumerStatefulWidget {
   const PremiumPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PremiumPage> createState() => _PremiumPageState();
+}
+
+class _PremiumPageState extends ConsumerState<PremiumPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(ref.read(billingControllerProvider).loadProducts());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final t = AppText.of(context);
     final accessAsync = ref.watch(accessSnapshotProvider);
     final billingController = ref.watch(billingControllerProvider);
@@ -376,7 +390,7 @@ class _PremiumPurchaseCard extends StatelessWidget {
     final price = billingState.selectedProduct?.price ??
         t.get(
           'premium_product_price_unavailable',
-          fallback: 'Price unavailable',
+          fallback: 'Checking Google Play price...',
         );
 
     return Container(

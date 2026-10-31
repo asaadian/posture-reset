@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../sessions/application/sessions_providers.dart';
+import '../../auth/application/auth_providers.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../data/session_continuity_repository_impl.dart';
 import '../domain/session_continuity_models.dart';

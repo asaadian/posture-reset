@@ -438,7 +438,7 @@ class _ProfileActionGrid extends StatelessWidget {
 
     final premium = _ProfileActionData(
       icon: Icons.workspace_premium_rounded,
-      title: t.get('profile_action_premium', fallback: 'Core Access'),
+      title: 'Unlock Premium',
       subtitle: t.get(
         'profile_action_premium_subtitle_large',
         fallback: 'Unlock all sessions, programs, Quick Fix, and insights.',
@@ -966,7 +966,12 @@ class _ProfilePremiumActionTile extends StatelessWidget {
           height: 126,
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(32),
+              topRight: Radius.circular(18),
+              bottomLeft: Radius.circular(18),
+              bottomRight: Radius.circular(32),
+            ),
             gradient: LinearGradient(
               colors: const [Color(0xFF12263D), Color(0xFF175368), Color(0xFF167267)],
               begin: Alignment.topLeft,
@@ -1057,10 +1062,7 @@ class _ProfilePremiumActionTile extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            t.get(
-                              'profile_core_access_badge',
-                              fallback: 'CORE ACCESS',
-                            ),
+                            'PREMIUM · ONE-TIME',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.labelSmall?.copyWith(
@@ -1124,7 +1126,7 @@ class _ProfilePremiumActionTile extends StatelessWidget {
                       Text(
                         t.get(
                           'profile_core_access_cta_short',
-                          fallback: 'Open',
+                          fallback: 'Unlock',
                         ),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: mutedForeground,

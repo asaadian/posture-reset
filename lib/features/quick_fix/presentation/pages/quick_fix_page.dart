@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/app_text.dart';
+import '../../../access/application/access_providers.dart';
 import '../../../../shared/onboarding/page_onboarding.dart';
 import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../player/domain/session_feedback_models.dart';
@@ -143,6 +144,10 @@ class _QuickFixPageState extends ConsumerState<QuickFixPage> {
   Widget build(BuildContext context) {
     final t = AppText.of(context);
     final quickFixAsync = ref.watch(quickFixControllerProvider);
+    final hasPremium = ref.watch(accessSnapshotProvider).maybeWhen(
+      data: (value) => value.hasCoreAccess,
+      orElse: () => false,
+    );
 
     return ResponsivePageScaffold(
       title: _QuickFixPageTitle(t: t),
@@ -190,6 +195,57 @@ class _QuickFixPageState extends ConsumerState<QuickFixPage> {
                   bottom: pageInfo.isCompact ? 30 : 40,
                 ),
                 children: [
+                  if (!hasPremium) ...[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => context.pushNamed('premium'),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Ink(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF142943), Color(0xFF196E68)],
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Image.asset('assets/images/premium-badge.png',
+                                  width: 46, height: 46,
+                                  errorBuilder: (_, __, ___) => const Icon(
+                                    Icons.workspace_premium_rounded,
+                                    color: Color(0xFFFFD58A), size: 36,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                const Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Unlock more Quick Fix sessions',
+                                        style: TextStyle(color: Colors.white,
+                                          fontWeight: FontWeight.w800)),
+                                      SizedBox(height: 3),
+                                      Text('Get access to every recommended reset.',
+                                        style: TextStyle(color: Color(0xFFD1E8E8),
+                                          fontSize: 12)),
+                                    ],
+                                  ),
+                                ),
+                                const Icon(Icons.chevron_right_rounded,
+                                  color: Colors.white),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                   _QuickFixSelectionSurface(
                     state: state,
                     isWide: isWide,

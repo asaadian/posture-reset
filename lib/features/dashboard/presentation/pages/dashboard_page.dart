@@ -11,6 +11,7 @@ import '../../../../shared/onboarding/page_onboarding.dart';
 import '../../../../shared/layout/responsive_content_section.dart';
 import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../../shared/widgets/modern_progress_track.dart';
+import '../../../../shared/widgets/program_join_social_proof.dart';
 import '../../../access/application/access_providers.dart';
 import '../../../access/domain/access_models.dart';
 import '../../../auth/application/auth_providers.dart';
@@ -1168,51 +1169,6 @@ String _runStatusLabel(BuildContext context, DashboardRunStatus status) {
 }
 
 
-/// Generic decorative portraits, not identities of program participants.
-class _ProgramDecorativeAvatars extends StatelessWidget {
-  const _ProgramDecorativeAvatars({required this.programId});
-  final String programId;
-
-  @override
-  Widget build(BuildContext context) {
-    final seed = programId.codeUnits.fold<int>(0, (sum, code) => sum + code);
-    return Semantics(
-      label: 'Decorative avatars',
-      child: SizedBox(
-        width: 62,
-        height: 26,
-        child: Stack(
-          children: List.generate(3, (index) {
-            final number = ((seed + index * 7) % 20) + 1;
-            return Positioned(
-              left: index * 18.0,
-              child: Container(
-                width: 26,
-                height: 26,
-                padding: const EdgeInsets.all(1.5),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/avatars/$number.png',
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const ColoredBox(
-                      color: Color(0xFF3A6772),
-                      child: Icon(Icons.person, size: 15, color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
-        ),
-      ),
-    );
-  }
-}
-
 class _ProgramPosterCard extends StatelessWidget {
   const _ProgramPosterCard({
     required this.program,
@@ -1287,27 +1243,15 @@ class _ProgramPosterCard extends StatelessWidget {
                   _InactiveDashboardProgramContent(program: program),
                 if (joinedCount != null && joinedCount! > 0)
                   Positioned(
-                    right: 10,
-                    top: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.65),
-                        borderRadius: BorderRadius.circular(99),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _ProgramDecorativeAvatars(programId: program.id),
-                          const SizedBox(width: 7),
-                          Text(
-                            '${_compactPublicCount(joinedCount!)} users joined',
-                            style: const TextStyle(
-                              color: Colors.white, fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ],
+                    right: 7,
+                    top: 8,
+                    child: ProgramJoinSocialProof(
+                      programId: program.id,
+                      count: joinedCount!,
+                      compact: true,
+                    ),
+                  ),
+              ],
                       ),
                     ),
                   ),

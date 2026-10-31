@@ -56,7 +56,7 @@ class SavedSessionCard extends StatelessWidget {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(11),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -65,10 +65,11 @@ class SavedSessionCard extends StatelessWidget {
                   children: [
                     SessionVisualStage(
                       sessionId: item.session.id,
-                      width: 108,
-                      height: 116,
+                      width: 94,
+                      height: 96,
+                      imageFit: BoxFit.cover,
                       compact: true,
-                      padding: const EdgeInsets.fromLTRB(7, 8, 7, 6),
+                      padding: EdgeInsets.zero,
                       borderRadius: 19,
                     ),
                     const SizedBox(width: 14),
@@ -118,7 +119,7 @@ class SavedSessionCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 13),
+                const SizedBox(height: 9),
                 Container(
                   decoration: BoxDecoration(
                     color: colors.surfaceContainerLow,

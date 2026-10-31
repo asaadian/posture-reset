@@ -992,5 +992,9 @@
   "explore_body_hips": "Hüfte & Beine",
   "explore_body_hands": "Hände & Handgelenke",
   "explore_body_default": "Körperbereich",
-  "insights_recovery_label": "Erholung"
+  "insights_recovery_label": "Erholung",
+  "explore_level_signature": "Besonders beliebt",
+  "explore_level_advanced": "Fortgeschrittenes Training",
+  "explore_level_therapy": "Gezieltes Training",
+  "explore_level_all": "Alle Levels"
 }

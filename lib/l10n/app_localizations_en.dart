@@ -2911,4 +2911,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profile_your_space => 'YOUR SPACE';
   @override
   String get premium_lifetime_note => 'One payment · Lifetime access';
+  @override
+  String get premium_benefit_sessions => 'Every recovery session';
+  @override
+  String get premium_benefit_programs => 'All guided programs';
+  @override
+  String get premium_benefit_quick_fix => 'Full Quick Fix recommendations';
+  @override
+  String get premium_benefit_insights => 'Insights, history and saved sessions';
+  @override
+  String get premium_is_active => 'Premium is active';
+  @override
+  String get premium_toolkit_ready => 'Your complete recovery toolkit is ready.';
+  @override
+  String get premium_hero_subtitle => 'One payment. More ways to feel better at your desk.';
+  @override
+  String get premium_active_label => 'Premium active';
+  @override
+  String get premium_lifetime_label => 'Premium lifetime';
+  @override
+  String get premium_pay_once => 'Pay once';
+  @override
+  String get premium_access_ready => 'Your Premium access is ready.';
+  @override
+  String get premium_no_subscription => 'Pay once. Keep access. No subscription.';
 }

@@ -1281,27 +1281,6 @@ Color _phaseAccent(String code, ColorScheme colors) {
   }
 }
 
-IconData _phaseIcon(String code) {
-  switch (code) {
-    case 'calm':
-      return Icons.self_improvement_rounded;
-    case 'release':
-      return Icons.air_rounded;
-    case 'activate':
-      return Icons.bolt_rounded;
-    case 'control':
-      return Icons.tune_rounded;
-    case 'stability':
-      return Icons.shield_outlined;
-    case 'integrate':
-      return Icons.hub_rounded;
-    case 'maintain':
-      return Icons.all_inclusive_rounded;
-    default:
-      return Icons.route_rounded;
-  }
-}
-
 
 
 class _SafeAnimatedProgramDay extends StatefulWidget {
@@ -1888,79 +1867,9 @@ class _CompactProgramDayTile extends ConsumerWidget {
 
 
 
-class _TodayBadge extends StatelessWidget {
-  const _TodayBadge({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    const blue = Color(0xFF2563EB);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        color: blue,
-        boxShadow: [
-          BoxShadow(
-            color: blue.withValues(alpha: 0.24),
-            blurRadius: 12,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-              height: 1.0,
-            ),
-      ),
-    );
-  }
-}
 
 
 
-
-
-
-
-
-
-class _PlanStatusBadge extends StatelessWidget {
-  const _PlanStatusBadge({
-    required this.label,
-    required this.color,
-    required this.filled,
-  });
-
-  final String label;
-  final Color color;
-  final bool filled;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        color: color.withValues(alpha: filled ? 0.14 : 0.08),
-        border: Border.all(color: color.withValues(alpha: filled ? 0.24 : 0.14)),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w900,
-              height: 1.0,
-            ),
-      ),
-    );
-  }
-}
 
 class _PhaseTransitionCard extends StatefulWidget {
   const _PhaseTransitionCard({

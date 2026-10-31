@@ -1793,7 +1793,7 @@ class _RecoveryScorePremiumCard extends StatelessWidget {
               ),
               const SizedBox(height: 7),
               Text(
-                _focusedRecoveryLine(snapshot),
+                AppText.get(context, key: 'insights_dynamic_recovery_summary', fallback: _focusedRecoveryLine(snapshot)),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: wide ? TextAlign.start : TextAlign.center,
@@ -1915,7 +1915,7 @@ class _LargeRecoveryRing extends StatelessWidget {
               ),
               const SizedBox(height: 3),
               Text(
-                'Recovery',
+                AppText.get(context, key: 'insights_recovery_label', fallback: 'Recovery'),
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: colors.onSurfaceVariant,
                   fontWeight: FontWeight.w900,

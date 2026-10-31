@@ -50,6 +50,7 @@ flutter:
     - assets/images/body_map/front.png
     - assets/images/body_map/back.png
     - assets/images/sessions/
+    - assets/images/avatars/
     - assets/images/premium-badge.png
     - assets/images/premium_recovery_loop.gif
     - assets/images/programs/

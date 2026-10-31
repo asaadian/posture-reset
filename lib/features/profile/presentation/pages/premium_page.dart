@@ -1069,12 +1069,11 @@ class _SignalPill extends StatelessWidget {
   const _SignalPill({
     required this.icon,
     required this.label,
-    this.muted = false,
   });
 
   final IconData icon;
   final String label;
-  final bool muted;
+  bool get muted => false;
 
   @override
   Widget build(BuildContext context) {

@@ -227,7 +227,7 @@ class _QuickFixPageState extends ConsumerState<QuickFixPage> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Unlock all Quick Fix resets',
+                                      Text(AppText.get(context, key: 'quick_fix_unlock_all', fallback: 'Unlock all Quick Fix resets'),
                                         style: TextStyle(color: Colors.white,
                                           fontWeight: FontWeight.w800)),
                                     ],

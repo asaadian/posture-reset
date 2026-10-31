@@ -2881,4 +2881,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premium_one_payment_full_access => 'One payment. Full access.';
   @override
   String get quick_fix_unlock_all => 'Unlock all Quick Fix resets';
+  @override
+  String get dashboard_your_programs => 'Your programs';
+  @override
+  String get dashboard_weekly_goal => 'Weekly goal';
+  @override
+  String get dashboard_goal_reached => 'Goal reached. Keep your routine going.';
+  @override
+  String dashboard_goal_remaining(String count) => '$count more sessions to reach your weekly goal.';
+  @override
+  String get explore_community_favorites => 'COMMUNITY FAVORITES';
+  @override
+  String get explore_top_ten_title => 'Top 10 most played sessions';
+  @override
+  String get explore_top_ten_subtitle => 'Based on completed sessions across Desk Workout';
+  @override
+  String get explore_body_focus_heading => 'Focus on an area';
+  @override
+  String get insights_logged_time => 'Logged time';
+  @override
+  String insights_day_window(String count) => '$count-day period';
+  @override
+  String get insights_premium_heading => 'Your recovery, in detail';
+  @override
+  String get insights_premium_body => 'Unlock your trends, patterns and progress with Premium.';
+  @override
+  String get premium_explore_cta => 'Explore Premium';
+  @override
+  String get profile_your_space => 'YOUR SPACE';
+  @override
+  String get premium_lifetime_note => 'One payment · Lifetime access';
 }

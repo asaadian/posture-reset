@@ -89,7 +89,7 @@ class InsightsPage extends ConsumerWidget {
                     const SizedBox(height: 18),
                     FilledButton(
                       onPressed: () => context.pushNamed('premium'),
-                      child: Text(AppText.get(context, key: 'premium_explore_cta', fallback: 'Explore Premium'),
+                      child: Text(AppText.get(context, key: 'premium_explore_cta', fallback: 'Explore Premium')),
                     ),
                   ],
                 ),

@@ -32,10 +32,10 @@ class SettingsPage extends ConsumerWidget {
     final prefsAsync = ref.watch(userPreferencesControllerProvider);
     final themeMode = ref.watch(appThemeModeControllerProvider);
 
-    return WillPopScope(
-      onWillPop: () async {
-        context.goNamed('dashboard');
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) context.goNamed('dashboard');
       },
       child: ResponsivePageScaffold(
       leading: IconButton(
@@ -116,84 +116,7 @@ class SettingsPage extends ConsumerWidget {
   }
 }
 
-class _SettingsHero extends StatelessWidget {
-  const _SettingsHero({required this.title, required this.subtitle});
 
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: context.actionCardGradient,
-        border: Border.all(color: context.subtleBorderColor),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.20)
-                : colors.primary.withValues(alpha: 0.07),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(19),
-              gradient: LinearGradient(
-                colors: [
-                  colors.primary.withValues(alpha: 0.95),
-                  colors.tertiary.withValues(alpha: 0.82),
-                ],
-              ),
-            ),
-            child: Icon(Icons.tune_rounded, color: colors.onPrimary, size: 27),
-          ),
-          const SizedBox(width: 13),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: colors.onSurface,
-                    fontWeight: FontWeight.w900,
-                    height: 1,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  subtitle,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: colors.onSurfaceVariant,
-                    fontWeight: FontWeight.w700,
-                    height: 1.22,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _PreferencesSection extends StatelessWidget {
   const _PreferencesSection({

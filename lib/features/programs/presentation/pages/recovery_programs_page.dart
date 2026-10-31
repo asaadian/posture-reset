@@ -400,16 +400,6 @@ class _ProgramCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (joinedCount != null && joinedCount! > 0)
-                        Positioned(
-                          left: 5,
-                          bottom: 5,
-                          child: ProgramJoinSocialProof(
-                            programId: program.id,
-                            count: joinedCount!,
-                            compact: true,
-                          ),
-                        ),
                       if (isLocked)
                         Positioned(
                           left: 9,
@@ -482,6 +472,18 @@ class _ProgramCard extends StatelessWidget {
                             height: 1.12,
                           ),
                         ),
+                        if (joinedCount != null && joinedCount! > 0) ...[
+                          const SizedBox(height: 7),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: ProgramJoinSocialProof(
+                              programId: program.id,
+                              count: joinedCount!,
+                              compact: true,
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: 9),
                         Row(
                           children: [

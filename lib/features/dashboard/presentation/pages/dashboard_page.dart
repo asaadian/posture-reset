@@ -229,7 +229,10 @@ class DashboardPage extends ConsumerWidget {
                       fallback: 'Find a matching desk reset in seconds.',
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  if (!accessSnapshot.hasCoreAccess) ...[
+                    const _DashboardPremiumShowcase(),
+                    const SizedBox(height: 2),
+                  ],
                   if (programs.isNotEmpty) ...[
                     _DashboardProgramCarousel(
                       programs: programs,
@@ -253,7 +256,7 @@ class DashboardPage extends ConsumerWidget {
                         return _DashboardNewUserHome(
                           programs: programs,
                           sessions: recommendedSessions.take(3).toList(growable: false),
-                          showPremium: !accessSnapshot.hasCoreAccess,
+                          showPremium: false,
                         );
                       }
 
@@ -282,10 +285,7 @@ class DashboardPage extends ConsumerWidget {
                               runs: snapshot.recentRuns.take(1).toList(growable: false),
                             ),
                           ],
-                          if (!accessSnapshot.hasCoreAccess) ...[
-                            const SizedBox(height: 16),
-                            const _DashboardPremiumShowcase(),
-                          ],
+
                         ],
                       );
                     },
@@ -1522,86 +1522,43 @@ class _DashboardPremiumShowcase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = AppText.of(context);
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(26),
         onTap: () => context.pushNamed('premium'),
+        borderRadius: BorderRadius.circular(22),
         child: Ink(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(26),
-            gradient: LinearGradient(
-              colors: [
-                colors.primary.withValues(alpha: 0.16),
-                colors.tertiary.withValues(alpha: 0.10),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(26), topRight: Radius.circular(14),
+              bottomLeft: Radius.circular(14), bottomRight: Radius.circular(26)),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF142943), Color(0xFF176D69)]),
+          ),
+          child: Row(children: [
+            Image.asset('assets/images/premium-badge.png',
+              width: 45, height: 45,
+              errorBuilder: (_, __, ___) => const Icon(
+                Icons.workspace_premium_rounded, color: Color(0xFFFFD58A), size: 34)),
+            const SizedBox(width: 10),
+            const Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Unlock Premium', style: TextStyle(
+                  color: Colors.white, fontSize: 15, fontWeight: FontWeight.w900)),
+                SizedBox(height: 2),
+                Text('One payment. Full access.', style: TextStyle(
+                  color: Color(0xFFD1E8E8), fontSize: 11)),
               ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            border: Border.all(color: colors.primary.withValues(alpha: 0.18)),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.workspace_premium_rounded,
-                color: colors.primary,
-                size: 24,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      t.get('dashboard_premium_title', fallback: 'Your complete recovery system'),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: colors.onSurface,
-                        fontWeight: FontWeight.w900,
-                        height: 1.0,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      t.get(
-                        'dashboard_premium_body',
-                        fallback: 'Guided programs, deeper insights, and every recovery session unlocked.',
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                        height: 1.18,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                t.get('dashboard_premium_cta_short', fallback: 'Explore'),
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: colors.primary,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
+            )),
+            const Icon(Icons.chevron_right_rounded, color: Colors.white),
+          ]),
         ),
       ),
     );
   }
 }
-
-
-
 
 class _SectionTitleRow extends StatelessWidget {
   const _SectionTitleRow({
@@ -1757,18 +1714,18 @@ class _DashboardAccountAction extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
             onTap: onPremiumTap,
             child: SizedBox(
-              width: 44,
-              height: 44,
-              child: Image.asset(
+              width: 36,
+              height: 36,
+              child: Center(child: Image.asset(
                 'assets/images/premium-badge.png',
-                width: 25,
-                height: 25,
+                width: 21,
+                height: 21,
                 errorBuilder: (_, __, ___) => Icon(
                   Icons.workspace_premium_rounded,
                   color: colors.onPrimaryContainer,
-                  size: 22,
+                  size: 19,
                 ),
-              ),
+              )),
             ),
           ),
         ),

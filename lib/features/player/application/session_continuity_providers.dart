@@ -22,6 +22,7 @@ final sessionContinuityRepositoryProvider =
 });
 
 final completedSessionCountProvider = FutureProvider<int>((ref) async {
+  ref.watch(currentUserProvider.select((user) => user?.id));
   final client = ref.watch(supabaseClientProvider);
   final user = client.auth.currentUser;
   if (user == null) return 0;

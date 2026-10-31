@@ -106,7 +106,22 @@ class InsightsPage extends ConsumerWidget {
                   const SizedBox(height: 10),
                   _InsightsMetricWrap(snapshot: snapshot),
                   const SizedBox(height: 10),
-                  _InsightsPremiumIntelligenceDeck(snapshot: snapshot),
+                  if (accessAsync.maybeWhen(
+                    data: (value) => value.hasCoreAccess,
+                    orElse: () => false,
+                  ))
+                    _InsightsPremiumIntelligenceDeck(snapshot: snapshot)
+                  else
+                    Card(
+                      margin: EdgeInsets.zero,
+                      child: ListTile(
+                        leading: const Icon(Icons.workspace_premium_rounded),
+                        title: const Text('More insights with Premium'),
+                        subtitle: const Text('Unlock advanced analysis and your complete recovery picture.'),
+                        trailing: const Icon(Icons.arrow_forward_rounded),
+                        onTap: () => context.pushNamed('premium'),
+                      ),
+                    ),
                   const SizedBox(height: 10),
                   _InsightsCompactAnalysisDeck(
                     snapshot: snapshot,

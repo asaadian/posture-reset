@@ -908,5 +908,29 @@
   "player_guidance_breathing": "Atmung",
   "player_guidance_coach_tip": "Tipp vom Coach",
   "player_guidance_safety": "Sicherheit",
-  "player_guidance_avoid_mistakes": "Häufige Fehler vermeiden"
+  "player_guidance_avoid_mistakes": "Häufige Fehler vermeiden",
+  "player_phase_named_complete_body": "{phase} ist abgeschlossen. Die nächste Phase kann beginnen.",
+  "@player_phase_named_complete_body": {
+    "placeholders": {
+      "phase": {
+        "type": "String"
+      }
+    }
+  },
+  "player_mission_streak": "{count} Sessions in Folge",
+  "@player_mission_streak": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "player_phase_unlocked_named": "{phase} freigeschaltet",
+  "@player_phase_unlocked_named": {
+    "placeholders": {
+      "phase": {
+        "type": "String"
+      }
+    }
+  }
 }

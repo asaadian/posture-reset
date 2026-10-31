@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/localization/app_text.dart';
-import '../../../../shared/onboarding/page_onboarding.dart';
 import '../../../../shared/layout/responsive_content_section.dart';
 import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../access/application/access_providers.dart';
@@ -27,7 +26,6 @@ class SessionsLibraryPage extends ConsumerStatefulWidget {
 }
 
 class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
-  final GlobalKey _trainingSessionsGuideKey = GlobalKey(debugLabel: 'training_sessions_guide');
 
   final String _searchQuery = '';
   final SessionLibraryCategory _selectedCategory = SessionLibraryCategory.all;
@@ -93,17 +91,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                 ? _visibleSessions(allSessions)
                 : allSessions.where((session) =>
                     _matchesBodyPage(session, widget.bodyCategory!)).toList();
-            return PageOnboarding(
-              pageId: 'training_guide_v1',
-              tips: [
-                OnboardingTip(
-                  targetKey: _trainingSessionsGuideKey,
-                  icon: Icons.self_improvement_rounded,
-                  title: t.get('guide_training_sessions_title', fallback: 'Sessions are single resets'),
-                  body: t.get('guide_training_sessions_body', fallback: 'Use sessions when you want one quick recovery exercise right now.'),
-                ),
-              ],
-              child: RefreshIndicator(
+            return RefreshIndicator(
               onRefresh: () async {
                 ref.invalidate(sessionSummariesProvider);
                 ref.invalidate(globalPopularSessionIdsProvider);
@@ -131,7 +119,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                         )
                       else
                         KeyedSubtree(
-                          key: _trainingSessionsGuideKey,
+                          
                           child: widget.bodyCategory == null
                               ? _TrainingDiscoverySections(
                                   sessions: visibleSessions,
@@ -147,7 +135,6 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
                   ),
                 ],
               ),
-            ),
             );
           },
         );

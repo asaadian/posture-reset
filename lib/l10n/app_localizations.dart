@@ -5311,6 +5311,19 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recovery route'**
   String get program_recovery_route;
+  String get dashboard_quick_fix_badge;
+  String get dashboard_quick_fix_cta;
+  String get program_mission_label;
+  String get common_min;
+  String get program_short_session;
+  String get program_load_label;
+  String get program_recovery_label;
+  String get program_today_target;
+  String get program_why_mission;
+  String get program_notice_after;
+  String get program_start_mission;
+  String get common_done;
+  String get program_back_current_mission;
   String get explore_level_signature;
   String get explore_level_advanced;
   String get explore_level_therapy;

@@ -11,7 +11,6 @@ import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../access/application/access_providers.dart';
 import '../../../access/domain/access_models.dart';
 import '../../../auth/application/auth_providers.dart';
-import '../../../programs/application/recovery_program_providers.dart';
 import '../../../programs/domain/recovery_program_models.dart';
 import '../../application/sessions_providers.dart';
 import '../../domain/session_models.dart';
@@ -315,87 +314,7 @@ class _SessionsLibraryPageState extends ConsumerState<SessionsLibraryPage> {
   }
 }
 
-class _ProgramRail extends StatelessWidget {
-  const _ProgramRail({
-    required this.programs,
-    required this.activeProgram,
-  });
 
-  final List<RecoveryProgramSummary> programs;
-  final RecoveryProgramDashboardProgress? activeProgram;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-    final hasActive = activeProgram != null && !activeProgram!.isCompleted;
-    final sorted = _sortedPrograms(programs, activeProgram);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionBlockHeader(
-          icon: Icons.route_rounded,
-          title: t.get('training_programs_title', fallback: 'Programs'),
-          subtitle: hasActive
-              ? t
-                  .get(
-                    'training_programs_active_subtitle',
-                    fallback:
-                        'Continue your active recovery journey — Mission {day} of {total}.',
-                  )
-                  .replaceAll('{day}', activeProgram!.currentDay.toString())
-                  .replaceAll('{total}', activeProgram!.durationDays.toString())
-              : t.get(
-                  'training_programs_subtitle',
-                  fallback: 'Guided therapy journeys for structured recovery.',
-                ),
-          actionLabel: t.get('common_view_all', fallback: 'View all'),
-          onAction: () => context.pushNamed('recovery-programs'),
-        ),
-        const SizedBox(height: 10),
-        if (sorted.isEmpty)
-          const _SkeletonBox(height: 160)
-        else
-          SizedBox(
-            height: hasActive ? 190 : 158,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: sorted.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
-              itemBuilder: (context, index) {
-                final program = sorted[index];
-                final isActive = activeProgram?.programId == program.id;
-                return SizedBox(
-                  width: isActive ? 300 : 238,
-                  child: _MiniProgramPoster(
-                    program: program,
-                    activeProgram: activeProgram,
-                    isActive: isActive,
-                  ),
-                );
-              },
-            ),
-          ),
-      ],
-    );
-  }
-
-  List<RecoveryProgramSummary> _sortedPrograms(
-    List<RecoveryProgramSummary> programs,
-    RecoveryProgramDashboardProgress? active,
-  ) {
-    final list = [...programs];
-    final activeId = active?.programId;
-    if (activeId != null) {
-      list.sort((a, b) {
-        if (a.id == activeId) return -1;
-        if (b.id == activeId) return 1;
-        return a.sortOrder.compareTo(b.sortOrder);
-      });
-    }
-    return list;
-  }
-}
 
 class _MiniProgramPoster extends StatelessWidget {
   const _MiniProgramPoster({
@@ -1173,7 +1092,6 @@ class _SectionBlockHeader extends StatelessWidget {
     required this.subtitle,
     this.actionLabel,
     this.onAction,
-    this.trailing,
   });
 
   final IconData icon;
@@ -1181,7 +1099,7 @@ class _SectionBlockHeader extends StatelessWidget {
   final String subtitle;
   final String? actionLabel;
   final VoidCallback? onAction;
-  final Widget? trailing;
+  Widget? get trailing => null;
 
   @override
   Widget build(BuildContext context) {
@@ -1345,53 +1263,7 @@ class _SortButton extends StatelessWidget {
   }
 }
 
-class _CategoryChip extends StatelessWidget {
-  const _CategoryChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
 
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(999),
-      child: Ink(
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(999),
-          color: selected
-              ? colors.primary
-              : isDark
-                  ? const Color(0xFF101827)
-                  : Colors.white,
-          border: Border.all(
-            color: selected
-                ? colors.primary
-                : isDark
-                    ? const Color(0xFF26324A)
-                    : const Color(0xFFDCE5F0),
-          ),
-        ),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: selected ? colors.onPrimary : colors.onSurface,
-                fontWeight: FontWeight.w900,
-              ),
-        ),
-      ),
-    );
-  }
-}
 
 class _MessageCard extends StatelessWidget {
   const _MessageCard({
@@ -1621,11 +1493,10 @@ class _RemoteSessionCoverImage extends StatelessWidget {
 class _SessionCoverFallback extends StatelessWidget {
   const _SessionCoverFallback({
     this.iconSize = 34,
-    this.dark = false,
   });
 
   final double iconSize;
-  final bool dark;
+  bool get dark => false;
 
   @override
   Widget build(BuildContext context) {

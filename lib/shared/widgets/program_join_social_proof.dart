@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../../core/localization/app_text.dart';
 
 /// Decorative sample avatars. They do not represent actual participants.
 /// Only display next to a verified aggregate participant count.
@@ -108,7 +109,7 @@ class ProgramJoinSocialProof extends StatelessWidget {
             ProgramAvatarStack(programId: programId),
             const SizedBox(width: 5),
           ],
-          Text('$countLabel users joined',
+          Text(AppText.get(context, key: 'program_users_joined', fallback: '{count} people joined').replaceAll('{count}', countLabel),
             style: TextStyle(color: Colors.white,
               fontSize: compact ? 9 : 10, fontWeight: FontWeight.w800)),
         ],

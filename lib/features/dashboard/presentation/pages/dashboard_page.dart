@@ -386,7 +386,7 @@ class _DashboardProgramCarousel extends StatelessWidget {
           )),
           TextButton.icon(
             onPressed: () => context.pushNamed('recovery-programs'),
-            label: const Text('View all'),
+            label: const Text(AppText.get(context, key: 'common_view_all', fallback: 'View all')),
             icon: const Icon(Icons.arrow_forward_rounded, size: 17),
           ),
         ]),
@@ -1477,10 +1477,10 @@ class _DashboardPremiumShowcase extends StatelessWidget {
             const Expanded(child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Unlock Premium', style: TextStyle(
+                Text(AppText.get(context, key: 'premium_unlock_label', fallback: 'Unlock Premium'), style: TextStyle(
                   color: Colors.white, fontSize: 15, fontWeight: FontWeight.w900)),
                 SizedBox(height: 2),
-                Text('One payment. Full access.', style: TextStyle(
+                Text(AppText.get(context, key: 'premium_one_payment_full_access', fallback: 'One payment. Full access.'), style: TextStyle(
                   color: Color(0xFFD1E8E8), fontSize: 11)),
               ],
             )),

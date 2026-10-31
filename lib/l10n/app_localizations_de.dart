@@ -2833,4 +2833,68 @@ class AppLocalizationsDe extends AppLocalizations {
   String player_step_of(Object current, Object total) {
     return 'Schritt $current von $total';
   }
+  @override
+  String get dashboard_load_error_title => 'Deine Aktivitäten konnten nicht geladen werden';
+  @override
+  String get dashboard_load_error_body => 'Dein Trainingsverlauf bleibt erhalten. Prüfe deine Internetverbindung und versuche es erneut.';
+  @override
+  String get program_sessions_title => 'Deine Sessions';
+  @override
+  String get program_card_label => 'BEGLEITETES PROGRAMM';
+  @override
+  String get program_card_open => 'Programm ansehen';
+  @override
+  String get quick_fix_no_match_hint => 'Wähle einen anderen Körperbereich oder andere Hilfsmittel. Du kannst auch alle Sessions durchstöbern.';
+  @override
+  String get quick_fix_browse_sessions => 'Sessions entdecken';
+  @override
+  String get profile_metric_completed => 'Abgeschlossen';
+  @override
+  String get notification_open_phone_settings => 'Einstellungen öffnen';
+  @override
+  String get premium_loading_products => 'Preis wird geladen …';
+  @override
+  String get premium_purchase_processing => 'Kauf wird bearbeitet …';
+  @override
+  String get premium_product_unavailable => 'Premium ist derzeit nicht verfügbar';
+  @override
+  String get player_journey_complete => 'Programm abgeschlossen';
+  @override
+  String get player_phase_complete => 'Phase abgeschlossen';
+  @override
+  String get player_mission_complete => 'Session abgeschlossen';
+  @override
+  String get player_journey_complete_body => 'Du hast das gesamte Trainingsprogramm abgeschlossen.';
+  @override
+  String get player_phase_complete_body => 'Du hast diese Phase abgeschlossen. Die nächste Phase kann beginnen.';
+  @override
+  String get player_mission_complete_body => 'Diese Session ist jetzt als abgeschlossen vermerkt.';
+  @override
+  String get player_journey_progress => 'Programmfortschritt';
+  @override
+  String get player_milestone_reached => 'Etappenziel erreicht';
+  @override
+  String get player_next_phase_unlocked => 'Die nächste Phase ist freigeschaltet';
+  @override
+  String get player_next_mission_unlocked => 'Nächste Session freigeschaltet';
+  @override
+  String get player_view_completed_journey => 'Abgeschlossenes Programm ansehen';
+  @override
+  String get player_back_to_journey => 'Zurück zum Programm';
+  @override
+  String get player_guidance_how_to => 'So geht’s';
+  @override
+  String get player_guidance_goal => 'Ziel';
+  @override
+  String get player_guidance_notice => 'Darauf solltest du achten';
+  @override
+  String get player_guidance_coach_cue => 'Hinweis vom Coach';
+  @override
+  String get player_guidance_breathing => 'Atmung';
+  @override
+  String get player_guidance_coach_tip => 'Tipp vom Coach';
+  @override
+  String get player_guidance_safety => 'Sicherheit';
+  @override
+  String get player_guidance_avoid_mistakes => 'Häufige Fehler vermeiden';
 }

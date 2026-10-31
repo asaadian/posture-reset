@@ -1653,65 +1653,9 @@ class _WhitePill extends StatelessWidget {
   }
 }
 
-class _WhiteProgress extends StatelessWidget {
-  const _WhiteProgress({
-    required this.completed,
-    required this.total,
-  });
 
-  final int completed;
-  final int total;
 
-  @override
-  Widget build(BuildContext context) {
-    final safeTotal = total <= 0 ? 1 : total;
-    final value = (completed / safeTotal).clamp(0.0, 1.0);
 
-    return SizedBox(
-      width: 170,
-      child: ModernProgressTrack(
-        value: value,
-        height: 8,
-        light: true,
-      ),
-    );
-  }
-}
-
-class _WhiteButton extends StatelessWidget {
-  const _WhiteButton({
-    required this.label,
-  });
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.play_arrow_rounded, size: 16, color: colors.primary),
-          const SizedBox(width: 5),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: colors.primary,
-                  fontWeight: FontWeight.w900,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 
 
@@ -1966,74 +1910,6 @@ const String _remoteSessionCoverBaseUrl =
 String _remoteSessionCoverUrl(String sessionId) =>
     '$_remoteSessionCoverBaseUrl/$sessionId.webp';
 
-class _RemoteSessionCoverImage extends StatelessWidget {
-  const _RemoteSessionCoverImage({
-    required this.sessionId,
-    required this.fit,
-    required this.alignment,
-    required this.fallbackBuilder,
-  });
 
-  final String sessionId;
-  final BoxFit fit;
-  final AlignmentGeometry alignment;
-  final WidgetBuilder fallbackBuilder;
 
-  @override
-  Widget build(BuildContext context) {
-    return Image.network(
-      _remoteSessionCoverUrl(sessionId),
-      fit: fit,
-      alignment: alignment,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return fallbackBuilder(context);
-      },
-      errorBuilder: (context, error, stackTrace) => Image.asset(
-        'assets/images/sessions/$sessionId.png',
-        fit: fit,
-        alignment: alignment,
-        errorBuilder: (_, __, ___) => fallbackBuilder(context),
-      ),
-    );
-  }
-}
 
-class _SessionCoverFallback extends StatelessWidget {
-  const _SessionCoverFallback({
-    this.iconSize = 34,
-  });
-
-  final double iconSize;
-  bool get dark => false;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: dark
-              ? [
-                  colors.primary.withValues(alpha: 0.30),
-                  colors.tertiary.withValues(alpha: 0.16),
-                  const Color(0xFF0F172A),
-                ]
-              : [
-                  colors.primary.withValues(alpha: 0.16),
-                  colors.tertiary.withValues(alpha: 0.10),
-                  const Color(0xFFF7FAFF),
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Icon(
-        Icons.self_improvement_rounded,
-        color: dark ? Colors.white.withValues(alpha: 0.80) : colors.primary,
-        size: iconSize,
-      ),
-    );
-  }
-}

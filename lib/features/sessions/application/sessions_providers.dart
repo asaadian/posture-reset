@@ -72,6 +72,7 @@ final sessionsByIdsProvider =
 );
 
 final savedSessionIdsProvider = FutureProvider<Set<String>>((ref) async {
+  ref.watch(currentUserProvider.select((user) => user?.id));
   final repository = ref.watch(savedSessionsRepositoryProvider);
   return repository.getSavedSessionIds();
 });

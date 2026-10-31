@@ -153,6 +153,11 @@ class DashboardPage extends ConsumerWidget {
     return ResponsivePageScaffold(
       title: Text(_dashboardGreeting(t: t, profile: profile, email: user?.email)),
       actions: [
+        IconButton(
+          onPressed: () => context.pushNamed('settings'),
+          tooltip: 'Settings',
+          icon: const Icon(Icons.tune_rounded),
+        ),
         _DashboardNotificationAction(userId: user?.id),
         _DashboardAccountAction(
           userEmail: user?.email,
@@ -221,14 +226,21 @@ class DashboardPage extends ConsumerWidget {
                       fallback: 'Find a matching desk reset in seconds.',
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 6),
                   if (programs.isNotEmpty) ...[
                     _DashboardProgramCarousel(
                       programs: programs,
                       activeProgram: activeProgram,
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 8),
                   ],
+                  dashboardAsync.maybeWhen(
+                    data: (snapshot) => _WeeklyGoalCard(
+                      completed: snapshot.completedSessionsThisWeek,
+                    ),
+                    orElse: () => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: 8),
                   dashboardAsync.maybeWhen(
                     data: (snapshot) {
                       final isNewUser = !snapshot.hasContent &&
@@ -253,8 +265,7 @@ class DashboardPage extends ConsumerWidget {
                           ),
                           const SizedBox(height: 16),
                           _RecoveryStatusStrip(snapshot: snapshot),
-                          const SizedBox(height: 16),
-                          _WeeklyGoalCard(completed: snapshot.completedSessionsThisWeek),
+
                           if (recommendedSessions.isNotEmpty) ...[
                             const SizedBox(height: 16),
                             _DashboardVisualSessions(

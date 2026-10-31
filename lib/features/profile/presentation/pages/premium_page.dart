@@ -166,7 +166,7 @@ class PremiumPage extends ConsumerWidget {
                 isBusy: isBusy,
               ),
               const SizedBox(height: 12),
-              _PremiumValueDeck(hasCoreAccess: hasCoreAccess),
+              const _PremiumBenefitsList(),
               const SizedBox(height: 12),
               _PremiumPurchaseCard(
                 hasCoreAccess: hasCoreAccess,
@@ -290,6 +290,43 @@ class _PremiumHeroCard extends StatelessWidget {
               fontSize: 13, height: 1.45)),
         ],
       ),
+    );
+  }
+}
+
+class _PremiumBenefitsList extends StatelessWidget {
+  const _PremiumBenefitsList();
+
+  @override
+  Widget build(BuildContext context) {
+    const benefits = [
+      'Every recovery session',
+      'All guided programs',
+      'Full Quick Fix recommendations',
+      'Insights, history and saved sessions',
+    ];
+    return Column(
+      children: [
+        Center(
+          child: Image.asset('assets/images/premium-badge.png',
+            width: 126, height: 126, fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) => const Icon(
+              Icons.workspace_premium_rounded,
+              color: Color(0xFFD9A956), size: 104)),
+        ),
+        const SizedBox(height: 10),
+        ...benefits.map((benefit) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+          child: Row(children: [
+            const Icon(Icons.check_circle_rounded,
+              size: 19, color: Color(0xFF22A68B)),
+            const SizedBox(width: 12),
+            Expanded(child: Text(benefit,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w700))),
+          ]),
+        )),
+      ],
     );
   }
 }
@@ -464,15 +501,8 @@ class _PremiumPurchaseCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             hasCoreAccess
-                ? t.get(
-                    'premium_plan_unlocked_subtitle',
-                    fallback: 'Your full recovery toolkit is unlocked.',
-                  )
-                : t.get(
-                    'premium_plan_subtitle_v2',
-                    fallback:
-                        'One-time unlock. No subscription. Restore anytime with the same Google Play account.',
-                  ),
+                ? 'Your Premium access is ready.'
+                : 'Pay once. Keep access. No subscription.',
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -662,10 +692,7 @@ class _PurchaseHeader extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Text(
-            t.get(
-              'premium_plan_title',
-              fallback: 'Core Access',
-            ),
+            hasCoreAccess ? 'Premium active' : 'Premium lifetime',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.titleLarge?.copyWith(
@@ -689,10 +716,7 @@ class _PurchaseHeader extends StatelessWidget {
                 ),
               ),
               child: Text(
-                t.get(
-                  'premium_plan_lifetime_badge',
-                  fallback: 'One-time',
-                ),
+                'Pay once'
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: colors.primary,
                   fontWeight: FontWeight.w900,

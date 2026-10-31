@@ -916,7 +916,15 @@ class _TrainingHorizontalTile extends StatelessWidget {
                     Positioned(
                       top: 10,
                       left: 10,
-                      child: const _ImageGlassBadge(icon: Icons.lock_rounded),
+                      child: Image.asset(
+                        'assets/images/premium-badge.png',
+                        width: 33,
+                        height: 33,
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.workspace_premium_rounded,
+                          color: Color(0xFFFFD58A),
+                        ),
+                      ),
                     ),
                 ],
               ),
@@ -1151,7 +1159,7 @@ class _PremiumSessionImage extends StatelessWidget {
             left: 9,
             top: 9,
             child: _ImageGlassBadge(
-              icon: isLocked ? Icons.lock_rounded : Icons.bolt_rounded,
+              icon: isLocked ? Icons.workspace_premium_rounded : Icons.bolt_rounded,
             ),
           ),
           if (isLocked)
@@ -1286,11 +1294,11 @@ class _SessionOpenButton extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(
-        isLocked ? Icons.lock_rounded : Icons.play_arrow_rounded,
-        color: isLocked ? colors.onSurfaceVariant : Colors.white,
-        size: 24,
-      ),
+      child: isLocked
+          ? Image.asset('assets/images/premium-badge.png', width: 27, height: 27,
+              errorBuilder: (_, __, ___) => Icon(Icons.workspace_premium_rounded,
+                color: colors.onSurfaceVariant, size: 24))
+          : const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
     );
   }
 }

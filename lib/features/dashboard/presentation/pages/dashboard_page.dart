@@ -1759,12 +1759,12 @@ class _DashboardAccountAction extends StatelessWidget {
               height: 44,
               child: Image.asset(
                 'assets/images/premium-badge.png',
-                width: 36,
-                height: 36,
+                width: 25,
+                height: 25,
                 errorBuilder: (_, __, ___) => Icon(
                   Icons.workspace_premium_rounded,
                   color: colors.onPrimaryContainer,
-                  size: 27,
+                  size: 22,
                 ),
               ),
             ),

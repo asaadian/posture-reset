@@ -32,6 +32,17 @@ class ProfilePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = AppText.of(context);
     final user = ref.watch(currentUserProvider);
+    // Refresh all account-scoped aggregates as soon as the authenticated user changes.
+    ref.listen(currentUserProvider, (previous, next) {
+      if (previous?.id == next?.id) return;
+      ref.invalidate(currentUserProfileProvider);
+      ref.invalidate(savedSessionIdsProvider);
+      ref.invalidate(recentSessionRunsProvider);
+      ref.invalidate(completedSessionCountProvider);
+      ref.invalidate(continueSessionCandidateProvider);
+      ref.invalidate(sessionHistoryItemsProvider);
+      ref.invalidate(savedSessionContinuityItemsProvider);
+    });
     final auth = ref.read(authServiceProvider);
 
     final profileAsync = ref.watch(currentUserProfileProvider);

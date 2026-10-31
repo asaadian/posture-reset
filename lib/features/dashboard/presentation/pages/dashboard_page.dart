@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/app_data/app_data_reset_signal.dart';
 import '../../../../core/localization/app_text.dart';
 import '../../../../core/notifications/notification_history_repository.dart';
-import '../../../../shared/onboarding/page_onboarding.dart';
 import '../../../../shared/layout/responsive_content_section.dart';
 import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../../shared/widgets/modern_progress_track.dart';
@@ -37,47 +36,6 @@ final _dashboardSavedSessionsProvider =
   return sessionRepository.getSessionsByIds(savedIds);
 });
 
-
-Rect _dashboardBodyTarget(Size size, EdgeInsets safePadding) {
-  final top = safePadding.top + 118;
-  final bottom = size.height - safePadding.bottom - 158;
-  return Rect.fromLTRB(
-    14,
-    top,
-    size.width - 14,
-    bottom.clamp(top + 160, size.height - safePadding.bottom - 48).toDouble(),
-  );
-}
-
-/// PageOnboarding is mounted inside the scaffold body, while the header/actions
-/// are slightly above the scroll content. Use a tall negative rect so the clipped
-/// visible area still frames the full top bar instead of becoming a thin line.
-Rect _dashboardTopBarGuideTarget(Size size, EdgeInsets safePadding) {
-  const visibleHeight = 78.0;
-  final top = -(safePadding.top + 68.0);
-  final height = safePadding.top + 68.0 + visibleHeight;
-
-  return Rect.fromLTWH(
-    14,
-    top,
-    size.width - 28,
-    height,
-  );
-}
-
-/// The custom bottom navigation sits outside the scrollable dashboard content.
-/// This target is anchored to the real bottom edge so it frames the nav bar,
-/// not the last dashboard card.
-Rect _dashboardBottomNavGuideTarget(Size size, EdgeInsets safePadding) {
-  const height = 112.0;
-  final top = size.height - safePadding.bottom - height + 6;
-  return Rect.fromLTWH(
-    14,
-    top,
-    size.width - 28,
-    height,
-  );
-}
 
 class DashboardPage extends ConsumerWidget {
   const DashboardPage({super.key});
@@ -171,32 +129,7 @@ class DashboardPage extends ConsumerWidget {
         ),
       ],
       bodyBuilder: (context, pageInfo) {
-        return PageOnboarding(
-          pageId: 'dashboard_guide_v2',
-          tips: [
-            OnboardingTip(
-              targetBuilder: _dashboardTopBarGuideTarget,
-              targetBorderRadius: 24,
-              icon: Icons.tune_rounded,
-              title: t.get('guide_dashboard_topbar_title', fallback: 'Top bar'),
-              body: t.get('guide_dashboard_topbar_body', fallback: 'Use the top bar for notifications and your account. Free members can upgrade directly from the account badge.'),
-            ),
-            OnboardingTip(
-              targetBuilder: _dashboardBodyTarget,
-              targetBorderRadius: 28,
-              icon: Icons.dashboard_customize_rounded,
-              title: t.get('guide_dashboard_home_title', fallback: 'Your recovery home'),
-              body: t.get('guide_dashboard_home_body', fallback: 'Start with the smart next action, then check your recovery status, program progress, and recent activity.'),
-            ),
-            OnboardingTip(
-              targetBuilder: _dashboardBottomNavGuideTarget,
-              targetBorderRadius: 32,
-              icon: Icons.space_dashboard_rounded,
-              title: t.get('guide_dashboard_bottom_nav_title', fallback: 'Bottom navigation'),
-              body: t.get('guide_dashboard_bottom_nav_body', fallback: 'Use the bottom tabs to open Explore, Quick Fix, Insights, and Profile.'),
-            ),
-          ],
-          child: RefreshIndicator(
+        return RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(currentUserProfileProvider);
             ref.invalidate(accessSnapshotProvider);
@@ -335,7 +268,6 @@ class DashboardPage extends ConsumerWidget {
               ),
             ],
           ),
-        ),
         );
       },
     );

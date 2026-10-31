@@ -993,145 +993,7 @@ class _DashboardNotificationAction extends ConsumerWidget {
   }
 }
 
-class _RecoveryCommandDeck extends StatelessWidget {
-  const _RecoveryCommandDeck({
-    required this.snapshot,
-    required this.activeProgram,
-  });
 
-  final DashboardSnapshot snapshot;
-  final RecoveryProgramDashboardProgress? activeProgram;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-    final t = AppText.of(context);
-    final program = activeProgram;
-    final hasProgram = program != null && !program.isCompleted;
-    final helpful = (snapshot.helpRate * 100).round();
-    final rhythm = (snapshot.consistencyScore * 100).round();
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: LinearGradient(
-          colors: isDark
-              ? [const Color(0xFF101A2D), const Color(0xFF111827)]
-              : [colors.primary.withValues(alpha: 0.08), Colors.white],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(color: colors.primary.withValues(alpha: 0.16)),
-        boxShadow: [
-          BoxShadow(
-            color: colors.primary.withValues(alpha: isDark ? 0.10 : 0.06),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    colors: [colors.primary, colors.tertiary],
-                  ),
-                ),
-                child: Icon(Icons.monitor_heart_rounded, color: colors.onPrimary),
-              ),
-              const SizedBox(width: 11),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      t.get('dashboard_command_title', fallback: 'Recovery command center'),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: colors.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      hasProgram
-                          ? t.get('dashboard_command_active_body', fallback: 'Your journey, recovery signal, and next action in one place.')
-                          : t.get('dashboard_command_empty_body', fallback: 'Start a therapy journey to build a clear recovery signal.'),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                        fontWeight: FontWeight.w700,
-                        height: 1.15,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final compact = constraints.maxWidth < 560;
-              final tiles = [
-                _CommandMetric(
-                  icon: Icons.speed_rounded,
-                  label: t.get('dashboard_readiness_label', fallback: 'Readiness'),
-                  value: '${snapshot.readinessScore}',
-                  accent: colors.primary,
-                ),
-                _CommandMetric(
-                  icon: Icons.favorite_rounded,
-                  label: t.get('dashboard_helpful_label', fallback: 'Helpful'),
-                  value: '$helpful%',
-                  accent: colors.tertiary,
-                ),
-                _CommandMetric(
-                  icon: Icons.route_rounded,
-                  label: t.get('dashboard_rhythm_label', fallback: 'Rhythm'),
-                  value: '$rhythm%',
-                  accent: colors.secondary,
-                ),
-              ];
-              if (compact) {
-                return Row(
-                  children: [
-                    for (var i = 0; i < tiles.length; i++) ...[
-                      Expanded(child: tiles[i]),
-                      if (i != tiles.length - 1) const SizedBox(width: 8),
-                    ],
-                  ],
-                );
-              }
-              return Row(
-                children: [
-                  for (var i = 0; i < tiles.length; i++) ...[
-                    Expanded(child: tiles[i]),
-                    if (i != tiles.length - 1) const SizedBox(width: 10),
-                  ],
-                ],
-              );
-            },
-          ),
-          if (hasProgram) ...[
-            const SizedBox(height: 14),
-            _JourneyMiniProgress(program: program),
-          ],
-        ],
-      ),
-    );
-  }
-}
 
 class _CommandMetric extends StatelessWidget {
   const _CommandMetric({
@@ -1221,40 +1083,7 @@ class _JourneyMiniProgress extends StatelessWidget {
   }
 }
 
-class _DashboardSnapshotBlock extends StatelessWidget {
-  const _DashboardSnapshotBlock({
-    required this.dashboardAsync,
-    required this.activeProgram,
-    required this.accessSnapshot,
-  });
 
-  final AsyncValue<DashboardSnapshot> dashboardAsync;
-  final RecoveryProgramDashboardProgress? activeProgram;
-  final AccessSnapshot accessSnapshot;
-
-  @override
-  Widget build(BuildContext context) {
-    return dashboardAsync.when(
-      loading: () => const _DashboardSnapshotSkeleton(),
-      error: (error, _) => _DashboardInlineStatus(
-        icon: Icons.error_outline_rounded,
-        title: AppText.get(
-          context,
-          key: 'dashboard_snapshot_error_title',
-          fallback: 'Dashboard data is unavailable',
-        ),
-        body: error.toString(),
-      ),
-      data: (snapshot) {
-        if (!snapshot.hasContent && activeProgram == null) {
-          return const _DashboardStarterCard();
-        }
-
-        return _RecoveryStatusStrip(snapshot: snapshot);
-      },
-    );
-  }
-}
 
 class _RecoveryStatusStrip extends StatelessWidget {
   const _RecoveryStatusStrip({required this.snapshot});
@@ -1576,65 +1405,7 @@ String _runStatusLabel(BuildContext context, DashboardRunStatus status) {
   }
 }
 
-class _ProgramHeroSection extends StatelessWidget {
-  const _ProgramHeroSection({
-    required this.programs,
-    required this.activeProgram,
-  });
 
-  final List<RecoveryProgramSummary> programs;
-  final RecoveryProgramDashboardProgress? activeProgram;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-    final hasActive = activeProgram != null && !activeProgram!.isCompleted;
-    final activeSummary = hasActive
-        ? _activeProgramSummary(programs, activeProgram!)
-        : null;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionTitleRow(
-          title: hasActive
-              ? t.get('dashboard_programs_active_title', fallback: 'Continue your journey')
-              : t.get('dashboard_programs_title', fallback: 'Therapy journeys'),
-          actionLabel: t.get('common_view_all', fallback: 'View all'),
-          onAction: () => context.pushNamed('recovery-programs'),
-        ),
-        const SizedBox(height: 10),
-        if (hasActive && activeSummary != null)
-          SizedBox(
-            height: 218,
-            width: double.infinity,
-            child: _ProgramPosterCard(
-              program: activeSummary,
-              activeProgram: activeProgram,
-            ),
-          )
-        else if (hasActive)
-          const _ProgramHeroSkeleton()
-        else
-          _ProgramDiscoveryCard(
-            featuredProgram: programs.isEmpty ? null : programs.first,
-            programCount: programs.length,
-            onTap: () => context.pushNamed('recovery-programs'),
-          ),
-      ],
-    );
-  }
-
-  RecoveryProgramSummary? _activeProgramSummary(
-    List<RecoveryProgramSummary> programs,
-    RecoveryProgramDashboardProgress active,
-  ) {
-    for (final program in programs) {
-      if (program.id == active.programId) return program;
-    }
-    return null;
-  }
-}
 
 class _ProgramDiscoveryCard extends StatelessWidget {
   const _ProgramDiscoveryCard({
@@ -1976,44 +1747,7 @@ class _InactiveDashboardProgramContent extends StatelessWidget {
   }
 }
 
-class _SavedSessionsSection extends StatelessWidget {
-  const _SavedSessionsSection({
-    required this.sessions,
-  });
 
-  final List<SessionSummary> sessions;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionTitleRow(
-          title: t.get('dashboard_saved_title', fallback: 'Saved for later'),
-          actionLabel: t.get('common_view_all', fallback: 'View all'),
-          onAction: () => context.pushNamed('saved-sessions'),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 116,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: sessions.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, index) {
-              return SizedBox(
-                width: 250,
-                child: _SavedSessionTile(session: sessions[index]),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
 
 class _SavedSessionTile extends StatelessWidget {
   const _SavedSessionTile({
@@ -2176,42 +1910,7 @@ class _DashboardVisualSessions extends StatelessWidget {
   }
 }
 
-class _RecommendedTodaySection extends StatelessWidget {
-  const _RecommendedTodaySection({
-    required this.sessions,
-  });
 
-  final List<SessionSummary> sessions;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-
-    if (sessions.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionTitleRow(
-          title: t.get('dashboard_recommended_title', fallback: 'Recommended today'),
-          actionLabel: t.get('sessions_title', fallback: 'Training'),
-          onAction: () => context.goNamed('sessions'),
-        ),
-        const SizedBox(height: 10),
-        Column(
-          children: [
-            for (final session in sessions) ...[
-              _RecommendedSessionRow(session: session),
-              if (session != sessions.last) const SizedBox(height: 9),
-            ],
-          ],
-        ),
-      ],
-    );
-  }
-}
 
 class _RecommendedSessionRow extends StatelessWidget {
   const _RecommendedSessionRow({
@@ -2290,63 +1989,7 @@ class _RecommendedSessionRow extends StatelessWidget {
   }
 }
 
-class _MomentumSection extends StatelessWidget {
-  const _MomentumSection({
-    required this.activeProgram,
-    required this.savedSessionCount,
-  });
 
-  final RecoveryProgramDashboardProgress? activeProgram;
-  final int savedSessionCount;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-
-    final hasProgram = activeProgram != null && !activeProgram!.isCompleted;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionTitleRow(
-          title: t.get('dashboard_momentum_title', fallback: 'Your momentum'),
-          actionLabel: t.get('insights_title', fallback: 'Insights'),
-          onAction: () => context.goNamed('insights'),
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: _MomentumTile(
-                icon: Icons.route_rounded,
-                value: hasProgram
-                    ? '${activeProgram!.completedDayCount}/${activeProgram!.durationDays}'
-                    : '0',
-                label: t.get('dashboard_program_days_label', fallback: 'program missions'),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _MomentumTile(
-                icon: Icons.local_fire_department_rounded,
-                value: hasProgram ? activeProgram!.streakCount.toString() : '0',
-                label: t.get('dashboard_streak_label', fallback: 'streak'),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _MomentumTile(
-                icon: Icons.bookmark_rounded,
-                value: savedSessionCount.toString(),
-                label: t.get('dashboard_saved_count_label', fallback: 'saved'),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
 
 class _MomentumTile extends StatelessWidget {
   const _MomentumTile({
@@ -2405,89 +2048,7 @@ class _MomentumTile extends StatelessWidget {
   }
 }
 
-class _BodyFocusCard extends StatelessWidget {
-  const _BodyFocusCard();
 
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(26),
-        onTap: () => context.goNamed('quick-fix'),
-        child: Ink(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(26),
-            color: isDark ? const Color(0xFF101827) : Colors.white,
-            border: Border.all(
-              color: isDark ? const Color(0xFF26324A) : const Color(0xFFE2E8F0),
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(17),
-                  color: colors.primary.withValues(alpha: 0.12),
-                ),
-                child: Icon(
-                  Icons.flash_on_rounded,
-                  color: colors.primary,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      t.get('dashboard_body_focus_title', fallback: 'Need relief now?'),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: colors.onSurface,
-                        fontWeight: FontWeight.w900,
-                        height: 1.0,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      t.get(
-                        'dashboard_body_focus_body',
-                        fallback: 'Use Quick Fix to choose the body zone that needs attention.',
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                        height: 1.18,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: colors.onSurfaceVariant,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _DashboardPremiumShowcase extends StatelessWidget {
   const _DashboardPremiumShowcase();
@@ -3104,11 +2665,10 @@ class _RemoteSessionCoverImage extends StatelessWidget {
 class _SessionCoverFallback extends StatelessWidget {
   const _SessionCoverFallback({
     this.iconSize = 34,
-    this.dark = false,
   });
 
   final double iconSize;
-  final bool dark;
+  bool get dark => false;
 
   @override
   Widget build(BuildContext context) {

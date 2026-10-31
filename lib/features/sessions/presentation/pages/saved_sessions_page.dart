@@ -143,16 +143,16 @@ class SavedSessionsPage extends ConsumerWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('YOUR COLLECTION', style: TextStyle(
+                                  Text(AppText.get(context, key: 'saved_collection_label', fallback: 'YOUR COLLECTION'), style: TextStyle(
                                     color: Color(0xFF8CEBD3), letterSpacing: 1.4,
                                     fontWeight: FontWeight.w800, fontSize: 11,
                                   )),
                                   const SizedBox(height: 5),
-                                  Text('${items.length} sessions', style: const TextStyle(
+                                  Text(AppText.get(context, key: 'common_session_count', fallback: '{count} sessions').replaceAll('{count}', items.length.toString()), style: const TextStyle(
                                     color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800,
                                   )),
                                   const SizedBox(height: 4),
-                                  const Text('Your favorite resets, ready whenever you need them.', style: TextStyle(
+                                  Text(AppText.get(context, key: 'saved_collection_subtitle', fallback: 'Your favorite resets, ready whenever you need them.'), style: TextStyle(
                                     color: Color(0xFFDAE7EE), fontSize: 12, height: 1.35,
                                   )),
                                 ],

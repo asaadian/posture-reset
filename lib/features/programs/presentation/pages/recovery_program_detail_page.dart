@@ -857,10 +857,6 @@ class _HeroOverlay extends StatelessWidget {
             hasCoreAccess: viewModel.hasCoreAccess,
           ),
           const Spacer(),
-          _HeroTodaySummary(
-            phaseCode: viewModel.phaseCode,
-            phaseTitle: viewModel.phaseTitle,
-          ),
           _HeroProgress(
             currentDay: viewModel.currentDay,
             completedCount: viewModel.completedCount,

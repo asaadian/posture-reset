@@ -206,7 +206,7 @@ class _SessionVisualFallback extends StatelessWidget {
 
     return Center(
       child: Icon(
-        isLocked ? Icons.lock_rounded : Icons.accessibility_new_rounded,
+        isLocked ? Icons.workspace_premium_rounded : Icons.accessibility_new_rounded,
         size: compact ? 30 : 42,
         color: colors.onSurfaceVariant.withValues(alpha: 0.72),
       ),
@@ -246,11 +246,23 @@ class _VisualLockBadge extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(
-        isLocked ? Icons.lock_rounded : Icons.chevron_right_rounded,
-        size: isLocked ? 16 : 19,
-        color: isDark ? colors.onSurface : const Color(0xFF334155),
-      ),
+      child: isLocked
+          ? Image.asset(
+              'assets/images/premium-badge.png',
+              width: 27,
+              height: 27,
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) => const Icon(
+                Icons.workspace_premium_rounded,
+                size: 20,
+                color: Color(0xFFDDAF58),
+              ),
+            )
+          : Icon(
+              Icons.chevron_right_rounded,
+              size: 19,
+              color: isDark ? colors.onSurface : const Color(0xFF334155),
+            ),
     );
   }
 }

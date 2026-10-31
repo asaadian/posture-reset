@@ -185,6 +185,37 @@ class _NotificationPermissionPromptGateState
         await ref
             .read(userPreferencesControllerProvider.notifier)
             .setNotificationsEnabled(true);
+
+        // Android 12+: exact alarm access is a separate special permission.
+        // Ask only after the user explicitly enabled notifications.
+        if (await service.needsExactAlarmAccess() && mounted) {
+          final allowPrecise = await showDialog<bool>(
+            context: dialogContext,
+            barrierDismissible: true,
+            builder: (context) => AlertDialog(
+              icon: const Icon(Icons.schedule_rounded),
+              title: const Text('Keep reminders on time?'),
+              content: const Text(
+                'Android has a separate Alarms & reminders setting. '
+                'Allow it for more precise reminders, even when Desk Workout '
+                'is closed. You can skip this and still receive reminders.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Not now'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Open Android settings'),
+                ),
+              ],
+            ),
+          );
+          if (allowPrecise == true) {
+            await service.requestExactAlarmAccess();
+          }
+        }
         await ref
             .read(notificationReminderSyncControllerProvider)
             .syncForCurrentUser();

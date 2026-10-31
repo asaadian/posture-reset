@@ -1,5 +1,8 @@
 package com.weglabs.posturereset
 
+import android.app.AlarmManager
+import android.content.Context
+import android.os.Build
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
@@ -14,6 +17,16 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, settingsChannel)
             .setMethodCallHandler { call, result ->
+                if (call.method == "needsExactAlarmAccess") {
+                    val needed = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                        !alarmManager.canScheduleExactAlarms()
+                    } else {
+                        false
+                    }
+                    result.success(needed)
+                    return@setMethodCallHandler
+                }
                 if (call.method != "openNotificationSettings") {
                     result.notImplemented()
                     return@setMethodCallHandler

@@ -2987,4 +2987,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get common_done => 'Done';
   @override
   String get program_back_current_mission => 'Back to current mission';
+  @override
+  String get insights_more_premium => 'More insights with Premium';
+  @override
+  String get insights_more_premium_body => 'Unlock advanced analysis and your complete recovery picture.';
+  @override
+  String get program_user_joined_one => '1 person joined';
 }

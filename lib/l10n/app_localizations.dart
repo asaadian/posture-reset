@@ -5311,6 +5311,10 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recovery route'**
   String get program_recovery_route;
+  String get common_view_all;
+  String get premium_unlock_label;
+  String get premium_one_payment_full_access;
+  String get quick_fix_unlock_all;
   String player_phase_unlocked_named(String phase);
   String player_mission_streak(String count);
   String player_phase_named_complete_body(String phase);

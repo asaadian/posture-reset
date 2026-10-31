@@ -2997,4 +2997,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String get explore_level_therapy => 'Gezieltes Training';
   @override
   String get explore_level_all => 'Alle Levels';
+  @override
+  String get dashboard_quick_fix_badge => 'SCHNELLHILFE';
+  @override
+  String get dashboard_quick_fix_cta => 'Bereich auswählen';
+  @override
+  String get program_mission_label => 'Einheit';
+  @override
+  String get common_min => 'Min.';
+  @override
+  String get program_short_session => 'Kurze Session';
+  @override
+  String get program_load_label => 'Belastung';
+  @override
+  String get program_recovery_label => 'Erholung';
+  @override
+  String get program_today_target => 'Dein heutiges Ziel';
+  @override
+  String get program_why_mission => 'Warum diese Einheit?';
+  @override
+  String get program_notice_after => 'Darauf kannst du danach achten';
+  @override
+  String get program_start_mission => 'Einheit starten';
+  @override
+  String get common_done => 'Erledigt';
+  @override
+  String get program_back_current_mission => 'Zurück zur aktuellen Einheit';
 }

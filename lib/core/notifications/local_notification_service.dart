@@ -103,6 +103,31 @@ class LocalNotificationService {
     }
   }
 
+  /// True only on Android 12+ when Alarms & reminders is not granted.
+  Future<bool> needsExactAlarmAccess() async {
+    if (kIsWeb || !Platform.isAndroid) return false;
+    try {
+      return await _appSettingsChannel.invokeMethod<bool>(
+            'needsExactAlarmAccess',
+          ) ??
+          false;
+    } on PlatformException catch (error) {
+      debugPrint('[Notifications] Exact alarm access check failed: $error');
+      return false;
+    } on MissingPluginException {
+      return false;
+    }
+  }
+
+  /// Opens Android's special app access screen; optional for approximate reminders.
+  Future<bool> requestExactAlarmAccess() async {
+    if (!await needsExactAlarmAccess()) return true;
+    await initialize();
+    final android = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    return await android?.requestExactAlarmsPermission() ?? false;
+  }
+
   Future<bool> requestPermissions() async {
     await initialize();
 
@@ -166,7 +191,9 @@ class LocalNotificationService {
       plan.body,
       when,
       _notificationDetails(),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      androidScheduleMode: await needsExactAlarmAccess()
+          ? AndroidScheduleMode.inexactAllowWhileIdle
+          : AndroidScheduleMode.exactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
       payload: plan.payload,
     );

@@ -424,10 +424,17 @@ String _dashboardGreeting({
 
 String _compactPublicCount(int count) {
   if (count < 1000) return '$count';
-  if (count < 10000) {
-    final value = count / 1000;
-    final rounded = (value * 10).floor() / 10;
-    return '${rounded.toStringAsFixed(1).replaceFirst(RegExp(r'\\.0
+  if (count < 1000000) {
+    final thousands = count / 1000;
+    if (count < 10000) {
+      return '${(thousands * 10).floor() / 10}K';
+    }
+    return '${count ~/ 1000}K';
+  }
+  return '${(count / 100000).floor() / 10}M';
+}
+
+class _DashboardProgramCarousel extends StatelessWidget {
   const _DashboardProgramCarousel({
     required this.programs,
     required this.activeProgram,

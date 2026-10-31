@@ -773,6 +773,7 @@ class _DashboardPrimaryAction extends StatelessWidget {
                 SessionVisualStage(
                   sessionId: sessionId,
                   height: 232,
+                  imageFit: BoxFit.cover,
                   borderRadius: 30,
                   imageAlignment: Alignment.centerRight,
                   imageScale: 1.08,
@@ -1232,7 +1233,7 @@ class _ProgramPosterCard extends StatelessWidget {
                   )
                 else
                   _InactiveDashboardProgramContent(program: program),
-                if (joinedCount != null && joinedCount! > 0)
+                if (joinedCount != null)
                   Positioned(
                     right: 7,
                     top: 8,
@@ -1413,6 +1414,7 @@ class _DashboardVisualSessions extends StatelessWidget {
                           SessionVisualStage(
                             sessionId: session.id,
                             height: 132,
+                            imageFit: BoxFit.cover,
                             borderRadius: 24,
                             compact: true,
                           ),

@@ -964,5 +964,17 @@
   "insights_premium_body": "Unlock your trends, patterns and progress with Premium.",
   "premium_explore_cta": "Explore Premium",
   "profile_your_space": "YOUR SPACE",
-  "premium_lifetime_note": "One payment · Lifetime access"
+  "premium_lifetime_note": "One payment · Lifetime access",
+  "premium_benefit_sessions": "Every recovery session",
+  "premium_benefit_programs": "All guided programs",
+  "premium_benefit_quick_fix": "Full Quick Fix recommendations",
+  "premium_benefit_insights": "Insights, history and saved sessions",
+  "premium_is_active": "Premium is active",
+  "premium_toolkit_ready": "Your complete recovery toolkit is ready.",
+  "premium_hero_subtitle": "One payment. More ways to feel better at your desk.",
+  "premium_active_label": "Premium active",
+  "premium_lifetime_label": "Premium lifetime",
+  "premium_pay_once": "Pay once",
+  "premium_access_ready": "Your Premium access is ready.",
+  "premium_no_subscription": "Pay once. Keep access. No subscription."
 }

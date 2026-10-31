@@ -50,6 +50,54 @@ class InsightsPage extends ConsumerWidget {
         }
 
 
+        if (!accessAsync.maybeWhen(
+          data: (value) => value.hasCoreAccess,
+          orElse: () => false,
+        )) {
+          return ListView(
+            padding: const EdgeInsets.fromLTRB(18, 30, 18, 40),
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(28),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF142943), Color(0xFF176C69)],
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/images/premium-badge.png',
+                      width: 84,
+                      height: 84,
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.workspace_premium_rounded,
+                        size: 64,
+                        color: Color(0xFFFFD58A),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Your recovery, in detail',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white,
+                        fontSize: 23, fontWeight: FontWeight.w900)),
+                    const SizedBox(height: 8),
+                    const Text('Unlock your trends, patterns and progress with Premium.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Color(0xFFD1E8E8))),
+                    const SizedBox(height: 18),
+                    FilledButton(
+                      onPressed: () => context.pushNamed('premium'),
+                      child: const Text('Explore Premium'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
+
         return insightsAsync.when(
           loading: () => const _InsightsLoadingState(),
           error: (error, stackTrace) => _InsightsErrorState(

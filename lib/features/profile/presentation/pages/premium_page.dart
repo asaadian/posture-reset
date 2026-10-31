@@ -164,8 +164,6 @@ class PremiumPage extends ConsumerWidget {
                 isBusy: isBusy,
               ),
               const SizedBox(height: 12),
-              const _PremiumBenefitsList(),
-              const SizedBox(height: 12),
               _PremiumPurchaseCard(
                 hasCoreAccess: hasCoreAccess,
                 isSignedIn: isSignedIn,
@@ -245,86 +243,108 @@ class _PremiumHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(23, 20, 23, 23),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(36), topRight: Radius.circular(18),
-          bottomLeft: Radius.circular(18), bottomRight: Radius.circular(36),
-        ),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF13263D), Color(0xFF176C69)],
-          begin: Alignment.topLeft, end: Alignment.bottomRight,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [
-            Image.asset('assets/images/premium-badge.png',
-              width: 70, height: 70,
-              errorBuilder: (_, __, ___) => const Icon(
-                Icons.workspace_premium_rounded, color: Color(0xFFFFD58A), size: 60)),
-            const Spacer(),
-            const Text('DESK WORKOUT PREMIUM',
-              style: TextStyle(color: Color(0xFF9AE7D3),
-                fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
-            if (isBusy) ...[
-              const SizedBox(width: 9),
-              const SizedBox(width: 16, height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
-            ],
-          ]),
-          const SizedBox(height: 20),
-          Text(hasCoreAccess ? 'Your Premium is active'
-              : 'Your complete desk recovery companion',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: Colors.white, fontWeight: FontWeight.w900, height: 1.08)),
-          const SizedBox(height: 10),
-          Text(hasCoreAccess
-              ? 'All sessions and recovery tools are ready for you.'
-              : 'Every reset, guided program and insight. One payment, yours to keep.',
-            style: const TextStyle(color: Color(0xFFD8E8E9),
-              fontSize: 13, height: 1.45)),
-        ],
-      ),
-    );
-  }
-}
-
-class _PremiumBenefitsList extends StatelessWidget {
-  const _PremiumBenefitsList();
-
-  @override
-  Widget build(BuildContext context) {
     const benefits = [
       'Every recovery session',
       'All guided programs',
       'Full Quick Fix recommendations',
       'Insights, history and saved sessions',
     ];
-    return Column(
-      children: [
-        Center(
-          child: Image.asset('assets/images/premium-badge.png',
-            width: 126, height: 126, fit: BoxFit.contain,
-            errorBuilder: (_, __, ___) => const Icon(
-              Icons.workspace_premium_rounded,
-              color: Color(0xFFD9A956), size: 104)),
+    return Container(
+      padding: const EdgeInsets.fromLTRB(22, 24, 22, 25),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(36),
+          topRight: Radius.circular(18),
+          bottomLeft: Radius.circular(18),
+          bottomRight: Radius.circular(36),
         ),
-        const SizedBox(height: 10),
-        ...benefits.map((benefit) => Padding(
-          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
-          child: Row(children: [
-            const Icon(Icons.check_circle_rounded,
-              size: 19, color: Color(0xFF22A68B)),
-            const SizedBox(width: 12),
-            Expanded(child: Text(benefit,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w700))),
-          ]),
-        )),
-      ],
+        gradient: const LinearGradient(
+          colors: [Color(0xFF13263D), Color(0xFF176C69)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Image.asset(
+                  'assets/images/premium-badge.png',
+                  width: 128,
+                  height: 128,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.workspace_premium_rounded,
+                    color: Color(0xFFFFD58A),
+                    size: 108,
+                  ),
+                ),
+              ),
+              if (isBusy)
+                const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 9),
+          Text(
+            hasCoreAccess ? 'Premium is active' : 'Desk Workout Premium',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+              height: 1.1,
+            ),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            hasCoreAccess
+                ? 'Your complete recovery toolkit is ready.'
+                : 'One payment. More ways to feel better at your desk.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xFFD2E6E7),
+              fontSize: 12.5,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 21),
+          Divider(color: Colors.white.withValues(alpha: 0.19), height: 1),
+          const SizedBox(height: 11),
+          ...benefits.map((benefit) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: Color(0xFF9AE7D3),
+                  size: 19,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    benefit,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )),
+        ],
+      ),
     );
   }
 }

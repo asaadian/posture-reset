@@ -2278,8 +2278,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get dashboard_programs_title => 'Therapiepfade';
 
-  @override
-  String get common_view_all => 'Alle anzeigen';
 
   @override
   String get dashboard_program_discovery_pill_guided => 'Geführt';

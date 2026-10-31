@@ -964,5 +964,17 @@
   "insights_premium_body": "Entdecke mit Premium deine Entwicklungen, Gewohnheiten und Fortschritte.",
   "premium_explore_cta": "Premium entdecken",
   "profile_your_space": "DEIN BEREICH",
-  "premium_lifetime_note": "Einmal zahlen · Dauerhaft nutzen"
+  "premium_lifetime_note": "Einmal zahlen · Dauerhaft nutzen",
+  "premium_benefit_sessions": "Alle Recovery-Sessions",
+  "premium_benefit_programs": "Alle angeleiteten Programme",
+  "premium_benefit_quick_fix": "Alle Quick-Fix-Empfehlungen",
+  "premium_benefit_insights": "Auswertungen, Verlauf und gespeicherte Sessions",
+  "premium_is_active": "Premium ist aktiviert",
+  "premium_toolkit_ready": "Alle Funktionen stehen dir jetzt zur Verfügung.",
+  "premium_hero_subtitle": "Einmal zahlen und langfristig mehr für dein Wohlbefinden tun.",
+  "premium_active_label": "Premium aktiviert",
+  "premium_lifetime_label": "Premium auf Lebenszeit",
+  "premium_pay_once": "Einmal zahlen",
+  "premium_access_ready": "Dein Premium-Zugang ist aktiv.",
+  "premium_no_subscription": "Einmal zahlen, dauerhaft nutzen. Kein Abo."
 }

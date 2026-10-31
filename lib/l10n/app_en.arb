@@ -935,5 +935,34 @@
   },
   "premium_unlock_label": "Unlock Premium",
   "premium_one_payment_full_access": "One payment. Full access.",
-  "quick_fix_unlock_all": "Unlock all Quick Fix resets"
+  "quick_fix_unlock_all": "Unlock all Quick Fix resets",
+  "dashboard_your_programs": "Your programs",
+  "dashboard_weekly_goal": "Weekly goal",
+  "dashboard_goal_reached": "Goal reached. Keep your routine going.",
+  "dashboard_goal_remaining": "{count} more sessions to reach your weekly goal.",
+  "@dashboard_goal_remaining": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "explore_community_favorites": "COMMUNITY FAVORITES",
+  "explore_top_ten_title": "Top 10 most played sessions",
+  "explore_top_ten_subtitle": "Based on completed sessions across Desk Workout",
+  "explore_body_focus_heading": "Focus on an area",
+  "insights_logged_time": "Logged time",
+  "insights_day_window": "{count}-day period",
+  "@insights_day_window": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "insights_premium_heading": "Your recovery, in detail",
+  "insights_premium_body": "Unlock your trends, patterns and progress with Premium.",
+  "premium_explore_cta": "Explore Premium",
+  "profile_your_space": "YOUR SPACE",
+  "premium_lifetime_note": "One payment · Lifetime access"
 }

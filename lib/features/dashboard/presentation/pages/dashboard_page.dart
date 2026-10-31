@@ -1904,8 +1904,6 @@ class _RemoteProgramCoverImage extends StatelessWidget {
 }
 
 
-const String _remoteSessionCoverBaseUrl =
-    'https://weglabs.com/data/desk-workout/covers/sessions';
 
 
 

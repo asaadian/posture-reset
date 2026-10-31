@@ -223,7 +223,7 @@ class _QuickFixPageState extends ConsumerState<QuickFixPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                const Expanded(
+                                Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [

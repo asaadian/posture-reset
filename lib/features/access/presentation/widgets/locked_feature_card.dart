@@ -1,8 +1,4 @@
-// lib/features/access/presentation/widgets/locked_feature_card.dart
-
 import 'package:flutter/material.dart';
-
-import '../../../../core/localization/app_text.dart';
 
 class LockedFeatureCard extends StatelessWidget {
   const LockedFeatureCard({
@@ -22,77 +18,60 @@ class LockedFeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final t = AppText.of(context);
-
     return Container(
-      padding: EdgeInsets.all(compact ? 14 : 18),
+      padding: EdgeInsets.all(compact ? 18 : 24),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(compact ? 22 : 28),
-        color: theme.colorScheme.surfaceContainerHigh,
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(34),
+          topRight: Radius.circular(18),
+          bottomLeft: Radius.circular(18),
+          bottomRight: Radius.circular(34),
+        ),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF142943), Color(0xFF176D69)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: compact ? 42 : 48,
-            height: compact ? 42 : 48,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: theme.colorScheme.primary.withValues(alpha: 0.12),
-              border: Border.all(
-                color: theme.colorScheme.primary.withValues(alpha: 0.20),
+          Row(
+            children: [
+              Image.asset('assets/images/premium-badge.png',
+                width: compact ? 49 : 64, height: compact ? 49 : 64,
+                errorBuilder: (_, __, ___) => const Icon(
+                  Icons.workspace_premium_rounded,
+                  color: Color(0xFFFFD58A), size: 44)),
+              const Spacer(),
+              const Text('PREMIUM', style: TextStyle(
+                color: Color(0xFF9AE7D3), fontWeight: FontWeight.w800,
+                letterSpacing: 1.8, fontSize: 11)),
+            ],
+          ),
+          SizedBox(height: compact ? 12 : 19),
+          Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            color: Colors.white, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 8),
+          Text(message, style: const TextStyle(
+            color: Color(0xFFD4E5E9), height: 1.4)),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: onUpgrade,
+              icon: const Icon(Icons.arrow_forward_rounded),
+              label: const Text('Explore Premium'),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xFF173D4B),
+                padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
-            child: Icon(
-              icon,
-              color: theme.colorScheme.primary,
-              size: compact ? 20 : 22,
-            ),
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  maxLines: compact ? 1 : 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  message,
-                  maxLines: compact ? 2 : 4,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                    height: 1.35,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: FilledButton.icon(
-                    onPressed: onUpgrade,
-                    icon: const Icon(Icons.lock_open_rounded),
-                    label: Text(
-                      t.get(
-                        'access_unlock_core_cta',
-                        fallback: 'Unlock Core',
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const SizedBox(height: 7),
+          const Center(child: Text('One payment · Lifetime access',
+            style: TextStyle(color: Color(0xFFA9DBD5), fontSize: 11))),
         ],
       ),
     );

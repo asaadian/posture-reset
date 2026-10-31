@@ -27,6 +27,7 @@ class SessionVisualStage extends StatelessWidget {
     this.padding = EdgeInsets.zero,
     this.borderRadius = 24,
     this.imageScale = 1.0,
+    this.imageFit = BoxFit.contain,
     this.imageAlignment = Alignment.center,
   });
 
@@ -39,6 +40,7 @@ class SessionVisualStage extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final double borderRadius;
   final double imageScale;
+  final BoxFit imageFit;
   final Alignment imageAlignment;
 
   @override
@@ -116,14 +118,14 @@ class SessionVisualStage extends StatelessWidget {
                 alignment: imageAlignment,
                 child: Image.network(
                   SessionVisualAsset.remoteUrlForSessionId(sessionId),
-                  fit: BoxFit.contain,
+                  fit: imageFit,
                   alignment: imageAlignment,
                   filterQuality: FilterQuality.high,
                   loadingBuilder: (context, child, progress) {
                     if (progress == null) return child;
                     return Image.asset(
                       assetPath,
-                      fit: BoxFit.contain,
+                      fit: imageFit,
                       alignment: imageAlignment,
                       filterQuality: FilterQuality.high,
                       errorBuilder: (_, __, ___) => _SessionVisualFallback(
@@ -134,7 +136,7 @@ class SessionVisualStage extends StatelessWidget {
                   },
                   errorBuilder: (_, __, ___) => Image.asset(
                     assetPath,
-                    fit: BoxFit.contain,
+                    fit: imageFit,
                     alignment: imageAlignment,
                     filterQuality: FilterQuality.high,
                     errorBuilder: (_, __, ___) => _SessionVisualFallback(

@@ -92,7 +92,7 @@ class PremiumPage extends ConsumerWidget {
     });
 
     return ResponsivePageScaffold(
-      title: Text(t.get('premium_page_title', fallback: 'Premium')),
+      title: const Text('Premium'),
       bodyBuilder: (context, pageInfo) {
         final accessSnapshot = accessAsync.maybeWhen(
           data: (value) => value,
@@ -359,11 +359,11 @@ class _PremiumValueDeck extends StatelessWidget {
                   )
                 : t.get(
                     'premium_value_title',
-                    fallback: 'What Core unlocks',
+                    fallback: 'Everything in Premium',
                   ),
             subtitle: t.get(
               'premium_value_subtitle_v2',
-              fallback: 'Full access in one unlock.',
+              fallback: 'One purchase. Your full recovery toolkit.',
             ),
           ),
           const SizedBox(height: 10),

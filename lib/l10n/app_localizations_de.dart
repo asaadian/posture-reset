@@ -3065,4 +3065,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get history_journey_subtitle => 'Jede Session zählt. Hier siehst du deine Fortschritte.';
   @override
   String common_session_count(String count) => '$count Sessions';
+  @override
+  String get program_milestone_label => 'Etappenziel';
+  @override
+  String program_day_of_total_label(String day, String total) => 'Einheit $day von $total';
 }

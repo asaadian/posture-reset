@@ -55,6 +55,7 @@ class BillingController extends ChangeNotifier {
     _setState(
       _state.copyWith(
         status: BillingPurchaseStatus.loadingProducts,
+        clearSelectedProduct: true,
         clearFailure: true,
       ),
     );

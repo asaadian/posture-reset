@@ -594,16 +594,16 @@ class _PopularSessionsShowcaseState extends State<_PopularSessionsShowcase> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('COMMUNITY FAVORITES', style: TextStyle(
+          Text(AppText.get(context, key: 'explore_community_favorites', fallback: 'COMMUNITY FAVORITES'), style: TextStyle(
             color: Color(0xFF78E1C6), fontSize: 11,
             letterSpacing: 1.8, fontWeight: FontWeight.w800,
           )),
           const SizedBox(height: 7),
-          const Text('Top 10 most played sessions', style: TextStyle(
+          Text(AppText.get(context, key: 'explore_top_ten_title', fallback: 'Top 10 most played sessions'), style: TextStyle(
             color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800,
           )),
           const SizedBox(height: 5),
-          const Text('Based on completed sessions across Desk Workout',
+          Text(AppText.get(context, key: 'explore_top_ten_subtitle', fallback: 'Based on completed sessions across Desk Workout'),
             style: TextStyle(color: Color(0xFFD5E2E7), fontSize: 12)),
           const SizedBox(height: 16),
           AnimatedSize(
@@ -733,7 +733,7 @@ class _BodyFocusNavigation extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Focus on an area', style: Theme.of(context).textTheme.titleLarge),
+        Text(AppText.get(context, key: 'explore_body_focus_heading', fallback: 'Focus on an area'), style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
         SizedBox(
           height: 102,

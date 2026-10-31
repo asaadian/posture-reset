@@ -17,7 +17,6 @@ import '../../../../shared/widgets/modern_progress_track.dart';
 import '../../../../shared/onboarding/page_onboarding.dart';
 import '../../../access/application/access_providers.dart';
 import '../../../access/domain/access_models.dart';
-import '../../../access/domain/access_policy.dart';
 import '../../../programs/application/recovery_program_providers.dart';
 import '../../../programs/domain/recovery_program_models.dart';
 import '../../application/insights_providers.dart';
@@ -67,16 +66,6 @@ class InsightsPage extends ConsumerWidget {
       title: Text(t.get('insights_title', fallback: 'Insights')),
       actions: const [],
       bodyBuilder: (context, pageInfo) {
-        final accessSnapshot = accessAsync.maybeWhen(
-          data: (value) => value,
-          orElse: () => AccessSnapshot.guest,
-        );
-
-        final accessDecision = AccessPolicy.canAccessFeature(
-          snapshot: accessSnapshot,
-          feature: LockedFeature.insightsFullAccess,
-        );
-
         if (accessAsync.isLoading) {
           return const _InsightsLoadingState();
         }

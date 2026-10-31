@@ -2971,4 +2971,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get premium_access_ready => 'Dein Premium-Zugang ist aktiv.';
   @override
   String get premium_no_subscription => 'Einmal zahlen, dauerhaft nutzen. Kein Abo.';
+  @override
+  String program_users_joined(String count) => '$count Personen machen mit';
+  @override
+  String get explore_title => 'Entdecken';
+  @override
+  String get explore_body_neck => 'Nacken & Schultern';
+  @override
+  String get explore_body_upper_back => 'Oberer Rücken';
+  @override
+  String get explore_body_lower_back => 'Unterer Rücken';
+  @override
+  String get explore_body_hips => 'Hüfte & Beine';
+  @override
+  String get explore_body_hands => 'Hände & Handgelenke';
+  @override
+  String get explore_body_default => 'Körperbereich';
+  @override
+  String get insights_recovery_label => 'Erholung';
 }

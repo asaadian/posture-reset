@@ -92,7 +92,7 @@ class PremiumPage extends ConsumerWidget {
     });
 
     return ResponsivePageScaffold(
-      title: Text(t.get('premium_page_title', fallback: 'Core Access')),
+      title: Text(t.get('premium_page_title', fallback: 'Premium')),
       bodyBuilder: (context, pageInfo) {
         final accessSnapshot = accessAsync.maybeWhen(
           data: (value) => value,
@@ -240,161 +240,54 @@ class _PaywallViewedTrackerState extends ConsumerState<_PaywallViewedTracker> {
 }
 
 class _PremiumHeroCard extends StatelessWidget {
-  const _PremiumHeroCard({
-    required this.hasCoreAccess,
-    required this.isBusy,
-  });
+  const _PremiumHeroCard({required this.hasCoreAccess, required this.isBusy});
 
   final bool hasCoreAccess;
   final bool isBusy;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final t = AppText.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Container(
-      height: 236,
+      padding: const EdgeInsets.fromLTRB(23, 20, 23, 23),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(34),
-        gradient: LinearGradient(
-          colors: isDark
-              ? const [
-                  Color(0xFF07101F),
-                  Color(0xFF111A32),
-                  Color(0xFF0A2230),
-                ]
-              : const [
-                  Color(0xFF111827),
-                  Color(0xFF27348A),
-                  Color(0xFF075C64),
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(36), topRight: Radius.circular(18),
+          bottomLeft: Radius.circular(18), bottomRight: Radius.circular(36),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: colors.primary.withValues(alpha: isDark ? 0.22 : 0.18),
-            blurRadius: 34,
-            offset: const Offset(0, 18),
-          ),
-        ],
+        gradient: const LinearGradient(
+          colors: [Color(0xFF13263D), Color(0xFF176C69)],
+          begin: Alignment.topLeft, end: Alignment.bottomRight,
+        ),
       ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              _premiumHeroGifAsset,
-              fit: BoxFit.cover,
-              alignment: Alignment.centerRight,
-              errorBuilder: (_, __, ___) {
-                return _PremiumFallbackVisual(
-                  accent: colors.primary,
-                  secondary: colors.secondary,
-                );
-              },
-            ),
-          ),
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFF050814).withValues(alpha: 0.96),
-                    const Color(0xFF050814).withValues(alpha: 0.74),
-                    const Color(0xFF050814).withValues(alpha: 0.24),
-                  ],
-                  stops: const [0.0, 0.58, 1.0],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 18,
-            right: 72,
-            top: 18,
-            bottom: 18,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _HeroPill(
-                  icon: hasCoreAccess
-                      ? Icons.verified_rounded
-                      : Icons.workspace_premium_rounded,
-                  label: hasCoreAccess
-                      ? t.get('premium_status_core_active', fallback: 'Unlocked')
-                      : t.get('premium_visual_pill', fallback: 'One-time Core'),
-                ),
-                const Spacer(),
-                Text(
-                  hasCoreAccess
-                      ? t.get(
-                          'premium_hero_unlocked_title',
-                          fallback: 'Core Access is active.',
-                        )
-                      : t.get(
-                          'premium_visual_title_v2',
-                          fallback: 'Unlock the full recovery system.',
-                        ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
-                    height: 1.0,
-                    letterSpacing: -0.8,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  hasCoreAccess
-                      ? t.get(
-                          'premium_hero_unlocked_body_v2',
-                          fallback:
-                              'Programs, full sessions, Quick Fix, insights, saved items, and history are available.',
-                        )
-                      : t.get(
-                          'premium_visual_body_v2',
-                          fallback:
-                              'Programs, full sessions, Quick Fix, insights, saved items, and history — one unlock.',
-                        ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.78),
-                    height: 1.25,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            right: 18,
-            bottom: 18,
-            child: _HeroMiniBadge(
-              icon: Icons.route_rounded,
-              label: t.get('premium_programs_badge', fallback: 'Programs'),
-            ),
-          ),
-          if (isBusy)
-            Positioned(
-              right: 16,
-              top: 16,
-              child: SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: colors.primary,
-                ),
-              ),
-            ),
+          Row(children: [
+            Image.asset('assets/images/premium-badge.png',
+              width: 70, height: 70,
+              errorBuilder: (_, __, ___) => const Icon(
+                Icons.workspace_premium_rounded, color: Color(0xFFFFD58A), size: 60)),
+            const Spacer(),
+            const Text('DESK WORKOUT PREMIUM',
+              style: TextStyle(color: Color(0xFF9AE7D3),
+                fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+            if (isBusy) ...[
+              const SizedBox(width: 9),
+              const SizedBox(width: 16, height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+            ],
+          ]),
+          const SizedBox(height: 20),
+          Text(hasCoreAccess ? 'Your Premium is active'
+              : 'Your complete desk recovery companion',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              color: Colors.white, fontWeight: FontWeight.w900, height: 1.08)),
+          const SizedBox(height: 10),
+          Text(hasCoreAccess
+              ? 'All sessions and recovery tools are ready for you.'
+              : 'Every reset, guided program and insight. One payment, yours to keep.',
+            style: const TextStyle(color: Color(0xFFD8E8E9),
+              fontSize: 13, height: 1.45)),
         ],
       ),
     );

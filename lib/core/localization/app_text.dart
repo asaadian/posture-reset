@@ -1878,8 +1878,6 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.player_mission_streak('{count}');
       case 'player_phase_unlocked_named':
         return _t.player_phase_unlocked_named('{phase}');
-      case 'common_view_all':
-        return _t.common_view_all;
       case 'premium_unlock_label':
         return _t.premium_unlock_label;
       case 'premium_one_payment_full_access':

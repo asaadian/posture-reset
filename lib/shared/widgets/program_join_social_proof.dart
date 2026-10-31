@@ -94,7 +94,7 @@ class ProgramJoinSocialProof extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (count <= 0) return const SizedBox.shrink();
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
       decoration: BoxDecoration(
@@ -104,8 +104,10 @@ class ProgramJoinSocialProof extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ProgramAvatarStack(programId: programId),
-          const SizedBox(width: 5),
+          if (count > 0) ...[
+            ProgramAvatarStack(programId: programId),
+            const SizedBox(width: 5),
+          ],
           Text('$countLabel users joined',
             style: TextStyle(color: Colors.white,
               fontSize: compact ? 9 : 10, fontWeight: FontWeight.w800)),

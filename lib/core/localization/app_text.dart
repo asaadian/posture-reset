@@ -1808,6 +1808,70 @@ class _GeneratedAppTextReader extends AppTextReader {
       case 'player_reps_suffix':
         return _t.player_reps_suffix;
 
+      case 'dashboard_load_error_title':
+        return _t.dashboard_load_error_title;
+      case 'dashboard_load_error_body':
+        return _t.dashboard_load_error_body;
+      case 'program_sessions_title':
+        return _t.program_sessions_title;
+      case 'program_card_label':
+        return _t.program_card_label;
+      case 'program_card_open':
+        return _t.program_card_open;
+      case 'quick_fix_no_match_hint':
+        return _t.quick_fix_no_match_hint;
+      case 'quick_fix_browse_sessions':
+        return _t.quick_fix_browse_sessions;
+      case 'profile_metric_completed':
+        return _t.profile_metric_completed;
+      case 'notification_open_phone_settings':
+        return _t.notification_open_phone_settings;
+      case 'premium_loading_products':
+        return _t.premium_loading_products;
+      case 'premium_purchase_processing':
+        return _t.premium_purchase_processing;
+      case 'premium_product_unavailable':
+        return _t.premium_product_unavailable;
+      case 'player_journey_complete':
+        return _t.player_journey_complete;
+      case 'player_phase_complete':
+        return _t.player_phase_complete;
+      case 'player_mission_complete':
+        return _t.player_mission_complete;
+      case 'player_journey_complete_body':
+        return _t.player_journey_complete_body;
+      case 'player_phase_complete_body':
+        return _t.player_phase_complete_body;
+      case 'player_mission_complete_body':
+        return _t.player_mission_complete_body;
+      case 'player_journey_progress':
+        return _t.player_journey_progress;
+      case 'player_milestone_reached':
+        return _t.player_milestone_reached;
+      case 'player_next_phase_unlocked':
+        return _t.player_next_phase_unlocked;
+      case 'player_next_mission_unlocked':
+        return _t.player_next_mission_unlocked;
+      case 'player_view_completed_journey':
+        return _t.player_view_completed_journey;
+      case 'player_back_to_journey':
+        return _t.player_back_to_journey;
+      case 'player_guidance_how_to':
+        return _t.player_guidance_how_to;
+      case 'player_guidance_goal':
+        return _t.player_guidance_goal;
+      case 'player_guidance_notice':
+        return _t.player_guidance_notice;
+      case 'player_guidance_coach_cue':
+        return _t.player_guidance_coach_cue;
+      case 'player_guidance_breathing':
+        return _t.player_guidance_breathing;
+      case 'player_guidance_coach_tip':
+        return _t.player_guidance_coach_tip;
+      case 'player_guidance_safety':
+        return _t.player_guidance_safety;
+      case 'player_guidance_avoid_mistakes':
+        return _t.player_guidance_avoid_mistakes;
       default:
         return _translateDynamicFallback(fallback);
     }

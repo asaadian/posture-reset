@@ -1012,5 +1012,31 @@
   "program_back_current_mission": "Back to current mission",
   "insights_more_premium": "More insights with Premium",
   "insights_more_premium_body": "Unlock advanced analysis and your complete recovery picture.",
-  "program_user_joined_one": "1 person joined"
+  "program_user_joined_one": "1 person joined",
+  "explore_group_neck_title": "Neck & shoulders feel tight?",
+  "explore_group_upper_back_title": "Tension between your shoulders?",
+  "explore_group_lower_back_title": "Give your lower back a break",
+  "explore_group_hips_title": "Hips stiff after sitting?",
+  "explore_group_hands_title": "Hands & wrists need relief?",
+  "explore_group_other_title": "Move and feel better",
+  "explore_group_neck_subtitle": "A reset for the neck and shoulders",
+  "explore_group_upper_back_subtitle": "Open up after a long day at your desk",
+  "explore_group_lower_back_subtitle": "Comfortable movement for your back",
+  "explore_group_hips_subtitle": "Loosen up your hips and legs",
+  "explore_group_hands_subtitle": "Small movements with a big difference",
+  "explore_group_other_subtitle": "Discover more ways to move",
+  "explore_show_less": "Show less",
+  "explore_view_more": "View more",
+  "saved_collection_label": "YOUR COLLECTION",
+  "saved_collection_subtitle": "Your favorite resets, ready whenever you need them.",
+  "history_journey_label": "YOUR JOURNEY",
+  "history_journey_subtitle": "Every session is progress worth keeping track of.",
+  "common_session_count": "{count} sessions",
+  "@common_session_count": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  }
 }

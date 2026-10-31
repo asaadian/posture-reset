@@ -7,14 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/analytics/analytics_event.dart';
-import '../../../../core/analytics/analytics_providers.dart';
 import '../../../../core/app_data/app_data_reset_signal.dart';
 import '../../../../core/localization/app_text.dart';
 import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../../../shared/widgets/modern_progress_track.dart';
 import '../../../access/application/access_providers.dart';
-import '../../../access/domain/access_models.dart';
 import '../../../programs/application/recovery_program_providers.dart';
 import '../../../programs/domain/recovery_program_models.dart';
 import '../../application/insights_providers.dart';

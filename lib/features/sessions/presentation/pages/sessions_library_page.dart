@@ -499,21 +499,21 @@ class _TrainingDiscoverySections extends StatelessWidget {
       // Popular highlights remain discoverable in their primary body category.
       grouped[_primaryGroup(session)]!.add(session);
     }
-    const titles = <String, String>{
-      'neck': 'Neck & shoulders feel tight?',
-      'upper_back': 'Tension between your shoulders?',
-      'lower_back': 'Give your lower back a break',
-      'hips': 'Hips stiff after sitting?',
-      'hands': 'Hands & wrists need relief?',
-      'other': 'Move and feel better',
+    final titles = <String, String>{
+      'neck': AppText.get(context, key: 'explore_group_neck_title', fallback: 'Neck & shoulders feel tight?'),
+      'upper_back': AppText.get(context, key: 'explore_group_upper_back_title', fallback: 'Tension between your shoulders?'),
+      'lower_back': AppText.get(context, key: 'explore_group_lower_back_title', fallback: 'Give your lower back a break'),
+      'hips': AppText.get(context, key: 'explore_group_hips_title', fallback: 'Hips stiff after sitting?'),
+      'hands': AppText.get(context, key: 'explore_group_hands_title', fallback: 'Hands & wrists need relief?'),
+      'other': AppText.get(context, key: 'explore_group_other_title', fallback: 'Move and feel better'),
     };
-    const subtitles = <String, String>{
-      'neck': 'A reset for the neck and shoulders',
-      'upper_back': 'Open up after a long day at your desk',
-      'lower_back': 'Comfortable movement for your back',
-      'hips': 'Loosen up your hips and legs',
-      'hands': 'Small movements with a big difference',
-      'other': 'Discover more ways to move',
+    final subtitles = <String, String>{
+      'neck': AppText.get(context, key: 'explore_group_neck_subtitle', fallback: 'A reset for the neck and shoulders'),
+      'upper_back': AppText.get(context, key: 'explore_group_upper_back_subtitle', fallback: 'Open up after a long day at your desk'),
+      'lower_back': AppText.get(context, key: 'explore_group_lower_back_subtitle', fallback: 'Comfortable movement for your back'),
+      'hips': AppText.get(context, key: 'explore_group_hips_subtitle', fallback: 'Loosen up your hips and legs'),
+      'hands': AppText.get(context, key: 'explore_group_hands_subtitle', fallback: 'Small movements with a big difference'),
+      'other': AppText.get(context, key: 'explore_group_other_subtitle', fallback: 'Discover more ways to move'),
     };
     const icons = <String, IconData>{
       'neck': Icons.self_improvement_rounded,
@@ -639,7 +639,7 @@ class _PopularSessionsShowcaseState extends State<_PopularSessionsShowcase> {
                   foregroundColor: const Color(0xFF183C47),
                 ),
                 icon: Icon(expanded ? Icons.expand_less : Icons.expand_more),
-                label: Text(expanded ? 'Show less' : 'View more'),
+                label: Text(expanded ? AppText.get(context, key: 'explore_show_less', fallback: 'Show less') : AppText.get(context, key: 'explore_view_more', fallback: 'View more')),
               ),
             ),
           ],

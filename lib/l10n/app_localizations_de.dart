@@ -2909,4 +2909,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String player_phase_unlocked_named(String phase) {
     return '$phase freigeschaltet';
   }
+  @override
+  String get common_view_all => 'Alle ansehen';
+  @override
+  String get premium_unlock_label => 'Premium freischalten';
+  @override
+  String get premium_one_payment_full_access => 'Einmal zahlen. Alles nutzen.';
+  @override
+  String get quick_fix_unlock_all => 'Alle Quick-Fix-Übungen freischalten';
 }

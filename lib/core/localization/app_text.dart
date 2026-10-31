@@ -1914,6 +1914,30 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.profile_your_space;
       case 'premium_lifetime_note':
         return _t.premium_lifetime_note;
+      case 'premium_benefit_sessions':
+        return _t.premium_benefit_sessions;
+      case 'premium_benefit_programs':
+        return _t.premium_benefit_programs;
+      case 'premium_benefit_quick_fix':
+        return _t.premium_benefit_quick_fix;
+      case 'premium_benefit_insights':
+        return _t.premium_benefit_insights;
+      case 'premium_is_active':
+        return _t.premium_is_active;
+      case 'premium_toolkit_ready':
+        return _t.premium_toolkit_ready;
+      case 'premium_hero_subtitle':
+        return _t.premium_hero_subtitle;
+      case 'premium_active_label':
+        return _t.premium_active_label;
+      case 'premium_lifetime_label':
+        return _t.premium_lifetime_label;
+      case 'premium_pay_once':
+        return _t.premium_pay_once;
+      case 'premium_access_ready':
+        return _t.premium_access_ready;
+      case 'premium_no_subscription':
+        return _t.premium_no_subscription;
       default:
         return _translateDynamicFallback(fallback);
     }

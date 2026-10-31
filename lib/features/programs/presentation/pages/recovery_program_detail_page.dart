@@ -781,7 +781,7 @@ class _HeroImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final shortestSide = MediaQuery.sizeOf(context).shortestSide;
-    final heroHeight = shortestSide < 380 ? 224.0 : 238.0;
+    final heroHeight = shortestSide < 380 ? 198.0 : 210.0;
 
     return Container(
       height: heroHeight,
@@ -852,13 +852,10 @@ class _HeroOverlay extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _HeroTopRow(
-            program: viewModel.program,
-            hasCoreAccess: viewModel.hasCoreAccess,
-          ),
+          const SizedBox(height: 2),
           const Spacer(),
           _HeroTodaySummary(
-            phaseCode: viewModel.phaseCode,
+            phaseCode: '',
             phaseTitle: viewModel.phaseTitle,
           ),
           _HeroProgress(
@@ -889,17 +886,6 @@ class _HeroTodaySummary extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          phaseCode.isEmpty
-              ? t.get('program_phase_recovery', fallback: 'Recovery')
-              : phaseCode.toUpperCase(),
-          style: textTheme.labelLarge?.copyWith(
-            color: Colors.white70,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 2,
-          ),
-        ),
-        const SizedBox(height: 4),
         Text(
           phaseTitle,
           maxLines: 2,
@@ -1122,92 +1108,6 @@ class _HeroCTA extends StatelessWidget {
   }
 }
 
-
-
-
-class _HeroTopRow extends StatelessWidget {
-  const _HeroTopRow({
-    required this.program,
-    required this.hasCoreAccess,
-  });
-
-  final RecoveryProgramSummary program;
-  final bool hasCoreAccess;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-
-    return Row(
-      children: [
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.white.withValues(alpha: 0.20),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.20)),
-          ),
-          child: const Icon(Icons.route_rounded, color: Colors.white),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            t.get('program_path_label', fallback: 'Recovery program'),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                ),
-          ),
-        ),
-        _AccessBadge(
-          hasCoreAccess: hasCoreAccess,
-          freeDayCount: program.freeDayCount,
-        ),
-      ],
-    );
-  }
-}
-
-class _AccessBadge extends StatelessWidget {
-  const _AccessBadge({
-    required this.hasCoreAccess,
-    required this.freeDayCount,
-  });
-
-  final bool hasCoreAccess;
-  final int freeDayCount;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppText.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(999),
-        color: Colors.white.withValues(alpha: 0.18),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.24)),
-      ),
-      child: Text(
-        hasCoreAccess
-            ? t.get('program_unlocked_label', fallback: 'Unlocked')
-            : t
-                .get(
-                  'program_free_preview_count',
-                  fallback: '{count} free preview missions',
-                )
-                .replaceAll('{count}', freeDayCount.toString()),
-        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-            ),
-      ),
-    );
-  }
-}
 
 
 

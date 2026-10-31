@@ -1226,6 +1226,13 @@ class _ProgramPosterCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (isActive)
+                  _ActiveDashboardProgramContent(
+                    program: program,
+                    activeProgram: activeProgram!,
+                  )
+                else
+                  _InactiveDashboardProgramContent(program: program),
                 if (joinedCount != null)
                   Positioned(
                     right: 10,
@@ -1245,13 +1252,6 @@ class _ProgramPosterCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (isActive)
-                  _ActiveDashboardProgramContent(
-                    program: program,
-                    activeProgram: activeProgram!,
-                  )
-                else
-                  _InactiveDashboardProgramContent(program: program),
               ],
             ),
           ),

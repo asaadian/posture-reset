@@ -2034,6 +2034,10 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.history_journey_subtitle;
       case 'common_session_count':
         return _t.common_session_count('{count}');
+      case 'program_milestone_label':
+        return _t.program_milestone_label;
+      case 'program_day_of_total_label':
+        return _t.program_day_of_total_label('{day}', '{total}');
       default:
         return _translateDynamicFallback(fallback);
     }

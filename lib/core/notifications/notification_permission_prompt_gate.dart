@@ -223,6 +223,7 @@ class _NotificationPermissionPromptGateState
     if (dialogContext == null) return;
 
     await localPrefs.setBool(askedKey, true);
+    if (!mounted || !dialogContext.mounted) return;
     final allowPrecise = await showDialog<bool>(
       context: dialogContext,
       builder: (context) => AlertDialog(

@@ -291,7 +291,7 @@ class _ProfileHeroCard extends StatelessWidget {
     final initials = displayName.trim().isEmpty ? 'P' : displayName.characters.first.toUpperCase();
     return Container(
       clipBehavior: Clip.antiAlias,
-      padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+      padding: const EdgeInsets.fromLTRB(18, 15, 18, 14),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(36),
@@ -325,7 +325,7 @@ class _ProfileHeroCard extends StatelessWidget {
               )),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 11),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -370,9 +370,9 @@ class _ProfileHeroCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 6),
+            padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 6),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(22),
@@ -949,194 +949,66 @@ class _ProfilePremiumActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = AppText.of(context);
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-
-    final foreground = Colors.white;
-    final mutedForeground = const Color(0xFFD1E8E8);
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(28),
         onTap: data.onTap,
+        borderRadius: BorderRadius.circular(24),
         child: Ink(
-          height: 126,
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+          height: 88,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(32),
-              topRight: Radius.circular(18),
-              bottomLeft: Radius.circular(18),
-              bottomRight: Radius.circular(32),
+              topLeft: Radius.circular(28),
+              topRight: Radius.circular(14),
+              bottomLeft: Radius.circular(14),
+              bottomRight: Radius.circular(28),
             ),
-            gradient: LinearGradient(
-              colors: const [Color(0xFF12263D), Color(0xFF175368), Color(0xFF167267)],
-              begin: Alignment.topLeft,
+            gradient: const LinearGradient(
+              colors: [Color(0xFF13243D), Color(0xFF166B69)],
+              begin: Alignment.centerLeft,
               end: Alignment.bottomRight,
-            ),
-            border: Border.all(
-              color: const Color(0xFF85DFC8).withValues(alpha: 0.22),
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF123C4D).withValues(alpha: 0.20),
-                blurRadius: 30,
-                offset: const Offset(0, 14),
+                color: const Color(0xFF166B69).withValues(alpha: 0.15),
+                blurRadius: 15,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
-          child: Stack(
-            clipBehavior: Clip.none,
+          child: Row(
             children: [
-              Positioned(
-                right: -36,
-                top: -44,
-                child: Container(
-                  width: 132,
-                  height: 132,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: colors.primary.withValues(alpha: isDark ? 0.18 : 0.10),
-                  ),
+              Image.asset(
+                'assets/images/premium-badge.png',
+                width: 62,
+                height: 62,
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => const Icon(
+                  Icons.workspace_premium_rounded,
+                  size: 40,
+                  color: Color(0xFFFFD58A),
                 ),
               ),
-              Positioned(
-                left: -34,
-                bottom: -56,
-                child: Container(
-                  width: 142,
-                  height: 142,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF168C91)
-                        .withValues(alpha: isDark ? 0.12 : 0.10),
-                  ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Unlock Premium', style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w900,
+                      fontSize: 17,
+                    )),
+                    SizedBox(height: 3),
+                    Text('One payment. Full access.', style: TextStyle(
+                      color: Color(0xFFD1E8E8), fontSize: 12,
+                    )),
+                  ],
                 ),
               ),
-              Row(
-                children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
-                      gradient: LinearGradient(
-                        colors: [
-                          data.accent,
-                          const Color(0xFF168C91),
-                        ],
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: data.accent.withValues(alpha: 0.34),
-                          blurRadius: 22,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Icon(data.icon, color: Colors.white, size: 26),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 9,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(999),
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.12)
-                                : colors.primary.withValues(alpha: 0.10),
-                            border: Border.all(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.16)
-                                  : colors.primary.withValues(alpha: 0.16),
-                            ),
-                          ),
-                          child: Text(
-                            'PREMIUM · ONE-TIME',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: const Color(0xFF85DFC8),
-                              fontWeight: FontWeight.w900,
-                              height: 1,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          data.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: foreground,
-                            fontWeight: FontWeight.w900,
-                            height: 1.0,
-                            letterSpacing: -0.35,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          data.subtitle,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: mutedForeground,
-                            fontWeight: FontWeight.w700,
-                            height: 1.18,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.13)
-                              : colors.primary.withValues(alpha: 0.12),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.18)
-                                : colors.primary.withValues(alpha: 0.18),
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.arrow_forward_rounded,
-                          color: const Color(0xFF85DFC8),
-                          size: 22,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        t.get(
-                          'profile_core_access_cta_short',
-                          fallback: 'Unlock',
-                        ),
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: mutedForeground,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+              const Icon(Icons.arrow_forward_ios_rounded,
+                  size: 17, color: Colors.white),
             ],
           ),
         ),

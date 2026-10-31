@@ -2873,4 +2873,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String player_phase_unlocked_named(String phase) {
     return '$phase unlocked';
   }
+  @override
+  String get common_view_all => 'View all';
+  @override
+  String get premium_unlock_label => 'Unlock Premium';
+  @override
+  String get premium_one_payment_full_access => 'One payment. Full access.';
+  @override
+  String get quick_fix_unlock_all => 'Unlock all Quick Fix resets';
 }

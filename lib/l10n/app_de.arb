@@ -996,5 +996,18 @@
   "explore_level_signature": "Besonders beliebt",
   "explore_level_advanced": "Fortgeschrittenes Training",
   "explore_level_therapy": "Gezieltes Training",
-  "explore_level_all": "Alle Levels"
+  "explore_level_all": "Alle Levels",
+  "dashboard_quick_fix_badge": "SCHNELLHILFE",
+  "dashboard_quick_fix_cta": "Bereich auswählen",
+  "program_mission_label": "Einheit",
+  "common_min": "Min.",
+  "program_short_session": "Kurze Session",
+  "program_load_label": "Belastung",
+  "program_recovery_label": "Erholung",
+  "program_today_target": "Dein heutiges Ziel",
+  "program_why_mission": "Warum diese Einheit?",
+  "program_notice_after": "Darauf kannst du danach achten",
+  "program_start_mission": "Einheit starten",
+  "common_done": "Erledigt",
+  "program_back_current_mission": "Zurück zur aktuellen Einheit"
 }

@@ -932,5 +932,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "premium_unlock_label": "Unlock Premium",
+  "premium_one_payment_full_access": "One payment. Full access.",
+  "quick_fix_unlock_all": "Unlock all Quick Fix resets"
 }

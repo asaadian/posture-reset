@@ -1206,7 +1206,7 @@ class _ActiveDashboardProgramContent extends StatelessWidget {
           _WhitePill(label: t.get('program_active_badge', fallback: 'Active')),
           const Spacer(),
           Text(
-            AppText.get(context, key: 'program_mission_label', fallback: 'Mission') + ' ${activeProgram.currentDay}',
+            "${AppText.get(context, key: 'program_mission_label', fallback: 'Mission')} ${activeProgram.currentDay}",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.displaySmall?.copyWith(

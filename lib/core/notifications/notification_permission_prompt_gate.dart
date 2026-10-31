@@ -32,6 +32,7 @@ class NotificationPermissionPromptGate extends ConsumerStatefulWidget {
 class _NotificationPermissionPromptGateState
     extends ConsumerState<NotificationPermissionPromptGate> {
   static const String _askedKeyPrefix = 'notifications.permission_prompt_asked_v5.';
+  static const String _exactAskedKeyPrefix = 'notifications.exact_alarm_prompt_asked_v1.';
   bool _dialogOpen = false;
   String? _lastPromptedUserId;
   String? _promptScheduledForUserId;
@@ -94,7 +95,14 @@ class _NotificationPermissionPromptGateState
     final localPrefs = await SharedPreferences.getInstance();
     final askedKey = '$_askedKeyPrefix$userId';
     final alreadyAsked = localPrefs.getBool(askedKey) ?? false;
-    if (alreadyAsked) return;
+    if (alreadyAsked) {
+      _lastPromptedUserId = userId;
+      final existingPrefs = await ref.read(userPreferencesControllerProvider.future);
+      if (mounted && existingPrefs?.notificationsEnabled == true) {
+        await _maybeAskForExactAlarm(localPrefs, userId);
+      }
+      return;
+    }
 
     final userPrefs = await ref.read(userPreferencesControllerProvider.future);
     if (!mounted) return;
@@ -186,35 +194,9 @@ class _NotificationPermissionPromptGateState
             .read(userPreferencesControllerProvider.notifier)
             .setNotificationsEnabled(true);
 
-        // Android 12+: exact alarm access is a separate special permission.
-        // Ask only after the user explicitly enabled notifications.
-        if (await service.needsExactAlarmAccess() && mounted) {
-          final allowPrecise = await showDialog<bool>(
-            context: dialogContext,
-            barrierDismissible: true,
-            builder: (context) => AlertDialog(
-              icon: const Icon(Icons.schedule_rounded),
-              title: const Text('Keep reminders on time?'),
-              content: const Text(
-                'Android has a separate Alarms & reminders setting. '
-                'Allow it for more precise reminders, even when Desk Workout '
-                'is closed. You can skip this and still receive reminders.',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Not now'),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('Open Android settings'),
-                ),
-              ],
-            ),
-          );
-          if (allowPrecise == true) {
-            await service.requestExactAlarmAccess();
-          }
+        final currentId = ref.read(currentUserProvider)?.id;
+        if (currentId != null) {
+          await _maybeAskForExactAlarm(localPrefs, currentId);
         }
         await ref
             .read(notificationReminderSyncControllerProvider)
@@ -228,4 +210,45 @@ class _NotificationPermissionPromptGateState
 
     _dialogOpen = false;
   }
+  Future<void> _maybeAskForExactAlarm(
+    SharedPreferences localPrefs,
+    String userId,
+  ) async {
+    if (!mounted) return;
+    final askedKey = '$_exactAskedKeyPrefix$userId';
+    if (localPrefs.getBool(askedKey) ?? false) return;
+    final service = ref.read(localNotificationServiceProvider);
+    if (!await service.needsExactAlarmAccess() || !mounted) return;
+    final dialogContext = widget.navigatorKey.currentContext;
+    if (dialogContext == null) return;
+
+    await localPrefs.setBool(askedKey, true);
+    final allowPrecise = await showDialog<bool>(
+      context: dialogContext,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.schedule_rounded),
+        title: const Text('Keep reminders on time?'),
+        content: const Text(
+          'Android has a separate Alarms & reminders setting. '
+          'You can allow it for more precise reminders even when '
+          'Desk Workout is closed. Skipping it still keeps reminders active.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Not now'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Open Android settings'),
+          ),
+        ],
+      ),
+    );
+    if (allowPrecise == true && mounted) {
+      await service.requestExactAlarmAccess();
+      await ref.read(notificationReminderSyncControllerProvider).syncForCurrentUser();
+    }
+  }
+
 }

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/application/auth_providers.dart';
 import '../supabase/supabase_providers.dart';
 import 'analytics_service.dart';
+import 'analytics_event.dart';
 import 'analytics_consent.dart';
 
 final analyticsServiceProvider = Provider<AnalyticsService>((ref) {

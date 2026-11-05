@@ -5310,6 +5310,8 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recovery route'**
   String get program_recovery_route;
+  String get update_available_title;
+  String get update_required_title;
   String get program_milestone_label;
   String program_day_of_total_label(String day, String total);
   String get explore_group_neck_title;

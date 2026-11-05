@@ -80,6 +80,7 @@ class PosthogAnalyticsRuntime {
       }
       await Posthog().enable();
       _enabled = true;
+      await capture(eventName: 'app_opened');
     } catch (error) {
       _enabled = false;
       debugPrint('PostHog opt-in failed: $error');

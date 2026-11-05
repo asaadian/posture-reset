@@ -1,4 +1,5 @@
 // lib/app/shell/main_shell.dart
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/app_data/app_data_reset_signal.dart';
+import '../../core/analytics/analytics_consent.dart';
 import '../../core/localization/app_text.dart';
 import '../startup/auth_data_refresh_listener.dart';
 
@@ -15,6 +17,13 @@ class MainShell extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
   void _onTap(int index) {
+    const surfaces = ['dashboard', 'explore', 'quick_fix', 'insights', 'profile'];
+    if (index >= 0 && index < surfaces.length) {
+      unawaited(PosthogAnalyticsRuntime.capture(
+        eventName: 'tab_selected',
+        surface: surfaces[index],
+      ));
+    }
     navigationShell.goBranch(
       index,
       initialLocation: index == navigationShell.currentIndex,

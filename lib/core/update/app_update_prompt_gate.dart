@@ -71,8 +71,11 @@ class _AppUpdatePromptGateState extends ConsumerState<AppUpdatePromptGate>
     });
 
     ref.listen(analyticsConsentProvider, (previous, next) {
-      if (previous != AnalyticsConsentStatus.unknown ||
-          next == AnalyticsConsentStatus.unknown) return;
+      final wasPending = previous == AnalyticsConsentStatus.unknown ||
+          previous == AnalyticsConsentStatus.loading;
+      final isDecided = next == AnalyticsConsentStatus.granted ||
+          next == AnalyticsConsentStatus.denied;
+      if (!wasPending || !isDecided) return;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         unawaited(() async {
           // Allow the consent dialog to close before the update prompt opens.
@@ -99,7 +102,9 @@ class _AppUpdatePromptGateState extends ConsumerState<AppUpdatePromptGate>
   Future<void> _checkForUpdate({bool force = false}) async {
     if (_dialogOpen || !mounted) return;
     // Never stack update dialogs on the first-run analytics choice.
-    if (ref.read(analyticsConsentProvider) == AnalyticsConsentStatus.unknown) {
+    final consent = ref.read(analyticsConsentProvider);
+    if (consent == AnalyticsConsentStatus.unknown ||
+        consent == AnalyticsConsentStatus.loading) {
       return;
     }
 

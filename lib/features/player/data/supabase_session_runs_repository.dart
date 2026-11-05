@@ -1,6 +1,10 @@
+import 'dart:async';
+
 // lib/features/player/data/supabase_session_runs_repository.dart
 
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../core/analytics/analytics_consent.dart';
 
 import '../domain/session_feedback_models.dart';
 import '../domain/session_run_models.dart';
@@ -56,6 +60,7 @@ entry_source
         .select('id')
         .single();
 
+    unawaited(PosthogAnalyticsRuntime.capture(eventName: 'session_started'));
     return inserted['id'] as String;
   }
 
@@ -82,6 +87,8 @@ entry_source
         })
         .eq('id', runId)
         .eq('user_id', user.id);
+
+    unawaited(PosthogAnalyticsRuntime.capture(eventName: 'session_completed'));
   }
 
   @override
@@ -147,6 +154,8 @@ entry_source
         })
         .eq('id', runId)
         .eq('user_id', user.id);
+
+    unawaited(PosthogAnalyticsRuntime.capture(eventName: 'session_abandoned'));
   }
 
   @override

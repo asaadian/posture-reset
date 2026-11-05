@@ -72,7 +72,6 @@ class PosthogAnalyticsRuntime {
           ..host = host
           ..debug = kDebugMode
           ..captureApplicationLifecycleEvents = false
-          ..captureScreenViews = false
           ..sessionReplay = false;
 
         await Posthog().setup(config);

@@ -4,7 +4,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// No optional analytics SDK is initialized before an explicit grant.
-enum AnalyticsConsentStatus { unknown, denied, granted }
+enum AnalyticsConsentStatus { loading, unknown, denied, granted }
 
 const _consentKey = 'desk_workout.optional_analytics_consent.v1';
 
@@ -14,42 +14,67 @@ final analyticsConsentProvider =
 );
 
 class AnalyticsConsentController extends Notifier<AnalyticsConsentStatus> {
+  String? _activeUserId;
   bool _loaded = false;
 
   @override
-  AnalyticsConsentStatus build() => AnalyticsConsentStatus.unknown;
+  AnalyticsConsentStatus build() => AnalyticsConsentStatus.loading;
 
-  Future<void> load() async {
-    if (_loaded) return;
+  Future<void> loadForUser(String? userId) async {
+    if (_loaded && _activeUserId == userId) return;
+
+    final previousUser = _activeUserId;
+    _activeUserId = userId;
     _loaded = true;
+    state = AnalyticsConsentStatus.loading;
+
+    // A sign-out/account switch instantly blocks all optional analytics.
+    await PosthogAnalyticsRuntime.disable();
+    if (previousUser != null && previousUser != userId) {
+      await PosthogAnalyticsRuntime.resetIdentity();
+    }
+
+    if (userId == null) {
+      state = AnalyticsConsentStatus.unknown;
+      return;
+    }
+
     try {
       final prefs = await SharedPreferences.getInstance();
-      final value = prefs.getString(_consentKey);
+      final value = prefs.getString('$_consentKey.$userId');
+      if (_activeUserId != userId) return;
+
       final saved = switch (value) {
         'granted' => AnalyticsConsentStatus.granted,
         'denied' => AnalyticsConsentStatus.denied,
         _ => AnalyticsConsentStatus.unknown,
       };
-      state = saved;
       if (saved == AnalyticsConsentStatus.granted) {
         await PosthogAnalyticsRuntime.enable();
       }
+      if (_activeUserId == userId) state = saved;
     } catch (error) {
-      debugPrint('Optional analytics initialization unavailable: $error');
+      if (_activeUserId == userId) state = AnalyticsConsentStatus.unknown;
+      debugPrint('Optional analytics consent could not be loaded: $error');
     }
   }
 
   Future<void> choose(bool allow) async {
-    // A refusal takes effect before writing preferences.
+    final userId = _activeUserId;
+    if (userId == null) return;
+
+    // A refusal takes effect immediately, even before the disk write.
     if (!allow) {
       state = AnalyticsConsentStatus.denied;
       await PosthogAnalyticsRuntime.disable();
     }
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_consentKey, allow ? 'granted' : 'denied');
+    await prefs.setString('$_consentKey.$userId', allow ? 'granted' : 'denied');
+
+    if (_activeUserId != userId) return;
     if (allow) {
       await PosthogAnalyticsRuntime.enable();
-      state = AnalyticsConsentStatus.granted;
+      if (_activeUserId == userId) state = AnalyticsConsentStatus.granted;
     }
   }
 }
@@ -139,6 +164,15 @@ class PosthogAnalyticsRuntime {
       if (_initialized) await Posthog().disable();
     } catch (error) {
       debugPrint('PostHog opt-out failed: $error');
+    }
+  }
+
+  static Future<void> resetIdentity() async {
+    if (!_initialized) return;
+    try {
+      await Posthog().reset();
+    } catch (error) {
+      debugPrint('PostHog reset failed: $error');
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_consent.dart';
 import '../../../../core/localization/app_text.dart';
 import '../../../access/application/access_providers.dart';
 import '../../../../shared/onboarding/page_onboarding.dart';
@@ -103,6 +104,7 @@ class _QuickFixPageState extends ConsumerState<QuickFixPage> {
 
     if (!context.mounted) return;
 
+    unawaited(PosthogAnalyticsRuntime.capture(eventName: 'quick_fix_recommendation_viewed'));
     await showGeneralDialog<void>(
       context: context,
       barrierDismissible: true,

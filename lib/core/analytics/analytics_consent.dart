@@ -82,9 +82,11 @@ class AnalyticsConsentController extends Notifier<AnalyticsConsentStatus> {
 class PosthogAnalyticsRuntime {
   PosthogAnalyticsRuntime._();
 
-  static const String host = 'https://eu.i.posthog.com';
+  // Public project configuration injected at build time. Do not ship
+  // development, production, or fallback tokens in committed source files.
+  static const String host = String.fromEnvironment('POSTHOG_HOST');
   static const String projectToken =
-      'phc_vKbDPpW3Ss7fhd7K2a2YAg9HJQ4M29jQ3CVDoGy6e73D';
+      String.fromEnvironment('POSTHOG_PROJECT_TOKEN');
 
   static bool _initialized = false;
   static bool _enabled = false;
@@ -134,6 +136,10 @@ class PosthogAnalyticsRuntime {
   static Future<void> enable() async {
     final decision = ++_decisionVersion;
     try {
+      if (projectToken.isEmpty || !host.startsWith('https://')) {
+        debugPrint('PostHog is unconfigured: analytics remains disabled.');
+        return;
+      }
       if (!_initialized) {
         _setupFuture ??= _setup();
         await _setupFuture;

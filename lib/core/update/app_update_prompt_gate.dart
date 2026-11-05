@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/auth/application/auth_providers.dart';
+import '../analytics/analytics_consent.dart';
 import '../config/app_env.dart';
 import '../localization/app_text.dart';
 
@@ -69,6 +70,18 @@ class _AppUpdatePromptGateState extends ConsumerState<AppUpdatePromptGate>
       });
     });
 
+    ref.listen(analyticsConsentProvider, (previous, next) {
+      if (previous != AnalyticsConsentStatus.unknown ||
+          next == AnalyticsConsentStatus.unknown) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(() async {
+          // Allow the consent dialog to close before the update prompt opens.
+          await Future<void>.delayed(const Duration(milliseconds: 650));
+          if (mounted) await _checkForUpdate(force: true);
+        }());
+      });
+    });
+
     return widget.child;
   }
 
@@ -85,6 +98,10 @@ class _AppUpdatePromptGateState extends ConsumerState<AppUpdatePromptGate>
 
   Future<void> _checkForUpdate({bool force = false}) async {
     if (_dialogOpen || !mounted) return;
+    // Never stack update dialogs on the first-run analytics choice.
+    if (ref.read(analyticsConsentProvider) == AnalyticsConsentStatus.unknown) {
+      return;
+    }
 
     try {
       var path = widget.router.routerDelegate.currentConfiguration.uri.path;

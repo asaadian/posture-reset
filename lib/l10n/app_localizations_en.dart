@@ -3033,4 +3033,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get program_milestone_label => 'Milestone';
   @override
   String program_day_of_total_label(String day, String total) => 'Mission $day of $total';
+  @override
+  String get update_available_title => 'Update available';
+  @override
+  String get update_required_title => 'Update required';
 }

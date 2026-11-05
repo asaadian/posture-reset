@@ -1050,5 +1050,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "update_available_title": "Update available",
+  "update_required_title": "Update required"
 }

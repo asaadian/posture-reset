@@ -1,7 +1,7 @@
 name: posture_reset
 description: "Desk Workout - quick desk stretches, posture recovery, and short guided mobility sessions."
 publish_to: 'none'
-version: 1.5.3+10
+version: 1.5.3+11
 
 environment:
   sdk: ^3.9.2

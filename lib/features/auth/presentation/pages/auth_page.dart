@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/localization/app_text.dart';
 import '../../application/auth_providers.dart';
@@ -31,13 +30,6 @@ enum AuthMode {
 }
 
 class _AuthPageState extends ConsumerState<AuthPage> {
-  static final Uri _privacyPolicyUri = Uri.parse(
-    'https://weglabs.com/privacy-policy/',
-  );
-  static final Uri _termsOfUseUri = Uri.parse(
-    'https://weglabs.com/terms-of-use/',
-  );
-
   late AuthMode _mode;
   final _formKey = GlobalKey<FormState>();
 
@@ -272,23 +264,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     });
   }
 
-  Future<void> _openExternalUrl(Uri uri) async {
-    final t = AppText.of(context);
-    final opened = await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
-
-    if (!opened && mounted) {
-      _showSnack(
-        t.get(
-          'auth_link_open_failed',
-          fallback: 'Could not open the link.',
-        ),
-      );
-    }
-  }
-
   void _goAfterAuth() {
     if (_authRedirectHandled || !mounted) return;
 
@@ -453,10 +428,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                         _CompactLegalFooter(
                           isSignIn: isSignIn,
                           veryTight: veryTight,
-                          onPrivacyPressed: () =>
-                              _openExternalUrl(_privacyPolicyUri),
-                          onTermsPressed: () =>
-                              _openExternalUrl(_termsOfUseUri),
+                          onPrivacyPressed: () => context.pushNamed('legal-privacy'),
+                          onTermsPressed: () => context.pushNamed('legal-terms'),
+                          onDeletionPressed: () => context.pushNamed('legal-deletion'),
                         ),
                       ],
                     ),
@@ -1398,12 +1372,14 @@ class _CompactLegalFooter extends StatelessWidget {
     required this.veryTight,
     required this.onPrivacyPressed,
     required this.onTermsPressed,
+    required this.onDeletionPressed,
   });
 
   final bool isSignIn;
   final bool veryTight;
   final VoidCallback onPrivacyPressed;
   final VoidCallback onTermsPressed;
+  final VoidCallback onDeletionPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -1447,6 +1423,12 @@ class _CompactLegalFooter extends StatelessWidget {
             _LegalLinkButton(
               label: t.get('auth_terms_of_use_link', fallback: 'Terms of Use'),
               onTap: onTermsPressed,
+            ),
+            _LegalLinkButton(
+              label: Localizations.localeOf(context).languageCode == 'de'
+                  ? 'Datenlöschung'
+                  : 'Data deletion',
+              onTap: onDeletionPressed,
             ),
           ],
         ),

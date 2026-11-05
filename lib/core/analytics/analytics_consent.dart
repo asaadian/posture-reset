@@ -48,8 +48,8 @@ class AnalyticsConsentController extends Notifier<AnalyticsConsentStatus> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_consentKey, allow ? 'granted' : 'denied');
     if (allow) {
-      state = AnalyticsConsentStatus.granted;
       await PosthogAnalyticsRuntime.enable();
+      state = AnalyticsConsentStatus.granted;
     }
   }
 }
@@ -100,8 +100,7 @@ class PosthogAnalyticsRuntime {
       ..host = host
       ..debug = kDebugMode
       ..captureApplicationLifecycleEvents = false
-      ..sessionReplay = false
-      ..preloadFeatureFlags = false;
+      ..sessionReplay = false;
 
     await Posthog().setup(config);
     _initialized = true;

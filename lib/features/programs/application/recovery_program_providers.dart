@@ -1,7 +1,10 @@
+import 'dart:async';
+
 // lib/features/programs/application/recovery_program_providers.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/analytics/analytics_consent.dart';
 import '../../../core/localization/app_locale_controller.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../auth/application/auth_providers.dart';
@@ -74,6 +77,7 @@ class RecoveryProgramActionController extends AsyncNotifier<void> {
     try {
       final repository = ref.read(recoveryProgramsRepositoryProvider);
       await repository.startProgram(programId);
+      unawaited(PosthogAnalyticsRuntime.capture(eventName: 'program_started'));
 
       ref.invalidate(recoveryProgramSummariesProvider);
       ref.invalidate(recoveryProgramDetailProvider(programId));
@@ -101,6 +105,7 @@ class RecoveryProgramActionController extends AsyncNotifier<void> {
         programId: programId,
         dayNumber: dayNumber,
       );
+      unawaited(PosthogAnalyticsRuntime.capture(eventName: 'program_day_started'));
 
       ref.invalidate(recoveryProgramSummariesProvider);
       ref.invalidate(recoveryProgramDetailProvider(programId));
@@ -136,6 +141,7 @@ class RecoveryProgramActionController extends AsyncNotifier<void> {
         helped: helped,
         difficultyRating: difficultyRating,
       );
+      unawaited(PosthogAnalyticsRuntime.capture(eventName: 'program_day_completed'));
 
       ref.invalidate(recoveryProgramSummariesProvider);
       ref.invalidate(recoveryProgramDetailProvider(programId));

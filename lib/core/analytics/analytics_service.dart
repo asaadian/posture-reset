@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'analytics_event.dart';
+import 'analytics_consent.dart';
 
 abstract class AnalyticsService {
   Future<void> track(AnalyticsEvent event);
@@ -35,5 +36,25 @@ class SupabaseAnalyticsService implements AnalyticsService {
       debugPrint('Analytics track failed: $error');
       debugPrintStack(stackTrace: stackTrace);
     }
+  }
+}
+
+/// Keeps existing Supabase premium events and mirrors a minimal allowlist
+/// into PostHog. The provider constructs this only after explicit consent.
+class ConsentAwareAnalyticsService implements AnalyticsService {
+  const ConsentAwareAnalyticsService(this._supabase);
+
+  final SupabaseAnalyticsService _supabase;
+
+  @override
+  Future<void> track(AnalyticsEvent event) async {
+    await _supabase.track(event);
+    await PosthogAnalyticsRuntime.capture(
+      eventName: event.eventName,
+      surface: event.sourceSurface,
+      feature: event.featureKey,
+      result: event.resultCode,
+      tier: event.accessTier,
+    );
   }
 }

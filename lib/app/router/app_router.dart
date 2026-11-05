@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/pages/auth_callback_page.dart';
 import '../../features/auth/presentation/pages/auth_page.dart';
+import '../../core/legal/legal_document_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/insights/presentation/pages/insights_page.dart';
 import '../../features/insights/presentation/pages/logs_page.dart';
@@ -40,6 +41,27 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/startup',
         name: 'startup-route',
         builder: (context, state) => const InitialRoutePage(),
+      ),
+      GoRoute(
+        path: '/legal/privacy',
+        name: 'legal-privacy',
+        builder: (context, state) => const LegalDocumentPage(
+          kind: LegalDocumentKind.privacy,
+        ),
+      ),
+      GoRoute(
+        path: '/legal/terms',
+        name: 'legal-terms',
+        builder: (context, state) => const LegalDocumentPage(
+          kind: LegalDocumentKind.terms,
+        ),
+      ),
+      GoRoute(
+        path: '/legal/deletion',
+        name: 'legal-deletion',
+        builder: (context, state) => const LegalDocumentPage(
+          kind: LegalDocumentKind.deletion,
+        ),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

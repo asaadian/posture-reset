@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/analytics/analytics_consent.dart';
 import '../../../../core/localization/app_locale_controller.dart';
 import '../../../../core/localization/app_text.dart';
 import '../../../../core/notifications/notification_providers.dart';
@@ -15,10 +16,6 @@ import '../../../../shared/layout/responsive_page_scaffold.dart';
 import '../../application/profile_providers.dart';
 import '../../domain/profile_models.dart';
 
-const String _privacyPolicyUrl = 'https://weglabs.com/privacy-policy/';
-const String _termsOfUseUrl = 'https://weglabs.com/terms-of-use/';
-const String _accountDataDeletionUrl =
-    'https://weglabs.com/account-data-deletion-weglabs-apps/';
 const String _supportEmail = 'contact@weglabs.com';
 
 class SettingsPage extends ConsumerWidget {
@@ -463,9 +460,9 @@ class _ReminderTimeSegmentedControl extends StatelessWidget {
   }
 }
 
-class _SupportLegalSection extends StatelessWidget {
+class _SupportLegalSection extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = AppText.of(context);
     final colors = Theme.of(context).colorScheme;
 
@@ -488,22 +485,43 @@ class _SupportLegalSection extends StatelessWidget {
         _ActionRow(
           icon: Icons.privacy_tip_outlined,
           title: t.get('settings_privacy_policy_title', fallback: 'Privacy Policy'),
-          subtitle: t.get('settings_external_link_subtitle', fallback: 'Open in browser'),
-          onTap: () => _openExternalLink(context, _privacyPolicyUrl),
+          subtitle: Localizations.localeOf(context).languageCode == 'de'
+              ? 'Offline in der App lesen'
+              : 'Read offline in the app',
+          onTap: () => context.pushNamed('legal-privacy'),
         ),
         const SizedBox(height: 8),
         _ActionRow(
           icon: Icons.description_outlined,
           title: t.get('settings_terms_title', fallback: 'Terms of Use'),
-          subtitle: t.get('settings_external_link_subtitle', fallback: 'Open in browser'),
-          onTap: () => _openExternalLink(context, _termsOfUseUrl),
+          subtitle: Localizations.localeOf(context).languageCode == 'de'
+              ? 'Offline in der App lesen'
+              : 'Read offline in the app',
+          onTap: () => context.pushNamed('legal-terms'),
         ),
         const SizedBox(height: 8),
         _ActionRow(
           icon: Icons.delete_sweep_outlined,
           title: t.get('settings_account_data_deletion_info_title', fallback: 'Data deletion policy'),
-          subtitle: t.get('settings_external_link_subtitle', fallback: 'Open in browser'),
-          onTap: () => _openExternalLink(context, _accountDataDeletionUrl),
+          subtitle: Localizations.localeOf(context).languageCode == 'de'
+              ? 'Offline in der App lesen'
+              : 'Read offline in the app',
+          onTap: () => context.pushNamed('legal-deletion'),
+        ),
+        const SizedBox(height: 10),
+        SwitchListTile.adaptive(
+          contentPadding: EdgeInsets.zero,
+          secondary: const Icon(Icons.insights_outlined),
+          title: Text(Localizations.localeOf(context).languageCode == 'de'
+              ? 'Freiwillige Nutzungsanalyse'
+              : 'Optional product analytics'),
+          subtitle: Text(Localizations.localeOf(context).languageCode == 'de'
+              ? 'PostHog EU. Keine Aufzeichnung; jederzeit widerrufbar.'
+              : 'PostHog EU. No screen recording; withdraw at any time.'),
+          value: ref.watch(analyticsConsentProvider) == AnalyticsConsentStatus.granted,
+          onChanged: (enabled) {
+            ref.read(analyticsConsentProvider.notifier).choose(enabled);
+          },
         ),
         const SizedBox(height: 8),
         const _AppVersionRow(),
@@ -1087,15 +1105,6 @@ class _InlineStatus extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-Future<void> _openExternalLink(BuildContext context, String rawUrl) async {
-  final launched = await launchUrl(Uri.parse(rawUrl), mode: LaunchMode.externalApplication);
-  if (!launched && context.mounted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppText.get(context, key: 'settings_link_open_failed', fallback: 'Could not open the link.'))),
     );
   }
 }

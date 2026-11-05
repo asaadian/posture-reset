@@ -78,7 +78,7 @@ class _AnalyticsConsentGateState extends ConsumerState<AnalyticsConsentGate> {
         final path = widget.router.routerDelegate.currentConfiguration.uri.path;
         if (!path.startsWith('/app/')) return;
         final navigatorContext = widget.navigatorKey.currentContext;
-        if (navigatorContext == null) return;
+        if (navigatorContext == null || !navigatorContext.mounted) return;
         await _ask(navigatorContext);
       }());
     });

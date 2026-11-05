@@ -29,7 +29,7 @@ android {
 
     defaultConfig {
         applicationId = "com.weglabs.posturereset"
-        minSdk = flutter.minSdkVersion
+        minSdk = maxOf(23, flutter.minSdkVersion)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

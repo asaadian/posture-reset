@@ -53,17 +53,17 @@ class PostureResetApp extends ConsumerWidget {
               child: AppUpdatePromptGate(
                 router: router,
                 navigatorKey: appRootNavigatorKey,
-              child: NotificationPermissionPromptGate(
-                router: router,
-                navigatorKey: appRootNavigatorKey,
-                child: NotificationTapRouterGate(
+                child: NotificationPermissionPromptGate(
                   router: router,
                   navigatorKey: appRootNavigatorKey,
-                  child: NotificationReminderSyncGate(
-                    child: routedChild,
+                  child: NotificationTapRouterGate(
+                    router: router,
+                    navigatorKey: appRootNavigatorKey,
+                    child: NotificationReminderSyncGate(
+                      child: routedChild,
+                    ),
                   ),
                 ),
-              ),
               ),
             ),
           ),

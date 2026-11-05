@@ -12,6 +12,10 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
+        <!-- Explicit opt-in: never auto-start PostHog on app launch. -->
+        <meta-data android:name="com.posthog.posthog.AUTO_INIT" android:value="false" />
+        <meta-data android:name="com.posthog.posthog.CAPTURE_APPLICATION_LIFECYCLE_EVENTS" android:value="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

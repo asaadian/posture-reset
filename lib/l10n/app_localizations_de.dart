@@ -3069,4 +3069,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get program_milestone_label => 'Etappenziel';
   @override
   String program_day_of_total_label(String day, String total) => 'Einheit $day von $total';
+  @override
+  String get update_available_title => 'Update verfügbar';
+  @override
+  String get update_required_title => 'Update erforderlich';
 }

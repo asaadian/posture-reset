@@ -838,7 +838,7 @@ class _QuickFixFiltersPanel extends ConsumerWidget {
     required bool exclusiveFallback,
     required ValueChanged<Set<String>> onChanged,
   }) async {
-    final result = await _showQuickFixCompactPicker(
+    await _showQuickFixCompactPicker(
       context: context,
       title: title,
       options: options,
@@ -846,10 +846,8 @@ class _QuickFixFiltersPanel extends ConsumerWidget {
       multiSelect: true,
       fallbackId: fallbackId,
       exclusiveFallback: exclusiveFallback,
+      onSelectionChanged: (ids) => onChanged(ids.isEmpty ? {fallbackId} : ids),
     );
-
-    if (result == null) return;
-    onChanged(result.isEmpty ? {fallbackId} : result);
   }
 
   @override
@@ -905,6 +903,7 @@ Future<Set<String>?> _showQuickFixCompactPicker({
   required bool multiSelect,
   String? fallbackId,
   bool exclusiveFallback = false,
+  ValueChanged<Set<String>>? onSelectionChanged,
 }) {
   return showModalBottomSheet<Set<String>>(
     context: context,
@@ -920,6 +919,7 @@ Future<Set<String>?> _showQuickFixCompactPicker({
         multiSelect: multiSelect,
         fallbackId: fallbackId,
         exclusiveFallback: exclusiveFallback,
+        onSelectionChanged: onSelectionChanged,
       );
     },
   );
@@ -933,6 +933,7 @@ class _QuickFixCompactPickerSheet extends StatefulWidget {
     required this.multiSelect,
     required this.fallbackId,
     required this.exclusiveFallback,
+    this.onSelectionChanged,
   });
 
   final String title;
@@ -941,6 +942,7 @@ class _QuickFixCompactPickerSheet extends StatefulWidget {
   final bool multiSelect;
   final String? fallbackId;
   final bool exclusiveFallback;
+  final ValueChanged<Set<String>>? onSelectionChanged;
 
   @override
   State<_QuickFixCompactPickerSheet> createState() =>
@@ -988,10 +990,7 @@ class _QuickFixCompactPickerSheetState
 
       _selected = next;
     });
-  }
-
-  void _apply() {
-    Navigator.of(context).pop(_selected);
+    widget.onSelectionChanged?.call({..._selected});
   }
 
   @override
@@ -1132,38 +1131,6 @@ class _QuickFixCompactPickerSheetState
                         ),
                       ),
                     ),
-                    if (widget.multiSelect)
-                      Container(
-                        padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: colors.outlineVariant.withValues(
-                                alpha: isDark ? 0.72 : 0.58,
-                              ),
-                            ),
-                          ),
-                        ),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: FilledButton(
-                            onPressed: _apply,
-                            style: FilledButton.styleFrom(
-                              minimumSize: const Size.fromHeight(46),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            child: Text(
-                              AppText.get(
-                                context,
-                                key: 'common_apply',
-                                fallback: 'Apply',
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),

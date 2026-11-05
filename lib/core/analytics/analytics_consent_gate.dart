@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/application/auth_providers.dart';
 import '../legal/legal_document_page.dart';
 import 'analytics_consent.dart';
 
@@ -35,9 +36,13 @@ class _AnalyticsConsentGateState extends ConsumerState<AnalyticsConsentGate> {
     super.initState();
     widget.router.routerDelegate.addListener(_queuePrompt);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      unawaited(ref.read(analyticsConsentProvider.notifier).load().then((_) {
-        if (mounted) _queuePrompt();
-      }));
+      if (!mounted) return;
+      final userId = ref.read(currentUserProvider)?.id;
+      unawaited(
+        ref.read(analyticsConsentProvider.notifier).loadForUser(userId).then((_) {
+          if (mounted) _queuePrompt();
+        }),
+      );
     });
   }
 
@@ -49,6 +54,12 @@ class _AnalyticsConsentGateState extends ConsumerState<AnalyticsConsentGate> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(currentUserProvider, (previous, next) {
+      if (previous?.id == next?.id) return;
+      unawaited(
+        ref.read(analyticsConsentProvider.notifier).loadForUser(next?.id),
+      );
+    });
     ref.listen(analyticsConsentProvider, (_, __) => _queuePrompt());
     return widget.child;
   }

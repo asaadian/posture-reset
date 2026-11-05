@@ -9,6 +9,7 @@ import '../../core/localization/app_text.dart';
 import '../../core/notifications/notification_permission_prompt_gate.dart';
 import '../../core/notifications/notification_reminder_sync_gate.dart';
 import '../../core/notifications/notification_tap_router_gate.dart';
+import '../../core/analytics/analytics_consent_gate.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/app_theme_controller.dart';
 import '../../core/update/app_update_prompt_gate.dart';
@@ -46,9 +47,12 @@ class PostureResetApp extends ConsumerWidget {
         return AppStartupGate(
           child: AuthRouteGate(
             router: router,
-            child: AppUpdatePromptGate(
+            child: AnalyticsConsentGate(
               router: router,
               navigatorKey: appRootNavigatorKey,
+              child: AppUpdatePromptGate(
+                router: router,
+                navigatorKey: appRootNavigatorKey,
               child: NotificationPermissionPromptGate(
                 router: router,
                 navigatorKey: appRootNavigatorKey,
@@ -59,6 +63,7 @@ class PostureResetApp extends ConsumerWidget {
                     child: routedChild,
                   ),
                 ),
+              ),
               ),
             ),
           ),

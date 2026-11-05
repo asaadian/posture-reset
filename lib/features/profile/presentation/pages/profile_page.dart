@@ -979,17 +979,15 @@ class _ProfilePremiumActionTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Image.asset(
-                'assets/images/premium-badge.png',
-                width: 62,
-                height: 62,
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => const Icon(
+              SizedBox(
+                  width: 62,
+                  height: 62,
+                  child: const Icon(
                   Icons.workspace_premium_rounded,
                   size: 40,
                   color: Color(0xFFFFD58A),
+                  ),
                 ),
-              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

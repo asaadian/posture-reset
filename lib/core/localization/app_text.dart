@@ -2038,6 +2038,10 @@ class _GeneratedAppTextReader extends AppTextReader {
         return _t.program_milestone_label;
       case 'program_day_of_total_label':
         return _t.program_day_of_total_label('{day}', '{total}');
+      case 'update_available_title':
+        return _t.update_available_title;
+      case 'update_required_title':
+        return _t.update_required_title;
       default:
         return _translateDynamicFallback(fallback);
     }

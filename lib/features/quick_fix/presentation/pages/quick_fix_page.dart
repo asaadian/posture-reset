@@ -907,6 +907,7 @@ Future<Set<String>?> _showQuickFixCompactPicker({
 }) {
   return showModalBottomSheet<Set<String>>(
     context: context,
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
     backgroundColor: Colors.transparent,

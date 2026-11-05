@@ -40,17 +40,16 @@ class AnalyticsConsentController extends Notifier<AnalyticsConsentStatus> {
   }
 
   Future<void> choose(bool allow) async {
+    // A refusal takes effect before writing preferences.
+    if (!allow) {
+      state = AnalyticsConsentStatus.denied;
+      await PosthogAnalyticsRuntime.disable();
+    }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_consentKey, allow ? 'granted' : 'denied');
-
-    // Stop collection immediately on withdrawal, and only initialize
-    // PostHog after a persisted, affirmative decision.
     if (allow) {
       state = AnalyticsConsentStatus.granted;
       await PosthogAnalyticsRuntime.enable();
-    } else {
-      state = AnalyticsConsentStatus.denied;
-      await PosthogAnalyticsRuntime.disable();
     }
   }
 }
@@ -64,39 +63,88 @@ class PosthogAnalyticsRuntime {
 
   static bool _initialized = false;
   static bool _enabled = false;
+  static int _decisionVersion = 0;
+  static Future<void>? _setupFuture;
+
+  static const Set<String> _allowedEvents = {
+    'app_opened',
+    'tab_selected',
+    'session_started',
+    'session_completed',
+    'session_abandoned',
+    'program_started',
+    'program_day_started',
+    'program_day_completed',
+    'quick_fix_recommendation_viewed',
+    'paywall_viewed',
+    'unlock_tapped',
+    'purchase_started',
+    'purchase_success',
+    'purchase_cancelled',
+    'purchase_failed',
+    'restore_tapped',
+    'restore_success',
+    'restore_failed',
+    'locked_feature_viewed',
+    'locked_feature_cta_tapped',
+  };
+
+  static const Set<String> _allowedSurfaces = {
+    'dashboard', 'sessions_library', 'explore', 'quick_fix', 'body_map',
+    'insights', 'saved', 'history', 'profile', 'premium', 'session_detail',
+    'programs',
+  };
+
+  static Future<void> _setup() async {
+    final config = PostHogConfig(projectToken)
+      ..host = host
+      ..debug = kDebugMode
+      ..captureApplicationLifecycleEvents = false
+      ..sessionReplay = false
+      ..preloadFeatureFlags = false;
+
+    await Posthog().setup(config);
+    _initialized = true;
+  }
 
   static Future<void> enable() async {
+    final decision = ++_decisionVersion;
     try {
       if (!_initialized) {
-        final config = PostHogConfig(projectToken)
-          ..host = host
-          ..debug = kDebugMode
-          ..captureApplicationLifecycleEvents = false
-          ..sessionReplay = false;
-
-        await Posthog().setup(config);
-        _initialized = true;
+        _setupFuture ??= _setup();
+        await _setupFuture;
       }
+      if (decision != _decisionVersion) return;
       await Posthog().enable();
+      if (decision != _decisionVersion) {
+        await Posthog().disable();
+        return;
+      }
       _enabled = true;
       await capture(eventName: 'app_opened');
     } catch (error) {
       _enabled = false;
+      _setupFuture = null;
       debugPrint('PostHog opt-in failed: $error');
     }
   }
 
   static Future<void> disable() async {
+    ++_decisionVersion;
     _enabled = false;
-    if (!_initialized) return;
     try {
-      await Posthog().disable();
+      // If a grant is still initializing, ensure a later refusal wins.
+      if (_setupFuture != null && !_initialized) {
+        await _setupFuture;
+      }
+      if (_initialized) await Posthog().disable();
     } catch (error) {
       debugPrint('PostHog opt-out failed: $error');
     }
   }
 
-  /// Only strictly allowlisted, non-health event properties may leave the app.
+  /// Never forward user IDs, free text, selected body areas, symptoms,
+  /// session/program IDs, product identifiers, or arbitrary metadata.
   static Future<void> capture({
     required String eventName,
     String? surface,
@@ -104,17 +152,16 @@ class PosthogAnalyticsRuntime {
     String? result,
     String? tier,
   }) async {
-    if (!_enabled || !_initialized) return;
+    if (!_enabled || !_initialized || !_allowedEvents.contains(eventName)) return;
     try {
       final properties = <String, Object>{
-        if (surface != null) 'surface': surface,
-        if (feature != null) 'feature': feature,
-        if (result != null) 'result': result,
-        if (tier != null) 'access_tier': tier,
+        if (surface != null && _allowedSurfaces.contains(surface))
+          'surface': surface,
       };
       await Posthog().capture(eventName: eventName, properties: properties);
     } catch (error) {
       debugPrint('PostHog capture failed: $error');
     }
   }
+
 }

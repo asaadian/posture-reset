@@ -44,6 +44,26 @@ For consent and lower cost, screen recordings, automatic screen tracking, survey
 
 These are app-specific bilingual English/German notices, embedded as Dart content and accessible from both sign-in/sign-up and Settings. They are **not a byte-for-byte copy of the website policies**. Before publishing, compare and approve the app text and website policies; update the web policy to name PostHog and provide the same withdrawal instructions. The legacy Data Deletion website URL was not retrievable during authoring, so confirm account-deletion wording and Google Play Console public URLs separately. In-app pages remain accessible offline, but Google Play's public privacy and account-deletion URLs must still remain available.
 
+## Build-time PostHog configuration
+
+Do not hard-code the PostHog project token or host in Dart. Supply both values using Flutter `--dart-define`.
+The token is a public mobile project token, not a secret admin or personal key.
+
+Debug run in Windows PowerShell:
+
+```powershell
+flutter run --dart-define=POSTHOG_PROJECT_TOKEN=YOUR_PUBLIC_PHC_TOKEN --dart-define=POSTHOG_HOST=https://eu.i.posthog.com
+```
+
+Release AAB:
+
+```powershell
+flutter build appbundle --release --dart-define=POSTHOG_PROJECT_TOKEN=YOUR_PUBLIC_PHC_TOKEN --dart-define=POSTHOG_HOST=https://eu.i.posthog.com
+```
+
+Without these defines no PostHog events are sent, even if consent is granted. The app remains usable.
+Never commit private credentials or SDK admin tokens.
+
 ## Device acceptance tests
 1. On a new install (or after clearing app data), sign in. Read all three legal pages **with airplane mode on** (existing logged-in app functionality may need network; test the legal pages separately).
 2. Decline Analytics. Tap navigation, open Quick Fix, start/finish a session: there must be no new matching PostHog Live Events on that device.

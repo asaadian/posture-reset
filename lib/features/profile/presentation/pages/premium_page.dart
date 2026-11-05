@@ -286,12 +286,10 @@ class _PremiumHeroCard extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Image.asset(
-                  'assets/images/premium-badge.png',
+                child: SizedBox(
                   width: 128,
                   height: 128,
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => const Icon(
+                  child: const Icon(
                     Icons.workspace_premium_rounded,
                     color: Color(0xFFFFD58A),
                     size: 108,

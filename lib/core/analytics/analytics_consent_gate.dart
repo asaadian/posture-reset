@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/application/auth_providers.dart';
 import '../legal/legal_document_page.dart';
+import '../presentation/widgets/app_message_dialog.dart';
 import 'analytics_consent.dart';
 
 /// Offers a separate, genuinely optional choice once after entering the app.
@@ -94,35 +95,34 @@ class _AnalyticsConsentGateState extends ConsumerState<AnalyticsConsentGate> {
           final de = Localizations.localeOf(dialogContext).languageCode == 'de';
           return PopScope(
             canPop: false,
-            child: AlertDialog(
-              icon: const Icon(Icons.insights_outlined),
-              title: Text(de ? 'Anonyme Nutzungsanalyse?' : 'Optional app analytics?'),
-              content: Text(
-                de
+            child: AppMessageDialog(
+              imageAsset: 'assets/images/messages/analytics.png',
+              fallbackIcon: Icons.insights_outlined,
+              title: de ? 'Optionale Nutzungsanalyse?' : 'Optional app analytics?',
+              message: de
                     ? 'Dürfen wir die Nutzung wichtiger App-Funktionen mit PostHog EU messen, um Desk Workout zu verbessern? Es werden keine Namen, E-Mail-Adressen oder Angaben zu Beschwerden übermittelt. Keine Bildschirmaufzeichnung. Die Entscheidung ist freiwillig und jederzeit in den Einstellungen änderbar.'
                     : 'May we measure how key app features are used with PostHog EU to improve Desk Workout? We do not send names, email addresses or health complaints. Screen recording is disabled. This is optional and can be changed in Settings at any time.',
+              footer: TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const LegalDocumentPage(
+                        kind: LegalDocumentKind.privacy,
+                      ),
+                    ),
+                  );
+                },
+                child: Text(de ? 'Datenschutz lesen' : 'Read privacy policy'),
               ),
               actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(dialogContext).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const LegalDocumentPage(
-                          kind: LegalDocumentKind.privacy,
-                        ),
-                      ),
-                    );
-                  },
-                  child: Text(de ? 'Datenschutz lesen' : 'Read privacy policy'),
-                ),
-                TextButton(
+                OutlinedButton(
                   onPressed: () async {
                     await ref.read(analyticsConsentProvider.notifier).choose(false);
                     if (dialogContext.mounted) Navigator.of(dialogContext).pop();
                   },
                   child: Text(de ? 'Ablehnen' : 'Decline'),
                 ),
-                FilledButton(
+                OutlinedButton(
                   onPressed: () async {
                     await ref.read(analyticsConsentProvider.notifier).choose(true);
                     if (dialogContext.mounted) Navigator.of(dialogContext).pop();

@@ -490,7 +490,10 @@ class _PurchaseHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _PlanDot(active: hasCoreAccess),
@@ -498,8 +501,7 @@ class _PurchaseHeader extends StatelessWidget {
         Expanded(
           child: Text(
             hasCoreAccess ? AppText.get(context, key: 'premium_active_label', fallback: 'Premium active') : AppText.get(context, key: 'premium_lifetime_label', fallback: 'Premium lifetime'),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+
             style: theme.textTheme.titleLarge?.copyWith(
               color: colors.onSurface,
               fontWeight: FontWeight.w900,
@@ -507,9 +509,11 @@ class _PurchaseHeader extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+          ],
+        ),
+        const SizedBox(height: 12),
         Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -599,7 +603,7 @@ String _purchaseButtonLabel(BuildContext context, BillingState state) {
   if (!state.isStoreAvailable || state.selectedProduct == null) {
     return t.get('premium_product_unavailable', fallback: 'Premium unavailable');
   }
-  return 'Unlock Premium · ${state.selectedProduct!.price}';
+  return '${t.get('premium_unlock_label', fallback: 'Unlock Premium')} · ${state.selectedProduct!.price}';
 }
 
 String _billingFailureMessage(BuildContext context, BillingFailure failure) {

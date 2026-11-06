@@ -1,7 +1,7 @@
 name: posture_reset
 description: "Desk Workout - quick desk stretches, posture recovery, and short guided mobility sessions."
 publish_to: 'none'
-version: 1.5.4+12
+version: 1.5.4+13
 
 environment:
   sdk: ^3.9.2
@@ -47,6 +47,7 @@ flutter:
   generate: true
 
   assets:
+    - assets/images/avatars/
     - assets/images/messages/
     - assets/branding/desk_workout_icon.png
     - assets/images/body_map/front.png

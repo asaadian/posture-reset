@@ -2135,9 +2135,20 @@ class _GeneratedAppTextReader extends AppTextReader {
       'Time for a quick reset': 'Zeit für einen kurzen Reset',
       'Take two focused minutes for your neck, back, or wrists.': 'Nimm dir zwei konzentrierte Minuten für Nacken, Rücken oder Handgelenke.',
     };
+    if (fallback == '{count} logs') return '{count} Einträge';
     final direct = exact[fallback];
     if (direct != null) return direct;
 
+    final zoneMatch = RegExp(r'^Most attention is landing on (.+)$').firstMatch(fallback);
+    if (zoneMatch != null) {
+      const zones = {
+        'Neck': 'Nacken', 'Shoulders': 'Schultern',
+        'Upper back': 'oberer Rücken', 'Lower back': 'unterer Rücken',
+        'Wrists': 'Handgelenke', 'Forearms': 'Unterarme',
+        'Hands': 'Hände', 'Hips & glutes': 'Hüfte und Gesäß', 'Eyes': 'Augen',
+      };
+      return 'Aktueller Schwerpunkt: ${zones[zoneMatch.group(1)] ?? zoneMatch.group(1)}';
+    }
     var match = RegExp(r'^(\d+) days$').firstMatch(fallback);
     if (match != null) return '${match.group(1)} Tage';
     match = RegExp(r'^(\d+) min/day$').firstMatch(fallback);

@@ -23,11 +23,6 @@ class SavedSessionCard extends StatelessWidget {
       key: item.session.titleKey,
       fallback: item.session.titleFallback,
     );
-    final subtitle = AppText.get(
-      context,
-      key: item.session.shortDescriptionKey,
-      fallback: item.session.shortDescriptionFallback,
-    );
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
@@ -35,7 +30,7 @@ class SavedSessionCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(20),
         onTap: () => context.pushNamed(
           'session-detail',
           pathParameters: {'id': item.session.id},
@@ -43,7 +38,7 @@ class SavedSessionCard extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             color: colors.surface,
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: colors.outlineVariant.withValues(alpha: isDark ? 0.42 : 0.65),
             ),
@@ -56,90 +51,38 @@ class SavedSessionCard extends StatelessWidget {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(11),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.all(10),
+            child: Row(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SessionVisualStage(
-                      sessionId: item.session.id,
-                      width: 94,
-                      height: 96,
-                      imageFit: BoxFit.cover,
-                      compact: true,
-                      padding: EdgeInsets.zero,
-                      borderRadius: 19,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: colors.primary.withValues(alpha: 0.10),
-                              borderRadius: BorderRadius.circular(9),
-                            ),
-                            child: Text(
-                              _actionLabel(context, item.action),
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: colors.primary,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 9),
-                          Text(
-                            title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: colors.onSurface,
-                              fontWeight: FontWeight.w800,
-                              height: 1.15,
-                            ),
-                          ),
-                          if (subtitle.trim().isNotEmpty) ...[
-                            const SizedBox(height: 5),
-                            Text(
-                              subtitle,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colors.onSurfaceVariant,
-                                height: 1.35,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ],
+                SessionVisualStage(
+                  sessionId: item.session.id,
+                  width: 72,
+                  height: 80,
+                  imageFit: BoxFit.cover,
+                  compact: true,
+                  padding: EdgeInsets.zero,
+                  borderRadius: 14,
                 ),
-                const SizedBox(height: 9),
-                Container(
-                  decoration: BoxDecoration(
-                    color: colors.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  padding: const EdgeInsets.fromLTRB(12, 7, 7, 7),
-                  child: Row(
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.schedule_rounded, size: 16, color: colors.onSurfaceVariant),
-                      const SizedBox(width: 5),
-                      _MetaText(label: '${item.session.durationMinutes} min'),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: _MetaText(label: _intensityLabel(context, item.session.intensity)),
-                      ),
-                      const Spacer(),
-                      _QuickStartButton(item: item),
+                      Text(_actionLabel(context, item.action),
+                        style: theme.textTheme.labelSmall?.copyWith(color: colors.primary, fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 5),
+                      Text(title, maxLines: 2, overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800, height: 1.2)),
+                      const SizedBox(height: 6),
+                      Wrap(spacing: 5, runSpacing: 4, children: [
+                        _MetaText(label: '${item.session.durationMinutes} min'),
+                        _MetaText(label: _intensityLabel(context, item.session.intensity)),
+                      ]),
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
+                _QuickStartButton(item: item),
               ],
             ),
           ),

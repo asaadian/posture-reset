@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/auth/application/auth_providers.dart';
 import '../../features/profile/application/profile_providers.dart';
 import '../localization/app_text.dart';
+import '../presentation/widgets/app_message_dialog.dart';
 import 'notification_providers.dart';
 
 class NotificationPermissionPromptGate extends ConsumerStatefulWidget {
@@ -140,44 +141,28 @@ class _NotificationPermissionPromptGateState
       context: dialogContext,
       barrierDismissible: true,
       builder: (context) {
-        final theme = Theme.of(context);
-        final colors = theme.colorScheme;
         final t = AppText.of(context);
 
-        return AlertDialog(
-          icon: Container(
-            width: 54,
-            height: 54,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: LinearGradient(colors: [colors.primary, colors.tertiary]),
-            ),
-            child: Icon(Icons.notifications_active_rounded, color: colors.onPrimary),
+        return AppMessageDialog(
+          imageAsset: 'assets/images/messages/notify.png',
+          fallbackIcon: Icons.notifications_active_rounded,
+          title: t.get(
+            'notification_permission_prompt_title',
+            fallback: 'Enable recovery reminders?',
           ),
-          title: Text(
-            t.get(
-              'notification_permission_prompt_title',
-              fallback: 'Enable recovery reminders?',
-            ),
-            textAlign: TextAlign.center,
+          message: t.get(
+            'notification_permission_prompt_body',
+            fallback: 'Get one gentle daily reminder for a quick posture reset.',
           ),
-          content: Text(
-            t.get(
-              'notification_permission_prompt_body',
-              fallback: 'Get one gentle daily reminder for a quick posture reset.',
-            ),
-            textAlign: TextAlign.center,
-          ),
-          actionsAlignment: MainAxisAlignment.center,
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(t.get('common_not_now', fallback: 'Not now')),
-            ),
             FilledButton.icon(
               onPressed: () => Navigator.of(context).pop(true),
               icon: const Icon(Icons.notifications_rounded),
               label: Text(t.get('notification_enable_cta', fallback: 'Enable')),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(t.get('common_not_now', fallback: 'Not now')),
             ),
           ],
         );
@@ -226,25 +211,27 @@ class _NotificationPermissionPromptGateState
     if (!mounted || !dialogContext.mounted) return;
     final allowPrecise = await showDialog<bool>(
       context: dialogContext,
-      builder: (context) => AlertDialog(
-        icon: const Icon(Icons.schedule_rounded),
-        title: const Text('Keep reminders on time?'),
-        content: const Text(
-          'Android has a separate Alarms & reminders setting. '
-          'You can allow it for more precise reminders even when '
-          'Desk Workout is closed. Skipping it still keeps reminders active.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Not now'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Open Android settings'),
-          ),
-        ],
-      ),
+      builder: (context) {
+        final de = Localizations.localeOf(context).languageCode == 'de';
+        return AppMessageDialog(
+          imageAsset: 'assets/images/messages/notify.png',
+          fallbackIcon: Icons.schedule_rounded,
+          title: de ? 'Erinnerungen zur richtigen Zeit?' : 'Keep reminders on time?',
+          message: de
+              ? 'Android hat eine separate Einstellung für „Wecker und Erinnerungen“. Erlaube den Zugriff für genauere Erinnerungen, auch wenn Desk Workout geschlossen ist. Ohne diese Freigabe bleiben Erinnerungen aktiv, können aber später erscheinen.'
+              : 'Android has a separate Alarms & reminders setting. You can allow it for more precise reminders even when Desk Workout is closed. Skipping it still keeps reminders active, but they may arrive later.',
+          actions: [
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(de ? 'Android-Einstellungen öffnen' : 'Open Android settings'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(de ? 'Nicht jetzt' : 'Not now'),
+            ),
+          ],
+        );
+      },
     );
     if (allowPrecise == true && mounted) {
       await service.requestExactAlarmAccess();

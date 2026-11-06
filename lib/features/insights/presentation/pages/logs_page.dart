@@ -552,8 +552,6 @@ class _InsightLogTile extends StatelessWidget {
               children: [
                 Text(
                   AppText.get(context, key: 'insight_log_${log.id}_title', fallback: log.title),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleSmall?.copyWith(
                     color: colors.onSurface,
                     fontWeight: FontWeight.w900,
@@ -563,8 +561,6 @@ class _InsightLogTile extends StatelessWidget {
                 const SizedBox(height: 5),
                 Text(
                   AppText.get(context, key: 'insight_log_${log.id}_body', fallback: log.body),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colors.onSurfaceVariant,
                     height: 1.22,

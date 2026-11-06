@@ -392,7 +392,9 @@ class _ProfileHeroCard extends StatelessWidget {
                 )),
                 Expanded(child: _HeroMetric(
                   label: t.get('profile_metric_status', fallback: 'Status'),
-                  value: isAuthenticated ? 'On' : 'Off',
+                  value: isAuthenticated
+                      ? (Localizations.localeOf(context).languageCode == 'de' ? 'An' : 'On')
+                      : (Localizations.localeOf(context).languageCode == 'de' ? 'Aus' : 'Off'),
                 )),
               ],
             ),
@@ -1087,7 +1089,7 @@ class _HeroMetric extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 76,
+      constraints: const BoxConstraints(minHeight: 84),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
@@ -1106,8 +1108,7 @@ class _HeroMetric extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white.withValues(alpha: 0.70), fontWeight: FontWeight.w800, height: 1),
           ),
         ],

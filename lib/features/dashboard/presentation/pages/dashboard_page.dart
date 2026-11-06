@@ -1436,8 +1436,6 @@ class _MomentumTile extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
             style: theme.textTheme.labelSmall?.copyWith(
               color: featured ? const Color(0xFFDAF4F1) : colors.onSurfaceVariant,
               fontWeight: FontWeight.w700,

@@ -115,19 +115,19 @@ class _AnalyticsConsentGateState extends ConsumerState<AnalyticsConsentGate> {
                 child: Text(de ? 'Datenschutz lesen' : 'Read privacy policy'),
               ),
               actions: [
-                OutlinedButton(
-                  onPressed: () async {
-                    await ref.read(analyticsConsentProvider.notifier).choose(false);
-                    if (dialogContext.mounted) Navigator.of(dialogContext).pop();
-                  },
-                  child: Text(de ? 'Ablehnen' : 'Decline'),
-                ),
-                OutlinedButton(
+                FilledButton(
                   onPressed: () async {
                     await ref.read(analyticsConsentProvider.notifier).choose(true);
                     if (dialogContext.mounted) Navigator.of(dialogContext).pop();
                   },
                   child: Text(de ? 'Zustimmen' : 'Allow'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    await ref.read(analyticsConsentProvider.notifier).choose(false);
+                    if (dialogContext.mounted) Navigator.of(dialogContext).pop();
+                  },
+                  child: Text(de ? 'Ablehnen' : 'Decline'),
                 ),
               ],
             ),

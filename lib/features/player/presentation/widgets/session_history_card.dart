@@ -32,7 +32,7 @@ class SessionHistoryCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(20),
         onTap: () => context.pushNamed(
           'session-detail',
           pathParameters: {'id': item.session.id},
@@ -40,7 +40,7 @@ class SessionHistoryCard extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             color: colors.surface,
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: colors.outlineVariant.withValues(alpha: isDark ? 0.42 : 0.65),
             ),
@@ -53,53 +53,26 @@ class SessionHistoryCard extends StatelessWidget {
             ],
           ),
           child: Padding(
-            padding: const EdgeInsets.all(11),
-            child: Column(
+            padding: const EdgeInsets.all(10),
+            child: Row(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _HistoryVisual(sessionId: item.session.id),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: _HistoryCopy(
-                        title: title,
-                        meta: _meta(context),
-                        statusLabel: _statusLabel(context),
-                        statusColor: statusColor,
-                        statusIcon: _statusIcon(),
-                        resumable: item.isResumable,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 9),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
-                  decoration: BoxDecoration(
-                    color: colors.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(17),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.history_rounded, size: 16, color: colors.onSurfaceVariant),
-                      const SizedBox(width: 7),
-                      Expanded(
-                        child: Text(
-                          _meta(context),
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            color: colors.onSurfaceVariant,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      if (item.isResumable)
-                        _ResumeIconButton(item: item)
-                      else
-                        Icon(Icons.arrow_forward_rounded, size: 20, color: colors.primary),
-                    ],
+                _HistoryVisual(sessionId: item.session.id),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _HistoryCopy(
+                    title: title,
+                    meta: _meta(context),
+                    statusLabel: _statusLabel(context),
+                    statusColor: statusColor,
+                    statusIcon: _statusIcon(),
+                    resumable: item.isResumable,
                   ),
                 ),
+                const SizedBox(width: 6),
+                if (item.isResumable)
+                  _ResumeIconButton(item: item)
+                else
+                  Icon(Icons.chevron_right_rounded, size: 20, color: colors.primary),
               ],
             ),
           ),
@@ -168,12 +141,12 @@ class _HistoryVisual extends StatelessWidget {
   Widget build(BuildContext context) {
     return SessionVisualStage(
       sessionId: sessionId,
-      width: 94,
-      height: 94,
+      width: 72,
+      height: 80,
       imageFit: BoxFit.cover,
       compact: true,
       padding: EdgeInsets.zero,
-      borderRadius: 19,
+      borderRadius: 14,
     );
   }
 }
@@ -222,13 +195,16 @@ class _HistoryCopy extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           style: theme.textTheme.titleMedium?.copyWith(
             color: colors.onSurface,
             fontWeight: FontWeight.w900,
             height: 1.04,
           ),
         ),
-
+        const SizedBox(height: 6),
+        Text(meta, style: theme.textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant)),
       ],
     );
   }

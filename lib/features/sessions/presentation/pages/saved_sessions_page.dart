@@ -51,7 +51,7 @@ class SavedSessionsPage extends ConsumerWidget {
             padding: EdgeInsets.only(bottom: pageInfo.isCompact ? 24 : 32),
             children: [
               ResponsiveContentSection(
-                spacing: pageInfo.sectionSpacing,
+                spacing: 10,
                 children: [
                   const _SavedSessionsLockedViewedTracker(),
                   LockedFeatureCard(
@@ -102,7 +102,7 @@ class SavedSessionsPage extends ConsumerWidget {
                 padding: EdgeInsets.only(bottom: pageInfo.isCompact ? 24 : 32),
                 children: [
                   ResponsiveContentSection(
-                    spacing: pageInfo.sectionSpacing,
+                    spacing: 10,
                     children: const [
                       _SavedSessionsEmptyCard(),
                     ],
@@ -115,11 +115,11 @@ class SavedSessionsPage extends ConsumerWidget {
               padding: EdgeInsets.only(bottom: pageInfo.isCompact ? 24 : 32),
               children: [
                 ResponsiveContentSection(
-                  spacing: pageInfo.sectionSpacing,
+                  spacing: 10,
                   children: [
                     if (items.isNotEmpty) ...[
                       Container(
-                        padding: const EdgeInsets.all(22),
+                        padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(28),
                           gradient: const LinearGradient(
@@ -131,7 +131,7 @@ class SavedSessionsPage extends ConsumerWidget {
                         child: Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(14),
+                              padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(18),
@@ -149,7 +149,7 @@ class SavedSessionsPage extends ConsumerWidget {
                                   )),
                                   const SizedBox(height: 5),
                                   Text(AppText.get(context, key: 'common_session_count', fallback: '{count} sessions').replaceAll('{count}', items.length.toString()), style: const TextStyle(
-                                    color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800,
+                                    color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800,
                                   )),
                                   const SizedBox(height: 4),
                                   Text(AppText.get(context, key: 'saved_collection_subtitle', fallback: 'Your favorite resets, ready whenever you need them.'), style: TextStyle(

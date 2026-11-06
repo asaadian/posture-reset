@@ -13,6 +13,7 @@ import '../../features/auth/application/auth_providers.dart';
 import '../analytics/analytics_consent.dart';
 import '../config/app_env.dart';
 import '../localization/app_text.dart';
+import '../presentation/widgets/app_message_dialog.dart';
 
 class AppUpdatePromptGate extends ConsumerStatefulWidget {
   const AppUpdatePromptGate({
@@ -246,48 +247,24 @@ class _AppUpdatePromptGateState extends ConsumerState<AppUpdatePromptGate>
       context: dialogContext,
       barrierDismissible: !forceUpdate,
       builder: (context) {
-        final theme = Theme.of(context);
-        final colors = theme.colorScheme;
         final t = AppText.of(context);
 
         return PopScope(
           canPop: !forceUpdate,
-          child: AlertDialog(
-            icon: Container(
-              width: 54,
-              height: 54,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  colors: [colors.primary, colors.tertiary],
+          child: AppMessageDialog(
+            imageAsset: 'assets/images/messages/update.png',
+            fallbackIcon: Icons.system_update_alt_rounded,
+            version: latestVersion,
+            title: t.get(
+              forceUpdate ? 'update_required_title' : 'update_available_title',
+              fallback: forceUpdate ? 'Update required' : 'Update available',
+            ),
+            message: message ??
+                t.get(
+                  'update_available_body',
+                  fallback: 'A newer version is available. Update the app for the latest fixes and improvements.',
                 ),
-              ),
-              child: Icon(Icons.system_update_alt_rounded, color: colors.onPrimary),
-            ),
-            title: Text(
-              t.get(
-                forceUpdate ? 'update_required_title' : 'update_available_title',
-                fallback: forceUpdate ? 'Update required' : 'Update available',
-              ),
-              textAlign: TextAlign.center,
-            ),
-            content: Text(
-              message ??
-                  t.get(
-                    'update_available_body',
-                    fallback: latestVersion == null
-                        ? 'A newer version is available. Update the app for the latest fixes and improvements.'
-                        : 'Version $latestVersion is available. Update the app for the latest fixes and improvements.',
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            actionsAlignment: MainAxisAlignment.center,
             actions: [
-              if (!forceUpdate)
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(t.get('update_later_cta', fallback: 'Later')),
-                ),
               FilledButton.icon(
                 onPressed: () async {
                   await launchUrl(
@@ -301,6 +278,11 @@ class _AppUpdatePromptGateState extends ConsumerState<AppUpdatePromptGate>
                 icon: const Icon(Icons.open_in_new_rounded),
                 label: Text(t.get('update_now_cta', fallback: 'Update')),
               ),
+              if (!forceUpdate)
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(t.get('update_later_cta', fallback: 'Later')),
+                ),
             ],
           ),
         );

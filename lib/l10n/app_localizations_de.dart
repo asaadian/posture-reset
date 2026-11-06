@@ -2258,7 +2258,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Dashboard-Daten sind nicht verfügbar';
 
   @override
-  String get dashboard_weekly_minutes_label => 'Min. diese Woche';
+  String get dashboard_weekly_minutes_label => 'Min./Woche';
 
   @override
   String get dashboard_completed_week_label => 'Sessions';
@@ -2846,7 +2846,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get quick_fix_browse_sessions => 'Sessions entdecken';
   @override
-  String get profile_metric_completed => 'Abgeschlossen';
+  String get profile_metric_completed => 'Erledigt';
   @override
   String get notification_open_phone_settings => 'Einstellungen öffnen';
   @override

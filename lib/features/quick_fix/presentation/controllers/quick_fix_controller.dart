@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -41,6 +43,8 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
       ref.read(quickFixRecommendationEngineProvider);
   QuickFixEventsRepository get _eventsRepository =>
       ref.read(quickFixEventsRepositoryProvider);
+
+  final _shownSessions = <String, List<String>>{};
 
   @override
   Future<QuickFixState> build() async {
@@ -107,6 +111,7 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
   Future<QuickFixState> _recompute(
     QuickFixState current, {
     bool trackRecommendation = false,
+    List<String> shownSessionIds = const [],
   }) async {
     final sessions = await _sessions();
     // Free users should receive a usable match first, rather than a paywall.
@@ -123,6 +128,7 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
     final freeResult = _engine.recommend(
       state: current,
       sessions: usableSessions,
+      shownSessionIds: shownSessionIds,
     );
     // Do not fall back to locked content for free users: it would send them
     // straight to a paywall after a supposedly usable Quick Fix recommendation.
@@ -130,6 +136,7 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
 
     var next = current.copyWith(
       primaryRecommendation: result.primary,
+      clearPrimaryRecommendation: result.primary == null,
       alternativeRecommendations: result.alternatives,
     );
 
@@ -292,31 +299,26 @@ class QuickFixController extends AsyncNotifier<QuickFixState> {
     final current = _current();
     if (current == null) return null;
 
-    if (current.recommendationRevealCount <= 0 ||
-        current.alternativeRecommendations.isEmpty) {
-      final next = current.copyWith(
-        recommendationRevealCount: current.recommendationRevealCount + 1,
-      );
-      state = AsyncData(next);
-      return next;
+    final account = Supabase.instance.client.auth.currentUser?.id ?? 'guest';
+    final historyKey = '$account:${current.selectedProblemId}';
+    final shown = _shownSessions.putIfAbsent(historyKey, () => []);
+    final ranked = await _recompute(current, shownSessionIds: shown);
+    if (!identical(_current(), current)) return _current();
+
+    final sessionId = ranked.primaryRecommendation?.session.id;
+    if (sessionId != null) {
+      shown.remove(sessionId);
+      shown.add(sessionId);
     }
 
-    final alternatives = [...current.alternativeRecommendations];
-    final promoted = alternatives.removeAt(0);
-    final demotedPrimary = current.primaryRecommendation;
-
-    final next = current.copyWith(
-      primaryRecommendation: promoted,
-      alternativeRecommendations: [
-        ...alternatives,
-        if (demotedPrimary != null) demotedPrimary,
-      ].take(3).toList(),
-      clearTrackedRecommendationId: true,
+    final next = ranked.copyWith(
       hasUserInteracted: true,
       recommendationRevealCount: current.recommendationRevealCount + 1,
     );
-
     state = AsyncData(next);
+    if (sessionId != null) {
+      unawaited(trackAction(QuickFixActionType.recommendationShown));
+    }
     return next;
   }
 

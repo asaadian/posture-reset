@@ -18,6 +18,7 @@ class QuickFixRecommendationEngine {
   QuickFixRecommendationResult recommend({
     required QuickFixState state,
     required List<SessionSummary> sessions,
+    List<String> shownSessionIds = const [],
   }) {
     if (sessions.isEmpty) {
       return const QuickFixRecommendationResult(
@@ -26,6 +27,9 @@ class QuickFixRecommendationEngine {
       );
     }
 
+    final shownOrder = {
+      for (var i = 0; i < shownSessionIds.length; i++) shownSessionIds[i]: i,
+    };
     final ranked = sessions
         .map(
           (session) => _ScoredRecommendation(
@@ -35,6 +39,11 @@ class QuickFixRecommendationEngine {
         .where((item) => item.recommendation.score > 0)
         .toList(growable: true)
       ..sort((a, b) {
+        // Unseen sessions come first. After a full cycle, reuse the oldest.
+        final byRecency = (shownOrder[a.recommendation.session.id] ?? -1)
+            .compareTo(shownOrder[b.recommendation.session.id] ?? -1);
+        if (byRecency != 0) return byRecency;
+
         final byScore =
             b.recommendation.score.compareTo(a.recommendation.score);
         if (byScore != 0) return byScore;
@@ -94,6 +103,12 @@ class QuickFixRecommendationEngine {
     score += _scoreEquipment(state, session);
     score += _scoreEnergy(state.selectedEnergyId, session);
     score += _scoreModes(state.selectedModeIds, session);
+    score += switch (session.sessionLevelTag) {
+      SessionLevelTag.freeStarter => 0,
+      SessionLevelTag.therapy => 6,
+      SessionLevelTag.advancedTherapy => 7,
+      SessionLevelTag.flagship => 8,
+    };
 
     if (session.isBeginnerFriendly) {
       score += 1.25;
@@ -162,10 +177,10 @@ class QuickFixRecommendationEngine {
             SessionGoal.mobility,
           ],
         );
-        if (session.id == 'sess_towel_deep_neck_flexor_control_07') return score + 8;
-        if (session.id == 'sess_cervical_isometric_stability_07') return score + 7;
-        if (session.id == 'sess_ball_upper_trap_levator_reset_07') return score + 5;
-        if (session.id == 'sess_flagship_laptop_neck_shoulder_chain_10') return score + 6;
+        if (session.id == 'sess_towel_deep_neck_flexor_control_07') return score > 0 ? score + 8 : 0;
+        if (session.id == 'sess_cervical_isometric_stability_07') return score > 0 ? score + 7 : 0;
+        if (session.id == 'sess_ball_upper_trap_levator_reset_07') return score > 0 ? score + 5 : 0;
+        if (session.id == 'sess_flagship_laptop_neck_shoulder_chain_10') return score > 0 ? score + 6 : 0;
         return score;
 
       case 'shoulders':
@@ -179,10 +194,10 @@ class QuickFixRecommendationEngine {
             SessionGoal.recovery,
           ],
         );
-        if (session.id == 'sess_band_rotator_cuff_scapular_control_08') return score + 8;
-        if (session.id == 'sess_serratus_wall_slide_miniband_07') return score + 7;
-        if (session.id == 'sess_dowel_shoulder_mobility_control_07') return score + 5;
-        if (session.id == 'sess_flagship_laptop_neck_shoulder_chain_10') return score + 6;
+        if (session.id == 'sess_band_rotator_cuff_scapular_control_08') return score > 0 ? score + 8 : 0;
+        if (session.id == 'sess_serratus_wall_slide_miniband_07') return score > 0 ? score + 7 : 0;
+        if (session.id == 'sess_dowel_shoulder_mobility_control_07') return score > 0 ? score + 5 : 0;
+        if (session.id == 'sess_flagship_laptop_neck_shoulder_chain_10') return score > 0 ? score + 6 : 0;
         return score;
 
       case 'upper_back':
@@ -202,9 +217,9 @@ class QuickFixRecommendationEngine {
             SessionGoal.postureReset,
           ],
         );
-        if (session.id == 'sess_foam_roller_thoracic_extension_rotation_08') return score + 8;
-        if (session.id == 'sess_desk_thoracic_rotation_scapular_integration_07') return score + 6;
-        if (session.id == 'sess_flagship_full_desk_worker_therapy_12') return score + 5;
+        if (session.id == 'sess_foam_roller_thoracic_extension_rotation_08') return score > 0 ? score + 8 : 0;
+        if (session.id == 'sess_desk_thoracic_rotation_scapular_integration_07') return score > 0 ? score + 6 : 0;
+        if (session.id == 'sess_flagship_full_desk_worker_therapy_12') return score > 0 ? score + 5 : 0;
         return score;
 
       case 'lower_back':
@@ -218,9 +233,9 @@ class QuickFixRecommendationEngine {
             SessionGoal.decompression,
           ],
         );
-        if (session.id == 'sess_chair_core_bracing_low_back_support_07') return score + 8;
-        if (session.id == 'sess_standing_back_decompression_core_reset_07') return score + 6;
-        if (session.id == 'sess_flagship_after_work_spine_hip_reset_10') return score + 5;
+        if (session.id == 'sess_chair_core_bracing_low_back_support_07') return score > 0 ? score + 8 : 0;
+        if (session.id == 'sess_standing_back_decompression_core_reset_07') return score > 0 ? score + 6 : 0;
+        if (session.id == 'sess_flagship_after_work_spine_hip_reset_10') return score > 0 ? score + 5 : 0;
         return score;
 
       case 'wrists':
@@ -234,10 +249,10 @@ class QuickFixRecommendationEngine {
             SessionGoal.mobility,
           ],
         );
-        if (session.id == 'sess_eccentric_wrist_extensor_loading_07') return score + 8;
-        if (session.id == 'sess_median_nerve_tendon_glide_06') return score + 6;
-        if (session.id == 'sess_flagship_mouse_arm_clinical_reset_09') return score + 5;
-        if (session.id == 'sess_free_typing_load_starter_04') return score + 3;
+        if (session.id == 'sess_eccentric_wrist_extensor_loading_07') return score > 0 ? score + 8 : 0;
+        if (session.id == 'sess_median_nerve_tendon_glide_06') return score > 0 ? score + 6 : 0;
+        if (session.id == 'sess_flagship_mouse_arm_clinical_reset_09') return score > 0 ? score + 5 : 0;
+        if (session.id == 'sess_free_typing_load_starter_04') return score > 0 ? score + 3 : 0;
         return score;
 
       case 'forearms':
@@ -251,9 +266,9 @@ class QuickFixRecommendationEngine {
             SessionGoal.mobility,
           ],
         );
-        if (session.id == 'sess_forearm_pronation_supination_control_07') return score + 8;
-        if (session.id == 'sess_mouse_arm_shoulder_chain_07') return score + 7;
-        if (session.id == 'sess_flagship_mouse_arm_clinical_reset_09') return score + 6;
+        if (session.id == 'sess_forearm_pronation_supination_control_07') return score > 0 ? score + 8 : 0;
+        if (session.id == 'sess_mouse_arm_shoulder_chain_07') return score > 0 ? score + 7 : 0;
+        if (session.id == 'sess_flagship_mouse_arm_clinical_reset_09') return score > 0 ? score + 6 : 0;
         return score;
 
       case 'hands':
@@ -268,8 +283,8 @@ class QuickFixRecommendationEngine {
             SessionGoal.mobility,
           ],
         );
-        if (session.id == 'sess_soft_ball_hand_strength_06') return score + 8;
-        if (session.id == 'sess_median_nerve_tendon_glide_06') return score + 5;
+        if (session.id == 'sess_soft_ball_hand_strength_06') return score > 0 ? score + 8 : 0;
+        if (session.id == 'sess_median_nerve_tendon_glide_06') return score > 0 ? score + 5 : 0;
         return score;
 
       case 'eyes':
@@ -290,8 +305,8 @@ class QuickFixRecommendationEngine {
             SessionGoal.recovery,
           ],
         );
-        if (session.id == 'sess_free_desk_decompression_04') return score + 4;
-        if (session.id == 'sess_towel_deep_neck_flexor_control_07') return score + 3;
+        if (session.id == 'sess_free_desk_decompression_04') return score > 0 ? score + 4 : 0;
+        if (session.id == 'sess_towel_deep_neck_flexor_control_07') return score > 0 ? score + 3 : 0;
         return score;
 
       case 'hips_glutes':
@@ -305,10 +320,10 @@ class QuickFixRecommendationEngine {
             SessionGoal.mobility,
           ],
         );
-        if (session.id == 'sess_miniband_glute_med_stability_08') return score + 8;
-        if (session.id == 'sess_hip_flexor_release_glute_rebalance_07') return score + 7;
-        if (session.id == 'sess_hamstring_slider_hip_hinge_control_07') return score + 5;
-        if (session.id == 'sess_flagship_after_work_spine_hip_reset_10') return score + 5;
+        if (session.id == 'sess_miniband_glute_med_stability_08') return score > 0 ? score + 8 : 0;
+        if (session.id == 'sess_hip_flexor_release_glute_rebalance_07') return score > 0 ? score + 7 : 0;
+        if (session.id == 'sess_hamstring_slider_hip_hinge_control_07') return score > 0 ? score + 5 : 0;
+        if (session.id == 'sess_flagship_after_work_spine_hip_reset_10') return score > 0 ? score + 5 : 0;
         return score;
 
       case 'stress':
@@ -322,9 +337,9 @@ class QuickFixRecommendationEngine {
             SessionGoal.focusPrep,
           ],
         );
-        if (session.id == 'sess_flagship_after_work_spine_hip_reset_10') return score + 7;
-        if (session.id == 'sess_free_desk_decompression_04') return score + 4;
-        if (session.id == 'sess_flagship_full_desk_worker_therapy_12') return score + 4;
+        if (session.id == 'sess_flagship_after_work_spine_hip_reset_10') return score > 0 ? score + 7 : 0;
+        if (session.id == 'sess_free_desk_decompression_04') return score > 0 ? score + 4 : 0;
+        if (session.id == 'sess_flagship_full_desk_worker_therapy_12') return score > 0 ? score + 4 : 0;
         return score;
 
       default:
@@ -338,6 +353,7 @@ class QuickFixRecommendationEngine {
     SessionSummary session, {
     required List<SessionGoal> preferredGoals,
   }) {
+    if (!primaryHit && !secondaryHit) return 0;
     double score = 0;
     if (primaryHit) score += 16;
     if (secondaryHit) score += 5;
@@ -444,7 +460,7 @@ class QuickFixRecommendationEngine {
 
     if (required.isEmpty) return 2.5;
     if (!required.every(selected.contains)) return 0;
-    return required.intersection(selected).isNotEmpty ? 4.5 : 0;
+    return 8;
   }
 
   Set<String> _requiredSpecialEquipment(SessionSummary session) {
